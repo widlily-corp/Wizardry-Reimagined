@@ -1,0 +1,42 @@
+{
+  "name": "ebwizardry:obelisk/start_pool_lightning",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "ebwizardry:obelisk_0",
+        "processors": "ebwizardry:lightning_parser",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "ebwizardry:obelisk_1",
+        "processors": "ebwizardry:lightning_parser",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "ebwizardry:obelisk_2",
+        "processors": "ebwizardry:lightning_parser",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "ebwizardry:obelisk_3",
+        "processors": "ebwizardry:lightning_parser",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "ebwizardry:wizard_tower",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 378477271,
+    "separation": 8,
+    "spacing": 42,
+    "type": "minecraft:random_spread"
+  }
+}

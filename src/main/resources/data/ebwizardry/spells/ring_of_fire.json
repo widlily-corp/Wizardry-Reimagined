@@ -1,0 +1,26 @@
+{
+  "type": "ebwizardry:construct",
+  "base_properties": {
+    "damage": 1.0,
+    "duration": 600,
+    "effect_duration": 10,
+    "effect_radius": 3
+  },
+  "chargeup": 10,
+  "cooldown": 100,
+  "cost": 30,
+  "element": "ebwizardry:fire",
+  "enabled": {
+    "book": true,
+    "commands": true,
+    "dispensers": true,
+    "looting": true,
+    "npcs": true,
+    "scroll": true,
+    "trades": true,
+    "treasure": true,
+    "wands": true
+  },
+  "spell_action": "ebwizardry:point",
+  "tier": "ebwizardry:advanced"
+}

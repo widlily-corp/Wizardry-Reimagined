@@ -1,0 +1,24 @@
+{
+  "type": "ebwizardry:imbuement_altar",
+  "center": {
+    "item": "ebwizardry:wizard_leggings"
+  },
+  "receptacles": [
+    {
+      "tag": "ebwizardry:healing_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:healing_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:healing_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:healing_elemental_dust"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "ebwizardry:wizard_leggings_healing"
+  }
+}

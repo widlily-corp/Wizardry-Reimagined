@@ -1,0 +1,24 @@
+{
+  "type": "ebwizardry:imbuement_altar",
+  "center": {
+    "item": "ebwizardry:battlemage_boots"
+  },
+  "receptacles": [
+    {
+      "tag": "ebwizardry:earth_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:earth_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:earth_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:earth_elemental_dust"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "ebwizardry:battlemage_boots_earth"
+  }
+}

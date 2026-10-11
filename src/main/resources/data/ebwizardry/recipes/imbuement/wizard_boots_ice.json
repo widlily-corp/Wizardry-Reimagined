@@ -1,0 +1,24 @@
+{
+  "type": "ebwizardry:imbuement_altar",
+  "center": {
+    "item": "ebwizardry:wizard_boots"
+  },
+  "receptacles": [
+    {
+      "tag": "ebwizardry:ice_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:ice_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:ice_elemental_dust"
+    },
+    {
+      "tag": "ebwizardry:ice_elemental_dust"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "ebwizardry:wizard_boots_ice"
+  }
+}

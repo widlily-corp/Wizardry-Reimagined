@@ -1,0 +1,23 @@
+{
+  "type": "ebwizardry:attack",
+  "base_properties": {
+    "speed": 0.1
+  },
+  "chargeup": 5,
+  "cooldown": 30,
+  "cost": 20,
+  "element": "ebwizardry:necromancy",
+  "enabled": {
+    "book": true,
+    "commands": true,
+    "dispensers": true,
+    "looting": true,
+    "npcs": true,
+    "scroll": true,
+    "trades": true,
+    "treasure": true,
+    "wands": true
+  },
+  "spell_action": "ebwizardry:point",
+  "tier": "ebwizardry:advanced"
+}

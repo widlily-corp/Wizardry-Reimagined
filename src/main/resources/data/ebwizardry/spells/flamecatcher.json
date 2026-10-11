@@ -1,0 +1,27 @@
+{
+  "type": "ebwizardry:utility",
+  "base_properties": {
+    "damage": 16.0,
+    "effect_duration": 15,
+    "item_lifetime": 900,
+    "range": 20.0,
+    "shot_count": 5
+  },
+  "chargeup": 20,
+  "cooldown": 150,
+  "cost": 100,
+  "element": "ebwizardry:fire",
+  "enabled": {
+    "book": true,
+    "commands": true,
+    "dispensers": true,
+    "looting": true,
+    "npcs": true,
+    "scroll": true,
+    "trades": true,
+    "treasure": true,
+    "wands": true
+  },
+  "spell_action": "ebwizardry:summon",
+  "tier": "ebwizardry:master"
+}

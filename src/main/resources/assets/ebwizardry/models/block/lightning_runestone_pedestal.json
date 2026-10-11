@@ -1,0 +1,8 @@
+{
+  "parent": "ebwizardry:block/runestone_pedestal",
+  "textures": {
+    "bottom": "ebwizardry:block/runestone_lightning_0",
+    "side": "ebwizardry:block/runestone_pedestal_lightning",
+    "top": "ebwizardry:block/runestone_lightning_0"
+  }
+}

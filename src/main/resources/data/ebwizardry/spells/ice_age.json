@@ -1,0 +1,26 @@
+{
+  "type": "ebwizardry:attack",
+  "base_properties": {
+    "effect_duration": 400,
+    "effect_radius": 7,
+    "effect_strength": 1,
+    "freeze_duration": 1200
+  },
+  "chargeup": 20,
+  "cooldown": 250,
+  "cost": 70,
+  "element": "ebwizardry:ice",
+  "enabled": {
+    "book": true,
+    "commands": true,
+    "dispensers": true,
+    "looting": true,
+    "npcs": true,
+    "scroll": true,
+    "trades": true,
+    "treasure": true,
+    "wands": true
+  },
+  "spell_action": "ebwizardry:point_down",
+  "tier": "ebwizardry:master"
+}

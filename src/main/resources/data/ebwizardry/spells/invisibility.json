@@ -1,0 +1,24 @@
+{
+  "type": "ebwizardry:buff",
+  "base_properties": {
+    "effect.minecraft.invisibility_duration": 600,
+    "effect.minecraft.invisibility_strength": 0
+  },
+  "chargeup": 15,
+  "cooldown": 200,
+  "cost": 35,
+  "element": "ebwizardry:sorcery",
+  "enabled": {
+    "book": true,
+    "commands": true,
+    "dispensers": true,
+    "looting": true,
+    "npcs": true,
+    "scroll": true,
+    "trades": true,
+    "treasure": true,
+    "wands": true
+  },
+  "spell_action": "ebwizardry:point_up",
+  "tier": "ebwizardry:advanced"
+}

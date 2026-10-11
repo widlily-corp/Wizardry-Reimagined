@@ -1,0 +1,27 @@
+{
+  "type": "ebwizardry:alteration",
+  "base_properties": {
+    "damage": 3.0,
+    "duration": 600,
+    "effect_duration": 100,
+    "effect_strength": 0,
+    "range": 10.0
+  },
+  "chargeup": 10,
+  "cooldown": 40,
+  "cost": 10,
+  "element": "ebwizardry:ice",
+  "enabled": {
+    "book": true,
+    "commands": true,
+    "dispensers": true,
+    "looting": true,
+    "npcs": true,
+    "scroll": true,
+    "trades": true,
+    "treasure": true,
+    "wands": true
+  },
+  "spell_action": "ebwizardry:point",
+  "tier": "ebwizardry:advanced"
+}

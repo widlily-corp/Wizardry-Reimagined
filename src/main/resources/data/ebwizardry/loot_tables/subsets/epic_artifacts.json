@@ -1,0 +1,53 @@
+{
+  "type": "minecraft:empty",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:ring_combustion"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:ring_arcane_frost"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:ring_seeking"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:ring_mana_return"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:amulet_ice_immunity"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:amulet_wither_immunity"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:amulet_absorption"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:ring_meteor"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:charm_lava_walking"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ebwizardry:charm_experience_tome"
+        }
+      ],
+      "name": "epic_artifacts",
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "ebwizardry:subsets/epic_artifacts"
+}

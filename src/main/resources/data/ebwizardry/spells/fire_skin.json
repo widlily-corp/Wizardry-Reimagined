@@ -1,0 +1,25 @@
+{
+  "type": "ebwizardry:defence",
+  "base_properties": {
+    "effect.ebwizardry.fireskin_duration": 600,
+    "effect.ebwizardry.fireskin_strength": 0,
+    "effect_duration": 5
+  },
+  "chargeup": 0,
+  "cooldown": 250,
+  "cost": 40,
+  "element": "ebwizardry:fire",
+  "enabled": {
+    "book": true,
+    "commands": true,
+    "dispensers": true,
+    "looting": true,
+    "npcs": true,
+    "scroll": true,
+    "trades": true,
+    "treasure": true,
+    "wands": true
+  },
+  "spell_action": "ebwizardry:point_up",
+  "tier": "ebwizardry:advanced"
+}
