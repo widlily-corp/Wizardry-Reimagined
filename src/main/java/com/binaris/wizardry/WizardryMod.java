@@ -27,8 +27,12 @@ public class WizardryMod {
         Elements.init();
         SpellTiers.init();
         Spells.init();
+        com.binaris.wizardry.registry.EBSpells.init();
 
-        // 2. Data Components
+        // 2. Entities
+        com.binaris.wizardry.registry.EBEntities.register(modBus);
+
+        // 3. Data Components
         EBDataComponents.register(modBus);
 
         // 3. Blocks & Items
