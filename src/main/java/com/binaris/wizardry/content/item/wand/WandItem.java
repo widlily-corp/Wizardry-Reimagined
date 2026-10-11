@@ -321,7 +321,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
             return;
         }
 
-        int useTick = getUseDuration(stack) - timeLeft;
+        int useTick = getUseDuration(stack, livingEntity) - timeLeft;
         if (useTick >= spell.getChargeup()) {
             if (canCastRequirements(stack, spell, player, level)) {
                 castInstant(level, player, player.getUsedItemHand(), stack, spell);

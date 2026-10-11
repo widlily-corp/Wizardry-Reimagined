@@ -34,11 +34,19 @@ public class WizardryMod {
         // 3. Blocks & Items
         EBBlocks.register(modBus);
         EBItems.register(modBus);
+        com.binaris.wizardry.registry.EBWandItems.register(modBus);
+        com.binaris.wizardry.registry.EBWorkbenchBlocks.register(modBus);
 
-        // 4. Sounds
+        // 4. Menus
+        com.binaris.wizardry.registry.EBMenuTypes.register(modBus);
+
+        // 5. Network
+        com.binaris.wizardry.network.EBNetwork.register(modBus);
+
+        // 6. Sounds
         EBSounds.register(modBus);
 
-        // 5. Creative Mode Tabs
+        // 7. Creative Mode Tabs
         EBCreativeTabs.register(modBus);
 
         // Setup listener
