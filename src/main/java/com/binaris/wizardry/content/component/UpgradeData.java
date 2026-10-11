@@ -15,9 +15,7 @@ public record UpgradeData(Map<String, Integer> upgrades) {
     public static final Codec<UpgradeData> CODEC = Codec.unboundedMap(Codec.STRING, Codec.INT)
             .xmap(UpgradeData::new, UpgradeData::upgrades);
 
-    public static final StreamCodec<ByteBuf, UpgradeData> STREAM_CODEC =
-            ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.VAR_INT)
-                    .map(UpgradeData::new, UpgradeData::upgrades);
+    public static final StreamCodec<ByteBuf, UpgradeData> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
 
     public int getUpgradeLevel(String upgradeId) {
         return upgrades.getOrDefault(upgradeId, 0);

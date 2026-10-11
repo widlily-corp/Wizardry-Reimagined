@@ -48,7 +48,7 @@ public final class EBBlocks {
             BLOCKS.register("deepslate_crystal_ore", () -> new CrystalOreBlock(true));
 
     public static final DeferredBlock<CrystalFlowerBlock> CRYSTAL_FLOWER =
-            BLOCKS.register("crystal_flower", CrystalFlowerBlock::new);
+            BLOCKS.register("crystal_flower", () -> new CrystalFlowerBlock());
 
     public static final DeferredBlock<FlowerPotBlock> POTTED_CRYSTAL_FLOWER =
             BLOCKS.register("potted_crystal_flower", () -> new FlowerPotBlock(

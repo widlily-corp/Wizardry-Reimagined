@@ -5,12 +5,14 @@ import com.binaris.wizardry.content.component.SpellData;
 import com.binaris.wizardry.content.component.UpgradeData;
 import com.binaris.wizardry.content.component.WandData;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class EBDataComponents {
-    public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(WizardryMod.MODID);
+    public static final DeferredRegister.DataComponents DATA_COMPONENTS =
+            DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, WizardryMod.MODID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<WandData>> WAND_DATA =
             DATA_COMPONENTS.registerComponentType("wand_data", builder -> builder
