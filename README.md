@@ -12,8 +12,8 @@ A modern, high-performance reimagining of the legendary RPG magic mod **Electrob
 
 This project is a modern reimagining inspired by and built upon the incredible legacy of **Electroblob's Wizardry**:
 
-* **[Electroblob](https://github.com/Electroblob)** — The visionary creator of the original *Electroblob's Wizardry* for Minecraft 1.7.10 / 1.12.2. Thank you for creating one of the most atmospheric, beloved, and iconic magic mods in Minecraft history.
-* **[Binaris](https://github.com/Binaris)** and the **Redux Team** — For their tremendous work on *Electroblob's Wizardry Redux* (1.20.1), modern texture reworks, and keeping the spirit of wizardry alive.
+* **[Electroblob's Wizardry (Original 1.7.10 / 1.12.2)](https://github.com/Electroblob77/Wizardry)** by **Electroblob77** — The visionary creator of the original *Electroblob's Wizardry*. Thank you for creating one of the most atmospheric, beloved, and iconic magic mods in Minecraft history.
+* **[Electroblob's Wizardry Redux (1.20.1)](https://github.com/Binaris00/ElectroblobsWizardryRedux)** by **Binaris00** and the Redux Team — For their tremendous work on the modern multi-loader port, texture reworks, and keeping the spirit of wizardry alive.
 * **WinDanesz** — Dedicated maintainer and contributor of the 1.12.2 codebase.
 * **NinjaFrito** — Creator of the refined modern spell and item textures.
 * **Min01 & 19** — Early port contributors and pioneers.
