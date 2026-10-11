@@ -66,6 +66,8 @@ public class WizardryMod {
                 com.binaris.wizardry.content.entity.mob.WizardEntity.createAttributes().build());
         event.put(com.binaris.wizardry.registry.EBEntities.EVIL_WIZARD.get(),
                 com.binaris.wizardry.content.entity.mob.EvilWizardEntity.createAttributes().build());
+        event.put(com.binaris.wizardry.registry.EBEntities.REMNANT.get(),
+                com.binaris.wizardry.content.entity.mob.EvilWizardEntity.createAttributes().build());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

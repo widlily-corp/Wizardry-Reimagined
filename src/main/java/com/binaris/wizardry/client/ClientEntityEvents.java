@@ -49,6 +49,7 @@ public final class ClientEntityEvents {
 
         event.registerEntityRenderer(EBEntities.WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.WizardRenderer::new);
         event.registerEntityRenderer(EBEntities.EVIL_WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);
+        event.registerEntityRenderer(EBEntities.REMNANT.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);
     }
 
     @SubscribeEvent

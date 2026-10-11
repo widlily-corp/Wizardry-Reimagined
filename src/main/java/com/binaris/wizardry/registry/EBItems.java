@@ -76,6 +76,45 @@ public final class EBItems {
     public static final DeferredItem<BlockItem> CRYSTAL_FLOWER_ITEM =
             ITEMS.registerSimpleBlockItem(EBBlocks.CRYSTAL_FLOWER);
 
+    // Runestone Items
+    public static final DeferredItem<BlockItem> FIRE_RUNESTONE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.FIRE_RUNESTONE);
+    public static final DeferredItem<BlockItem> EARTH_RUNESTONE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.EARTH_RUNESTONE);
+    public static final DeferredItem<BlockItem> ICE_RUNESTONE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.ICE_RUNESTONE);
+    public static final DeferredItem<BlockItem> LIGHTNING_RUNESTONE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.LIGHTNING_RUNESTONE);
+    public static final DeferredItem<BlockItem> NECROMANCY_RUNESTONE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.NECROMANCY_RUNESTONE);
+    public static final DeferredItem<BlockItem> SORCERY_RUNESTONE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.SORCERY_RUNESTONE);
+    public static final DeferredItem<BlockItem> HEALING_RUNESTONE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.HEALING_RUNESTONE);
+
+    // Pedestal Items
+    public static final DeferredItem<BlockItem> FIRE_RUNESTONE_PEDESTAL_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.FIRE_RUNESTONE_PEDESTAL);
+    public static final DeferredItem<BlockItem> EARTH_RUNESTONE_PEDESTAL_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.EARTH_RUNESTONE_PEDESTAL);
+    public static final DeferredItem<BlockItem> ICE_RUNESTONE_PEDESTAL_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.ICE_RUNESTONE_PEDESTAL);
+    public static final DeferredItem<BlockItem> LIGHTNING_RUNESTONE_PEDESTAL_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.LIGHTNING_RUNESTONE_PEDESTAL);
+    public static final DeferredItem<BlockItem> NECROMANCY_RUNESTONE_PEDESTAL_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.NECROMANCY_RUNESTONE_PEDESTAL);
+    public static final DeferredItem<BlockItem> SORCERY_RUNESTONE_PEDESTAL_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.SORCERY_RUNESTONE_PEDESTAL);
+    public static final DeferredItem<BlockItem> HEALING_RUNESTONE_PEDESTAL_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.HEALING_RUNESTONE_PEDESTAL);
+
+    // Library & Decorative Items
+    public static final DeferredItem<BlockItem> OAK_BOOKSHELF_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.OAK_BOOKSHELF);
+    public static final DeferredItem<BlockItem> SPRUCE_BOOKSHELF_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.SPRUCE_BOOKSHELF);
+    public static final DeferredItem<BlockItem> BIRCH_BOOKSHELF_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.BIRCH_BOOKSHELF);
+    public static final DeferredItem<BlockItem> JUNGLE_BOOKSHELF_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.JUNGLE_BOOKSHELF);
+    public static final DeferredItem<BlockItem> ACACIA_BOOKSHELF_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.ACACIA_BOOKSHELF);
+    public static final DeferredItem<BlockItem> DARK_OAK_BOOKSHELF_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.DARK_OAK_BOOKSHELF);
+    public static final DeferredItem<BlockItem> BOOKSHELF_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.BOOKSHELF);
+
+    public static final DeferredItem<BlockItem> GILDED_WOOD_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.GILDED_WOOD);
+    public static final DeferredItem<BlockItem> GILDED_OAK_WOOD_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.GILDED_OAK_WOOD);
+    public static final DeferredItem<BlockItem> GILDED_SPRUCE_WOOD_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.GILDED_SPRUCE_WOOD);
+    public static final DeferredItem<BlockItem> GILDED_BIRCH_WOOD_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.GILDED_BIRCH_WOOD);
+    public static final DeferredItem<BlockItem> GILDED_JUNGLE_WOOD_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.GILDED_JUNGLE_WOOD);
+    public static final DeferredItem<BlockItem> GILDED_ACACIA_WOOD_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.GILDED_ACACIA_WOOD);
+    public static final DeferredItem<BlockItem> GILDED_DARK_OAK_WOOD_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.GILDED_DARK_OAK_WOOD);
+
+    public static final DeferredItem<BlockItem> IMBUEMENT_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.IMBUEMENT_ALTAR);
+    public static final DeferredItem<BlockItem> RECEPTACLE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.RECEPTACLE);
+    public static final DeferredItem<BlockItem> WALL_RECEPTACLE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.WALL_RECEPTACLE);
+
     public static void register(IEventBus modBus) {
         ITEMS.register(modBus);
     }

@@ -61,6 +61,13 @@ public final class EBEntities {
                     .updateInterval(3)
                     .build("evil_wizard"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.mob.EvilWizardEntity>> REMNANT =
+            ENTITIES.register("remnant", () -> EntityType.Builder.of(com.binaris.wizardry.content.entity.mob.EvilWizardEntity::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.8f)
+                    .clientTrackingRange(64)
+                    .updateInterval(3)
+                    .build("remnant"));
+
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(
             String name, EntityType.EntityFactory<T> factory, float width, float height) {
         return ENTITIES.register(name, () -> EntityType.Builder.of(factory, MobCategory.MISC)

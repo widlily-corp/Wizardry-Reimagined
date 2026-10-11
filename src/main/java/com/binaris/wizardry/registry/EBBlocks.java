@@ -7,6 +7,7 @@ import com.binaris.wizardry.content.block.crystal.CrystalOreBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -56,6 +57,82 @@ public final class EBBlocks {
                     CRYSTAL_FLOWER,
                     BlockBehaviour.Properties.of().instabreak().noOcclusion().lightLevel(s -> 15).pushReaction(PushReaction.DESTROY)
             ));
+
+    // ==========================================
+    // Runestones
+    // ==========================================
+    public static final DeferredBlock<Block> FIRE_RUNESTONE =
+            BLOCKS.register("fire_runestone", () -> new com.binaris.wizardry.content.block.runestone.RunestoneBlock(Elements.FIRE));
+    public static final DeferredBlock<Block> EARTH_RUNESTONE =
+            BLOCKS.register("earth_runestone", () -> new com.binaris.wizardry.content.block.runestone.RunestoneBlock(Elements.EARTH));
+    public static final DeferredBlock<Block> ICE_RUNESTONE =
+            BLOCKS.register("ice_runestone", () -> new com.binaris.wizardry.content.block.runestone.RunestoneBlock(Elements.ICE));
+    public static final DeferredBlock<Block> LIGHTNING_RUNESTONE =
+            BLOCKS.register("lightning_runestone", () -> new com.binaris.wizardry.content.block.runestone.RunestoneBlock(Elements.LIGHTNING));
+    public static final DeferredBlock<Block> NECROMANCY_RUNESTONE =
+            BLOCKS.register("necromancy_runestone", () -> new com.binaris.wizardry.content.block.runestone.RunestoneBlock(Elements.NECROMANCY));
+    public static final DeferredBlock<Block> SORCERY_RUNESTONE =
+            BLOCKS.register("sorcery_runestone", () -> new com.binaris.wizardry.content.block.runestone.RunestoneBlock(Elements.SORCERY));
+    public static final DeferredBlock<Block> HEALING_RUNESTONE =
+            BLOCKS.register("healing_runestone", () -> new com.binaris.wizardry.content.block.runestone.RunestoneBlock(Elements.HEALING));
+
+    // ==========================================
+    // Runestone Pedestals
+    // ==========================================
+    public static final DeferredBlock<Block> FIRE_RUNESTONE_PEDESTAL =
+            BLOCKS.register("fire_runestone_pedestal", () -> new com.binaris.wizardry.content.block.runestone.RunestonePedestalBlock(Elements.FIRE));
+    public static final DeferredBlock<Block> EARTH_RUNESTONE_PEDESTAL =
+            BLOCKS.register("earth_runestone_pedestal", () -> new com.binaris.wizardry.content.block.runestone.RunestonePedestalBlock(Elements.EARTH));
+    public static final DeferredBlock<Block> ICE_RUNESTONE_PEDESTAL =
+            BLOCKS.register("ice_runestone_pedestal", () -> new com.binaris.wizardry.content.block.runestone.RunestonePedestalBlock(Elements.ICE));
+    public static final DeferredBlock<Block> LIGHTNING_RUNESTONE_PEDESTAL =
+            BLOCKS.register("lightning_runestone_pedestal", () -> new com.binaris.wizardry.content.block.runestone.RunestonePedestalBlock(Elements.LIGHTNING));
+    public static final DeferredBlock<Block> NECROMANCY_RUNESTONE_PEDESTAL =
+            BLOCKS.register("necromancy_runestone_pedestal", () -> new com.binaris.wizardry.content.block.runestone.RunestonePedestalBlock(Elements.NECROMANCY));
+    public static final DeferredBlock<Block> SORCERY_RUNESTONE_PEDESTAL =
+            BLOCKS.register("sorcery_runestone_pedestal", () -> new com.binaris.wizardry.content.block.runestone.RunestonePedestalBlock(Elements.SORCERY));
+    public static final DeferredBlock<Block> HEALING_RUNESTONE_PEDESTAL =
+            BLOCKS.register("healing_runestone_pedestal", () -> new com.binaris.wizardry.content.block.runestone.RunestonePedestalBlock(Elements.HEALING));
+
+    // ==========================================
+    // Library & Decorative Worldgen Blocks
+    // ==========================================
+    public static final DeferredBlock<Block> OAK_BOOKSHELF =
+            BLOCKS.register("oak_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> SPRUCE_BOOKSHELF =
+            BLOCKS.register("spruce_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> BIRCH_BOOKSHELF =
+            BLOCKS.register("birch_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> JUNGLE_BOOKSHELF =
+            BLOCKS.register("jungle_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> ACACIA_BOOKSHELF =
+            BLOCKS.register("acacia_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> DARK_OAK_BOOKSHELF =
+            BLOCKS.register("dark_oak_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> BOOKSHELF =
+            BLOCKS.register("bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+
+    public static final DeferredBlock<Block> GILDED_WOOD =
+            BLOCKS.register("gilded_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> GILDED_OAK_WOOD =
+            BLOCKS.register("gilded_oak_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> GILDED_SPRUCE_WOOD =
+            BLOCKS.register("gilded_spruce_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> GILDED_BIRCH_WOOD =
+            BLOCKS.register("gilded_birch_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> GILDED_JUNGLE_WOOD =
+            BLOCKS.register("gilded_jungle_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> GILDED_ACACIA_WOOD =
+            BLOCKS.register("gilded_acacia_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));
+    public static final DeferredBlock<Block> GILDED_DARK_OAK_WOOD =
+            BLOCKS.register("gilded_dark_oak_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));
+
+    public static final DeferredBlock<Block> IMBUEMENT_ALTAR =
+            BLOCKS.register("imbuement_altar", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0F).sound(SoundType.STONE).noOcclusion()));
+    public static final DeferredBlock<Block> RECEPTACLE =
+            BLOCKS.register("receptacle", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0F).sound(SoundType.STONE).noOcclusion()));
+    public static final DeferredBlock<Block> WALL_RECEPTACLE =
+            BLOCKS.register("wall_receptacle", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0F).sound(SoundType.STONE).noOcclusion()));
 
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);

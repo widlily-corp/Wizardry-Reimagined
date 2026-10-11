@@ -41,6 +41,22 @@ public final class EBCreativeTabs {
                         output.accept(EBBlocks.CRYSTAL_ORE.get());
                         output.accept(EBBlocks.DEEPSLATE_CRYSTAL_ORE.get());
                         output.accept(EBBlocks.CRYSTAL_FLOWER.get());
+
+                        output.accept(EBBlocks.FIRE_RUNESTONE.get());
+                        output.accept(EBBlocks.EARTH_RUNESTONE.get());
+                        output.accept(EBBlocks.ICE_RUNESTONE.get());
+                        output.accept(EBBlocks.LIGHTNING_RUNESTONE.get());
+                        output.accept(EBBlocks.NECROMANCY_RUNESTONE.get());
+                        output.accept(EBBlocks.SORCERY_RUNESTONE.get());
+                        output.accept(EBBlocks.HEALING_RUNESTONE.get());
+
+                        output.accept(EBBlocks.FIRE_RUNESTONE_PEDESTAL.get());
+                        output.accept(EBBlocks.EARTH_RUNESTONE_PEDESTAL.get());
+                        output.accept(EBBlocks.ICE_RUNESTONE_PEDESTAL.get());
+                        output.accept(EBBlocks.LIGHTNING_RUNESTONE_PEDESTAL.get());
+                        output.accept(EBBlocks.NECROMANCY_RUNESTONE_PEDESTAL.get());
+                        output.accept(EBBlocks.SORCERY_RUNESTONE_PEDESTAL.get());
+                        output.accept(EBBlocks.HEALING_RUNESTONE_PEDESTAL.get());
                     })
                     .build());
 
