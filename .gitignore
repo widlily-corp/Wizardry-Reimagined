@@ -1,0 +1,12 @@
+ElectroblobsWizardryRedux/
+.gradle/
+build/
+run/
+run-data/
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.DS_Store
+Thumbs.db
