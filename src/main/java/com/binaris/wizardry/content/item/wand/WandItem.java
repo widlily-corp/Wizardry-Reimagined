@@ -33,21 +33,31 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
     public static final int NON_ELEMENTAL_UPGRADE_BONUS = 3;
     public static final int UPGRADE_STACK_LIMIT = 3;
 
-    private final SpellTier tier;
-    private final Element element;
+    private final java.util.function.Supplier<SpellTier> tierSupplier;
+    private final java.util.function.Supplier<Element> elementSupplier;
+    private final int maxCharge;
+
+    public WandItem(java.util.function.Supplier<SpellTier> tierSupplier, java.util.function.Supplier<Element> elementSupplier, int maxCharge) {
+        super(new Properties().stacksTo(1).durability(maxCharge));
+        this.tierSupplier = tierSupplier;
+        this.elementSupplier = elementSupplier;
+        this.maxCharge = maxCharge;
+    }
 
     public WandItem(SpellTier tier, Element element) {
-        super(new Properties().stacksTo(1).durability(tier.getMaxCharge()));
-        this.tier = tier;
-        this.element = element != null ? element : Elements.MAGIC.get();
+        this(() -> tier, () -> element, tier != null ? tier.getMaxCharge() : 700);
     }
 
     public SpellTier getTier() {
-        return tier;
+        return tierSupplier != null ? tierSupplier.get() : SpellTiers.NOVICE.get();
     }
 
     public Element getElement() {
-        return element;
+        if (elementSupplier != null) {
+            Element elem = elementSupplier.get();
+            if (elem != null) return elem;
+        }
+        return Elements.MAGIC.get();
     }
 
     // ==========================================
@@ -85,7 +95,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
     @Override
     public int getManaCapacity(ItemStack stack) {
         int storageLevel = getUpgradeLevel(stack, WandUpgrades.STORAGE);
-        return (int) (this.tier.getMaxCharge() * (1.0f + STORAGE_INCREASE_PER_LEVEL * storageLevel) + 0.5f);
+        return (int) (getTier().getMaxCharge() * (1.0f + STORAGE_INCREASE_PER_LEVEL * storageLevel) + 0.5f);
     }
 
     @Override
@@ -237,8 +247,8 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
     }
 
     public void checkLevelUp(Player player, ItemStack stack, int progression) {
-        if (tier == SpellTiers.MASTER.get()) return;
-        SpellTier nextTier = tier.next();
+        if (getTier() == SpellTiers.MASTER.get()) return;
+        SpellTier nextTier = getTier().next();
         int excess = getProgression(stack) - nextTier.getProgression();
 
         if (excess >= 0 && excess < progression) {
@@ -255,14 +265,15 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
 
     @Override
     public boolean isFoil(@NotNull ItemStack stack) {
-        if (tier == SpellTiers.MASTER.get()) return false;
-        return getProgression(stack) >= tier.next().getProgression();
+        if (getTier() == SpellTiers.MASTER.get()) return false;
+        return getProgression(stack) >= getTier().next().getProgression();
     }
 
     @Override
     public @NotNull Component getName(@NotNull ItemStack stack) {
-        if (this.element != null) {
-            return Component.literal(super.getName(stack).getString()).withStyle(this.element.getColor());
+        Element elem = getElement();
+        if (elem != null) {
+            return Component.literal(super.getName(stack).getString()).withStyle(elem.getColor());
         }
         return super.getName(stack);
     }
@@ -273,7 +284,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
 
     public boolean canCastRequirements(ItemStack stack, Spell spell, Player player, Level level) {
         if (spell == null || spell == Spells.NONE.get()) return false;
-        if (spell.getTier().getLevel() > this.tier.getLevel()) return false;
+        if (spell.getTier().getLevel() > getTier().getLevel()) return false;
         if (!player.isCreative() && spell.getCost() > getMana(stack)) return false;
         return player.isCreative() || getCurrentCooldown(stack, level) == 0;
     }
@@ -345,7 +356,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
             setCurrentCooldown(stack, cd, level.getGameTime());
         }
 
-        if (tier.getLevel() < SpellTiers.MASTER.get().getLevel()) {
+        if (getTier().getLevel() < SpellTiers.MASTER.get().getLevel()) {
             int prog = Math.max(1, spell.getCost() > 0 ? spell.getCost() / 10 : 5);
             addProgression(stack, prog);
             checkLevelUp(player, stack, prog);
@@ -385,7 +396,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
             changed = applyUpgradeSlot(player, centre, upgrade);
         }
 
-        changed |= WorkbenchUtils.applySpellBooks(centre, spellBooks, this.tier);
+        changed |= WorkbenchUtils.applySpellBooks(centre, spellBooks, getTier());
         changed |= WorkbenchUtils.rechargeManaFromCrystals(centre, crystals);
         return changed;
     }
@@ -421,16 +432,16 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
     }
 
     protected ItemStack applyTierUpgrade(@Nullable Player player, ItemStack wand, ItemStack tomeStack) {
-        if (this.tier == SpellTiers.MASTER.get()) return wand;
+        if (getTier() == SpellTiers.MASTER.get()) return wand;
 
         SpellTier nextTier = WandUpgrades.getTomeTier(tomeStack);
-        if (nextTier == null || nextTier == this.tier || nextTier.getLevel() <= this.tier.getLevel()) {
+        if (nextTier == null || nextTier == getTier() || nextTier.getLevel() <= getTier().getLevel()) {
             return wand;
         }
 
         if (player == null || getProgression(wand) >= nextTier.getProgression()) {
             int newProgression = Math.max(0, getProgression(wand) - nextTier.getProgression());
-            Item newWandItem = EBWandItems.getWand(nextTier, this.element);
+            Item newWandItem = EBWandItems.getWand(nextTier, getElement());
             if (newWandItem != null) {
                 ItemStack newWand = new ItemStack(newWandItem);
                 newWand.applyComponents(wand.getComponents());
@@ -447,7 +458,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
         String upgradeId = WandUpgrades.getUpgradeId(upgradeStack);
         if (upgradeId == null) return;
 
-        int maxUpgrades = this.tier.getUpgradeLimit() + (this.element == Elements.MAGIC.get() ? NON_ELEMENTAL_UPGRADE_BONUS : 0);
+        int maxUpgrades = getTier().getUpgradeLimit() + (getElement() == Elements.MAGIC.get() ? NON_ELEMENTAL_UPGRADE_BONUS : 0);
         int currentTotal = getTotalUpgrades(wand);
         int currentLevel = getUpgradeLevel(wand, upgradeId);
 

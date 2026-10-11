@@ -18,28 +18,28 @@ public final class EBBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(WizardryMod.MODID);
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_MAGIC =
-            BLOCKS.register("crystal_block_magic", () -> new CrystalBlock(MapColor.COLOR_PINK, Elements.MAGIC.get()));
+            BLOCKS.register("crystal_block_magic", () -> new CrystalBlock(MapColor.COLOR_PINK, Elements.MAGIC));
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_FIRE =
-            BLOCKS.register("crystal_block_fire", () -> new CrystalBlock(MapColor.TERRACOTTA_ORANGE, Elements.FIRE.get()));
+            BLOCKS.register("crystal_block_fire", () -> new CrystalBlock(MapColor.TERRACOTTA_ORANGE, Elements.FIRE));
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_ICE =
-            BLOCKS.register("crystal_block_ice", () -> new CrystalBlock(MapColor.COLOR_LIGHT_BLUE, Elements.ICE.get()));
+            BLOCKS.register("crystal_block_ice", () -> new CrystalBlock(MapColor.COLOR_LIGHT_BLUE, Elements.ICE));
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_LIGHTNING =
-            BLOCKS.register("crystal_block_lightning", () -> new CrystalBlock(MapColor.COLOR_CYAN, Elements.LIGHTNING.get()));
+            BLOCKS.register("crystal_block_lightning", () -> new CrystalBlock(MapColor.COLOR_CYAN, Elements.LIGHTNING));
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_NECROMANCY =
-            BLOCKS.register("crystal_block_necromancy", () -> new CrystalBlock(MapColor.COLOR_PURPLE, Elements.NECROMANCY.get()));
+            BLOCKS.register("crystal_block_necromancy", () -> new CrystalBlock(MapColor.COLOR_PURPLE, Elements.NECROMANCY));
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_EARTH =
-            BLOCKS.register("crystal_block_earth", () -> new CrystalBlock(MapColor.COLOR_GREEN, Elements.EARTH.get()));
+            BLOCKS.register("crystal_block_earth", () -> new CrystalBlock(MapColor.COLOR_GREEN, Elements.EARTH));
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_SORCERY =
-            BLOCKS.register("crystal_block_sorcery", () -> new CrystalBlock(MapColor.COLOR_LIGHT_GREEN, Elements.SORCERY.get()));
+            BLOCKS.register("crystal_block_sorcery", () -> new CrystalBlock(MapColor.COLOR_LIGHT_GREEN, Elements.SORCERY));
 
     public static final DeferredBlock<CrystalBlock> CRYSTAL_BLOCK_HEALING =
-            BLOCKS.register("crystal_block_healing", () -> new CrystalBlock(MapColor.COLOR_YELLOW, Elements.HEALING.get()));
+            BLOCKS.register("crystal_block_healing", () -> new CrystalBlock(MapColor.COLOR_YELLOW, Elements.HEALING));
 
     public static final DeferredBlock<CrystalOreBlock> CRYSTAL_ORE =
             BLOCKS.register("crystal_ore", () -> new CrystalOreBlock(false));

@@ -25,17 +25,21 @@ import java.util.List;
 public class WizardArmorItem extends ArmorItem implements IManaItem, IWorkbenchItem {
     public static final float DEFAULT_COST_REDUCTION = 0.10F;
 
-    private final @Nullable Element element;
+    private final @Nullable java.util.function.Supplier<Element> elementSupplier;
     private final float costReduction;
 
-    public WizardArmorItem(Holder<ArmorMaterial> material, Type type, @Nullable Element element, int durability, Properties properties) {
+    public WizardArmorItem(Holder<ArmorMaterial> material, Type type, @Nullable java.util.function.Supplier<Element> elementSupplier, int durability, Properties properties) {
         super(material, type, properties.durability(durability));
-        this.element = element;
+        this.elementSupplier = elementSupplier;
         this.costReduction = DEFAULT_COST_REDUCTION;
     }
 
+    public WizardArmorItem(Holder<ArmorMaterial> material, Type type, @Nullable Element element, int durability, Properties properties) {
+        this(material, type, element != null ? () -> element : null, durability, properties);
+    }
+
     public @Nullable Element getElement() {
-        return element;
+        return elementSupplier != null ? elementSupplier.get() : null;
     }
 
     public float getCostReduction() {
@@ -85,8 +89,9 @@ public class WizardArmorItem extends ArmorItem implements IManaItem, IWorkbenchI
 
     @Override
     public int getBarColor(@NotNull ItemStack stack) {
-        if (element != null && element.getColors().length > 0) {
-            return element.getColors()[0];
+        Element elem = getElement();
+        if (elem != null && elem.getColors().length > 0) {
+            return elem.getColors()[0];
         }
         return 0xa811ce;
     }
@@ -111,8 +116,9 @@ public class WizardArmorItem extends ArmorItem implements IManaItem, IWorkbenchI
 
     @Override
     public @NotNull Component getName(@NotNull ItemStack stack) {
-        if (this.element != null) {
-            return Component.literal(super.getName(stack).getString()).withStyle(this.element.getColor());
+        Element elem = getElement();
+        if (elem != null) {
+            return Component.literal(super.getName(stack).getString()).withStyle(elem.getColor());
         }
         return super.getName(stack);
     }
@@ -122,11 +128,12 @@ public class WizardArmorItem extends ArmorItem implements IManaItem, IWorkbenchI
         tooltip.add(Component.translatable("item.ebwizardry.mana", getMana(stack), getManaCapacity(stack))
                 .withStyle(ChatFormatting.AQUA));
 
-        if (element != null) {
+        Element elem = getElement();
+        if (elem != null) {
             tooltip.add(Component.translatable(
                     "item." + WizardryMod.MODID + ".wizard_armor.element_cost_reduction",
                     (int) (this.costReduction * 100),
-                    element.getDescriptionFormatted().getString()
+                    elem.getDescriptionFormatted().getString()
             ).withStyle(ChatFormatting.GRAY));
         }
     }

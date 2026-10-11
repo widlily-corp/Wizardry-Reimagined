@@ -4,23 +4,33 @@ import com.binaris.wizardry.registry.Element;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Supplier;
+
 public class CrystalItem extends Item {
     private final int manaCapacity;
     @Nullable
-    private final Element element;
+    private final Supplier<Element> elementSupplier;
 
-    public CrystalItem(int manaCapacity, @Nullable Element element, Properties properties) {
+    public CrystalItem(int manaCapacity, @Nullable Supplier<Element> elementSupplier, Properties properties) {
         super(properties);
         this.manaCapacity = manaCapacity;
-        this.element = element;
+        this.elementSupplier = elementSupplier;
+    }
+
+    public CrystalItem(int manaCapacity, @Nullable Supplier<Element> elementSupplier) {
+        this(manaCapacity, elementSupplier, new Properties());
+    }
+
+    public CrystalItem(int manaCapacity, @Nullable Element element, Properties properties) {
+        this(manaCapacity, element != null ? () -> element : null, properties);
     }
 
     public CrystalItem(int manaCapacity, @Nullable Element element) {
-        this(manaCapacity, element, new Properties());
+        this(manaCapacity, element != null ? () -> element : null, new Properties());
     }
 
     public CrystalItem(int manaCapacity) {
-        this(manaCapacity, null, new Properties());
+        this(manaCapacity, (Supplier<Element>) null, new Properties());
     }
 
     public int getManaCapacity() {
@@ -29,6 +39,6 @@ public class CrystalItem extends Item {
 
     @Nullable
     public Element getElement() {
-        return element;
+        return elementSupplier != null ? elementSupplier.get() : null;
     }
 }

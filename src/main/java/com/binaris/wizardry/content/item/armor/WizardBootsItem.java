@@ -9,7 +9,11 @@ import org.jetbrains.annotations.Nullable;
 public class WizardBootsItem extends WizardArmorItem {
     public static final int DURABILITY = 180;
 
-    public WizardBootsItem(Holder<ArmorMaterial> material, @Nullable Element element, Properties properties) {
-        super(material, ArmorItem.Type.BOOTS, element, DURABILITY, properties);
+    public WizardBootsItem(Holder<ArmorMaterial> material, @Nullable java.util.function.Supplier<Element> elementSupplier, Properties properties) {
+        super(material, ArmorItem.Type.BOOTS, elementSupplier, DURABILITY, properties);
+    }
+
+    public WizardBootsItem(Holder<ArmorMaterial> material, Properties properties) {
+        this(material, (java.util.function.Supplier<Element>) null, properties);
     }
 }
