@@ -47,6 +47,20 @@ public final class EBEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<PoisonBombEntity>> POISON_BOMB =
             register("poison_bomb", PoisonBombEntity::new, 0.4f, 0.4f);
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.mob.WizardEntity>> WIZARD =
+            ENTITIES.register("wizard", () -> EntityType.Builder.of(com.binaris.wizardry.content.entity.mob.WizardEntity::new, MobCategory.CREATURE)
+                    .sized(0.6f, 1.8f)
+                    .clientTrackingRange(64)
+                    .updateInterval(3)
+                    .build("wizard"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.mob.EvilWizardEntity>> EVIL_WIZARD =
+            ENTITIES.register("evil_wizard", () -> EntityType.Builder.of(com.binaris.wizardry.content.entity.mob.EvilWizardEntity::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.8f)
+                    .clientTrackingRange(64)
+                    .updateInterval(3)
+                    .build("evil_wizard"));
+
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(
             String name, EntityType.EntityFactory<T> factory, float width, float height) {
         return ENTITIES.register(name, () -> EntityType.Builder.of(factory, MobCategory.MISC)

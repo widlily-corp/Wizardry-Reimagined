@@ -46,6 +46,17 @@ public final class ClientEntityEvents {
 
         event.registerEntityRenderer(EBEntities.POISON_BOMB.get(),
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/dart.png"), 0.6f));
+
+        event.registerEntityRenderer(EBEntities.WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.WizardRenderer::new);
+        event.registerEntityRenderer(EBEntities.EVIL_WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(com.binaris.wizardry.client.model.WizardModel.LAYER_LOCATION,
+                com.binaris.wizardry.client.model.WizardModel::createBodyLayer);
+        event.registerLayerDefinition(com.binaris.wizardry.client.model.WizardArmorModel.LAYER_LOCATION,
+                com.binaris.wizardry.client.model.WizardArmorModel::createBodyLayer);
     }
 
     private ClientEntityEvents() {}

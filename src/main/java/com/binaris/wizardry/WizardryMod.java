@@ -41,6 +41,8 @@ public class WizardryMod {
         com.binaris.wizardry.registry.EBCraftingItems.register(modBus);
         com.binaris.wizardry.registry.EBWandItems.register(modBus);
         com.binaris.wizardry.registry.EBWorkbenchBlocks.register(modBus);
+        com.binaris.wizardry.registry.EBArmorItems.register(modBus);
+        com.binaris.wizardry.registry.EBBaubleItems.register(modBus);
 
         // 4. Menus
         com.binaris.wizardry.registry.EBMenuTypes.register(modBus);
@@ -56,6 +58,14 @@ public class WizardryMod {
 
         // Setup listener
         modBus.addListener(this::commonSetup);
+        modBus.addListener(this::registerEntityAttributes);
+    }
+
+    private void registerEntityAttributes(net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent event) {
+        event.put(com.binaris.wizardry.registry.EBEntities.WIZARD.get(),
+                com.binaris.wizardry.content.entity.mob.WizardEntity.createAttributes().build());
+        event.put(com.binaris.wizardry.registry.EBEntities.EVIL_WIZARD.get(),
+                com.binaris.wizardry.content.entity.mob.EvilWizardEntity.createAttributes().build());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
