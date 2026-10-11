@@ -1,0 +1,15 @@
+﻿{
+    "addition":  {
+                     "item":  "minecraft:netherite_ingot"
+                 },
+    "template":  {
+                     "item":  "ebwizardry:arcane_upgrade_smithing_template"
+                 },
+    "result":  {
+                   "id":  "ebwizardry:wand_master_ice"
+               },
+    "type":  "minecraft:smithing_transform",
+    "base":  {
+                 "item":  "ebwizardry:wand_advanced_ice"
+             }
+}

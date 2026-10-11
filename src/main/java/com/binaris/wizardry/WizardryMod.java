@@ -34,6 +34,7 @@ public class WizardryMod {
         // 3. Blocks & Items
         EBBlocks.register(modBus);
         EBItems.register(modBus);
+        com.binaris.wizardry.registry.EBCraftingItems.register(modBus);
         com.binaris.wizardry.registry.EBWandItems.register(modBus);
         com.binaris.wizardry.registry.EBWorkbenchBlocks.register(modBus);
 

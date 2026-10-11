@@ -1,0 +1,15 @@
+﻿{
+    "addition":  {
+                     "item":  "ebwizardry:magic_crystal_grand"
+                 },
+    "template":  {
+                     "item":  "ebwizardry:arcane_upgrade_smithing_template"
+                 },
+    "result":  {
+                   "id":  "ebwizardry:wand_apprentice_earth"
+               },
+    "type":  "minecraft:smithing_transform",
+    "base":  {
+                 "item":  "ebwizardry:wand_novice_earth"
+             }
+}

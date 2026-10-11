@@ -6,10 +6,14 @@
       "item": "minecraft:paper"
     },
     {
-      "item": "minecraft:string"
+      "item": "minecraft:gold_nugget"
+    },
+    {
+      "item": "ebwizardry:magic_crystal"
     }
   ],
   "result": {
-    "item": "ebwizardry:blank_scroll"
+    "count": 2,
+    "id": "ebwizardry:blank_scroll"
   }
 }
