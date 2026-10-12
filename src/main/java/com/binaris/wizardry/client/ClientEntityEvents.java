@@ -101,6 +101,12 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.ARROW_RAIN.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.ARROW_ORB.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.ZOMBIE_SPAWNER.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.CELESTIAL_MONOLITH.get(), com.binaris.wizardry.client.renderer.entity.construct.CelestialMonolithRenderer::new);
+        event.registerEntityRenderer(EBEntities.SUPERNOVA.get(), com.binaris.wizardry.client.renderer.entity.construct.SupernovaRenderer::new);
+        event.registerEntityRenderer(EBEntities.GLACIAL_OBLIVION.get(), com.binaris.wizardry.client.renderer.entity.construct.GlacialOblivionRenderer::new);
+        event.registerEntityRenderer(EBEntities.TITANS_HAMMER.get(), com.binaris.wizardry.client.renderer.entity.construct.TitansHammerRenderer::new);
+        event.registerEntityRenderer(EBEntities.ABYSS_EYE.get(), com.binaris.wizardry.client.renderer.entity.construct.AbyssEyeRenderer::new);
+        event.registerEntityRenderer(EBEntities.TECTONIC_SHATTER.get(), com.binaris.wizardry.client.renderer.entity.construct.TectonicShatterRenderer::new);
 
         event.registerEntityRenderer(EBEntities.WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.WizardRenderer::new);
         event.registerEntityRenderer(EBEntities.EVIL_WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);

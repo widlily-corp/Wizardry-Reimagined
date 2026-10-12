@@ -19,7 +19,10 @@ public final class SpellTiers {
     public static final DeferredHolder<SpellTier, SpellTier> MASTER = EBRegistries.TIERS.register("master",
             () -> new SpellTier("master", 2500, 9, 1, 3, ChatFormatting.DARK_PURPLE, 6000));
 
-    public static final List<DeferredHolder<SpellTier, SpellTier>> ALL = List.of(NOVICE, APPRENTICE, ADVANCED, MASTER);
+    public static final DeferredHolder<SpellTier, SpellTier> GRAND = EBRegistries.TIERS.register("grand",
+            () -> new SpellTier("grand", 5000, 11, 0, 4, ChatFormatting.GOLD, 15000));
+
+    public static final List<DeferredHolder<SpellTier, SpellTier>> ALL = List.of(NOVICE, APPRENTICE, ADVANCED, MASTER, GRAND);
 
     public static SpellTier getNextByLevel(int level) {
         for (DeferredHolder<SpellTier, SpellTier> tierHolder : ALL) {

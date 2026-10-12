@@ -175,6 +175,15 @@ public final class EBSpells {
     public static final Spell FORCEFIELD;
     public static final Spell OAKFLESH;
 
+    // Grand Spells
+    public static final Spell CELESTIAL_MONOLITH;
+    public static final Spell LIGHTNING_RAILGUN;
+    public static final Spell WRATH_OF_HELIOS;
+    public static final Spell GLACIAL_OBLIVION;
+    public static final Spell TITANS_CATACLYSM;
+    public static final Spell ECLIPSE_OF_ABYSS;
+    public static final Spell TECTONIC_SHATTER;
+
     static {
         NONE = spell("none", NoneSpell::new);
 
@@ -839,6 +848,15 @@ public final class EBSpells {
         SPELLS.put("snare", SNARE);
         SPELLS.put("forcefield", FORCEFIELD);
         SPELLS.put("oakflesh", OAKFLESH);
+
+        // Grand Spells
+        CELESTIAL_MONOLITH = spell("celestial_monolith", CelestialMonolithSpell::new);
+        LIGHTNING_RAILGUN = spell("lightning_railgun", LightningRailgunSpell::new);
+        WRATH_OF_HELIOS = spell("wrath_of_helios", WrathOfHeliosSpell::new);
+        GLACIAL_OBLIVION = spell("glacial_oblivion", GlacialOblivionSpell::new);
+        TITANS_CATACLYSM = spell("titans_cataclysm", TitansCataclysmSpell::new);
+        ECLIPSE_OF_ABYSS = spell("eclipse_of_abyss", EclipseOfAbyssSpell::new);
+        TECTONIC_SHATTER = spell("tectonic_shatter", TectonicShatterSpell::new);
 
     }
 

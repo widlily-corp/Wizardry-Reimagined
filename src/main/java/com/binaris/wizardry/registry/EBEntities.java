@@ -157,6 +157,24 @@ public final class EBEntities {
                     .updateInterval(3)
                     .build("remnant"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.construct.CelestialMonolithEntity>> CELESTIAL_MONOLITH =
+            register("celestial_monolith", com.binaris.wizardry.content.entity.construct.CelestialMonolithEntity::new, 2.5f, 10.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.construct.SupernovaEntity>> SUPERNOVA =
+            register("supernova", com.binaris.wizardry.content.entity.construct.SupernovaEntity::new, 2.5f, 2.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.construct.GlacialOblivionEntity>> GLACIAL_OBLIVION =
+            register("glacial_oblivion", com.binaris.wizardry.content.entity.construct.GlacialOblivionEntity::new, 2.5f, 6.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.construct.TitansHammerEntity>> TITANS_HAMMER =
+            register("titans_hammer", com.binaris.wizardry.content.entity.construct.TitansHammerEntity::new, 2.0f, 4.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.construct.AbyssEyeEntity>> ABYSS_EYE =
+            register("abyss_eye", com.binaris.wizardry.content.entity.construct.AbyssEyeEntity::new, 2.0f, 2.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.construct.TectonicShatterEntity>> TECTONIC_SHATTER =
+            register("tectonic_shatter", com.binaris.wizardry.content.entity.construct.TectonicShatterEntity::new, 4.0f, 4.5f);
+
     public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.mob.IceGiant>> ICE_GIANT =
             ENTITIES.register("ice_giant", () -> EntityType.Builder.<com.binaris.wizardry.content.entity.mob.IceGiant>of(com.binaris.wizardry.content.entity.mob.IceGiant::new, MobCategory.CREATURE)
                     .sized(1.4f, 2.7f)
