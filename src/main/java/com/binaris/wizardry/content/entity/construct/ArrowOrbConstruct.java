@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -125,7 +126,7 @@ public class ArrowOrbConstruct extends MagicConstructEntity {
                 shootCooldown = 3; // Rapid continuous stream
 
                 AABB searchBox = this.getBoundingBox().inflate(range);
-                List<LivingEntity> targets = this.level().getEntitiesOfClass(LivingEntity.class, searchBox, this::isValidTarget);
+                List<LivingEntity> targets = new ArrayList<>(this.level().getEntitiesOfClass(LivingEntity.class, searchBox, this::isValidTarget));
 
                 if (!targets.isEmpty()) {
                     targets.sort(Comparator.comparingDouble(this::distanceToSqr));

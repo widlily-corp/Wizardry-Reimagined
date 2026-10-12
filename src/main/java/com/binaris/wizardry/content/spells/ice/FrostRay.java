@@ -41,7 +41,7 @@ public class FrostRay extends RaySpell {
                     property(DefaultProperties.EFFECT_STRENGTH)));
         }
 
-        if (ctx.castingTicks() % target.invulnerableDuration == 1) {
+        if (ctx.castingTicks() % Math.max(1, target.invulnerableDuration) == 1) {
             float damage = ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.DAMAGE));
             if (target instanceof Blaze || target instanceof MagmaCube) damage *= 2;
 

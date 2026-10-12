@@ -237,7 +237,8 @@ public final class ParticleBuilder {
         double baseZ = entity != null ? entity.getZ() + z : z;
 
         ParticleOptions toSpawn = particle;
-        if (toSpawn == null || toSpawn == EBParticles.BUFF.get() || toSpawn == EBParticles.SPARKLE.get()) {
+        if (toSpawn == null || toSpawn == EBParticles.BUFF.get() || toSpawn == EBParticles.SPARKLE.get()
+                || toSpawn == EBParticles.DARK_MAGIC.get() || toSpawn == EBParticles.SPHERE.get()) {
             toSpawn = new DustParticleOptions(new Vector3f(red, green, blue), scale);
         }
 

@@ -10,7 +10,11 @@ import com.binaris.wizardry.content.spells.abstr.AreaEffectSpell;
 import com.binaris.wizardry.registry.Elements;
 import com.binaris.wizardry.registry.SpellTiers;
 import com.binaris.wizardry.registry.EBParticles;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -28,8 +32,17 @@ public class Enrage extends AreaEffectSpell {
 
     @Override
     protected boolean affectEntity(CastContext ctx, Vec3 origin, LivingEntity target, int targetCount) {
-        if (ctx.caster() instanceof Player player && target instanceof PathfinderMob) {
-            target.setLastHurtByMob(player);
+        if (!ctx.world().isClientSide && target instanceof Mob mob) {
+            List<LivingEntity> potential = new ArrayList<>(ctx.world().getEntitiesOfClass(LivingEntity.class,
+                    mob.getBoundingBox().inflate(12.0),
+                    e -> e.isAlive() && e != mob && e != ctx.caster() && (ctx.caster() == null || !ctx.caster().isAlliedTo(e))));
+
+            if (!potential.isEmpty()) {
+                potential.sort(Comparator.comparingDouble(mob::distanceToSqr));
+                LivingEntity enemy = potential.get(0);
+                mob.setTarget(enemy);
+                mob.setLastHurtByMob(enemy);
+            }
         }
 
         return true;

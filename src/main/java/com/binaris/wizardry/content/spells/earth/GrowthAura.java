@@ -22,7 +22,7 @@ import java.util.List;
 public class GrowthAura extends Spell {
     @Override
     public boolean cast(PlayerCastContext ctx) {
-        if (ctx.caster().level().isClientSide) return false;
+        if (ctx.caster().level().isClientSide) return true;
 
         boolean flag = false;
         Level level = ctx.caster().level();

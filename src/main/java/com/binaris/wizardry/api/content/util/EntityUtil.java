@@ -32,7 +32,13 @@ public final class EntityUtil {
         AABB aabb = new AABB(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius);
         List<T> entityList = world.getEntitiesOfClass(entityType, aabb);
         double radiusSq = radius * radius;
-        return entityList.stream().filter(entity -> entity.distanceToSqr(x, y, z) <= radiusSq).toList();
+        List<T> result = new java.util.ArrayList<>();
+        for (T entity : entityList) {
+            if (entity.distanceToSqr(x, y, z) <= radiusSq) {
+                result.add(entity);
+            }
+        }
+        return result;
     }
 
     public static List<LivingEntity> getLivingWithinRadius(double radius, double x, double y, double z, Level world) {

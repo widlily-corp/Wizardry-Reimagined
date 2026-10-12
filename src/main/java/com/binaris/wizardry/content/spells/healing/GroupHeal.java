@@ -10,13 +10,16 @@ import com.binaris.wizardry.content.spells.DefaultProperties;
 import com.binaris.wizardry.content.spells.abstr.AreaEffectSpell;
 import com.binaris.wizardry.registry.Elements;
 import com.binaris.wizardry.registry.SpellTiers;
+import com.binaris.wizardry.registry.EBParticles;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class GroupHeal extends AreaEffectSpell {
     public GroupHeal() {
         this.targetAllies(true);
+        this.alwaysSucceed(true);
     }
 
     @Override
@@ -31,7 +34,9 @@ public class GroupHeal extends AreaEffectSpell {
     }
 
     @Override
-    protected void spawnParticleEffect(CastContext ctx, Vec3 origin, double radius) {
+    protected void spawnParticle(Level world, double x, double y, double z) {
+        ParticleBuilder.create(EBParticles.SPARKLE.get()).pos(x, y + 0.2, z)
+                .velocity(0, 0.05, 0).time(30).color(0.3f, 1f, 0.4f).spawn(world);
     }
 
     @Override

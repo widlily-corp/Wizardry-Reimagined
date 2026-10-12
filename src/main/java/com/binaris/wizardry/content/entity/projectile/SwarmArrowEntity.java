@@ -23,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -172,12 +173,12 @@ public class SwarmArrowEntity extends AbstractArrow {
     @Nullable
     private LivingEntity findNextTarget(Entity currentHit, double radius) {
         AABB searchBox = getBoundingBox().inflate(radius);
-        List<LivingEntity> candidates = level().getEntitiesOfClass(LivingEntity.class, searchBox, e ->
+        List<LivingEntity> candidates = new ArrayList<>(level().getEntitiesOfClass(LivingEntity.class, searchBox, e ->
                 e.isAlive()
                 && e != currentHit
                 && !hitTargets.contains(e.getUUID())
                 && e != getOwner()
-                && (getOwner() == null || !((LivingEntity) getOwner()).isAlliedTo(e)));
+                && (getOwner() == null || !((LivingEntity) getOwner()).isAlliedTo(e))));
 
         if (candidates.isEmpty()) return null;
         candidates.sort(Comparator.comparingDouble(this::distanceToSqr));
@@ -187,11 +188,11 @@ public class SwarmArrowEntity extends AbstractArrow {
     @Nullable
     private LivingEntity findNewTarget(double radius) {
         AABB searchBox = getBoundingBox().inflate(radius);
-        List<LivingEntity> candidates = level().getEntitiesOfClass(LivingEntity.class, searchBox, e ->
+        List<LivingEntity> candidates = new ArrayList<>(level().getEntitiesOfClass(LivingEntity.class, searchBox, e ->
                 e.isAlive()
                 && !hitTargets.contains(e.getUUID())
                 && e != getOwner()
-                && (getOwner() == null || !((LivingEntity) getOwner()).isAlliedTo(e)));
+                && (getOwner() == null || !((LivingEntity) getOwner()).isAlliedTo(e))));
 
         if (candidates.isEmpty()) return null;
         candidates.sort(Comparator.comparingDouble(this::distanceToSqr));

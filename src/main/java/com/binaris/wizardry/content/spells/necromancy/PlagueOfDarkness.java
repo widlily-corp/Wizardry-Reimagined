@@ -15,6 +15,7 @@ import com.binaris.wizardry.registry.SpellTiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,10 +34,17 @@ public class PlagueOfDarkness extends AreaEffectSpell {
     @Override
     protected boolean affectEntity(CastContext ctx, Vec3 origin, LivingEntity target, int targetCount) {
         if (ctx.world().isClientSide) return true;
-        target.hurt(target.damageSources().wither(), ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.DAMAGE)));
-        target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-                (int) (ctx.modifiers().get(SpellModifiers.DURATION, property(DefaultProperties.EFFECT_DURATION))),
-                property(DefaultProperties.EFFECT_STRENGTH) + BuffSpell.getStandardBonusAmplifier(ctx.modifiers().getFactor(SpellModifiers.POTENCY))));
+        DamageSource src = ctx.caster() != null
+                ? ctx.world().damageSources().indirectMagic(ctx.caster(), ctx.caster())
+                : ctx.world().damageSources().wither();
+        target.hurt(src, ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.DAMAGE)));
+
+        int duration = (int) (ctx.modifiers().get(SpellModifiers.DURATION, property(DefaultProperties.EFFECT_DURATION)));
+        int amplifier = property(DefaultProperties.EFFECT_STRENGTH) + BuffSpell.getStandardBonusAmplifier(ctx.modifiers().getFactor(SpellModifiers.POTENCY));
+
+        target.addEffect(new MobEffectInstance(MobEffects.WITHER, duration, amplifier));
+        target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, Math.min(160, duration), 0));
+        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 1));
 
         return true;
     }
@@ -59,10 +67,15 @@ public class PlagueOfDarkness extends AreaEffectSpell {
             particleX = origin.x - 1.0d + 2 * ctx.world().random.nextDouble();
             particleZ = origin.z - 1.0d + 2 * ctx.world().random.nextDouble();
 
-            BlockState state = ctx.world().getBlockState(new BlockPos((int) origin.x, (int) (origin.y - 0.5), (int) origin.z));
+            BlockPos bpos = BlockPos.containing(origin.x, origin.y - 0.5, origin.z);
+            BlockState state = ctx.world().getBlockState(bpos);
 
             if (state.getRenderShape() != RenderShape.INVISIBLE) {
-                ctx.world().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), particleX, origin.y, particleZ, particleX - origin.x, 0, particleZ - origin.z);
+                if (ctx.world().isClientSide) {
+                    ctx.world().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), particleX, origin.y, particleZ, particleX - origin.x, 0, particleZ - origin.z);
+                } else if (ctx.world() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), particleX, origin.y, particleZ, 1, particleX - origin.x, 0, particleZ - origin.z, 0.0);
+                }
             }
         }
 

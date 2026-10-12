@@ -120,7 +120,13 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
     }
 
     protected boolean castInstant(Level level, Player player, ItemStack stack, Spell spell) {
-        boolean success = spell.cast(level, player);
+        boolean success;
+        try {
+            success = spell.cast(level, player);
+        } catch (Throwable t) {
+            com.binaris.wizardry.WizardryMod.LOGGER.error("Failed to cast spell {}", spell, t);
+            return false;
+        }
         if (success && !player.isCreative()) {
             stack.shrink(1);
             player.getCooldowns().addCooldown(this, Math.max(10, spell.getCooldown()));

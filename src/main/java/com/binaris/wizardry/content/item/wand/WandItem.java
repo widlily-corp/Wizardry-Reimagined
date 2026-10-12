@@ -353,7 +353,13 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
     }
 
     protected boolean castInstant(Level level, Player player, InteractionHand hand, ItemStack stack, Spell spell) {
-        boolean success = spell.cast(level, player);
+        boolean success;
+        try {
+            success = spell.cast(level, player);
+        } catch (Throwable t) {
+            com.binaris.wizardry.WizardryMod.LOGGER.error("Failed to cast spell {}", spell, t);
+            return false;
+        }
         if (!success) return false;
 
         consumeMana(stack, spell.getCost(), player);

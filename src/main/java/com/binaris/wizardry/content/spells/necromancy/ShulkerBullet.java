@@ -36,7 +36,7 @@ public class ShulkerBullet extends Spell {
         if (!world.isClientSide) {
             double range = modifiers.get(SpellModifiers.RANGE, property(DefaultProperties.RANGE));
 
-            List<LivingEntity> possibleTargets = EntityUtil.getLivingWithinRadius(range, x, y, z, world);
+            List<LivingEntity> possibleTargets = new java.util.ArrayList<>(EntityUtil.getLivingWithinRadius(range, x, y, z, world));
             possibleTargets.remove(caster);
             possibleTargets.removeIf(t -> t instanceof ArmorStand);
             if (possibleTargets.isEmpty()) {

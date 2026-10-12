@@ -134,13 +134,13 @@ public class MinionSpell<T extends Mob> extends Spell {
             setLifetime(minion, (int) (ctx.modifiers().get(SpellModifiers.DURATION, (float) (hasProperty(DefaultProperties.MINION_LIFETIME) ? property(DefaultProperties.MINION_LIFETIME) : 600))));
 
             if (minion.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
-                minion.getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(
+                minion.getAttribute(Attributes.ATTACK_DAMAGE).addOrReplacePermanentModifier(
                         new AttributeModifier(ResourceLocation.fromNamespaceAndPath("ebwizardry", "potency"),
                                 ctx.modifiers().getFactor(SpellModifiers.POTENCY) - 1.0f,
                                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             }
             if (minion.getAttribute(Attributes.MAX_HEALTH) != null) {
-                minion.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(
+                minion.getAttribute(Attributes.MAX_HEALTH).addOrReplacePermanentModifier(
                         new AttributeModifier(ResourceLocation.fromNamespaceAndPath("ebwizardry", "health"),
                                 ctx.modifiers().getFactor(SpellModifiers.HEALTH_MODIFIER) - 1.0f,
                                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));

@@ -29,7 +29,7 @@ public class LightningPulse extends Spell {
         if (!ctx.caster().onGround()) return false;
         float radius = ctx.modifiers().get(SpellModifiers.BLAST, property(DefaultProperties.EFFECT_RADIUS));
 
-        List<LivingEntity> targets = EntityUtil.getLivingWithinRadius(radius, ctx.caster().getX(), ctx.caster().getY(), ctx.caster().getZ(), ctx.world());
+        List<LivingEntity> targets = new java.util.ArrayList<>(EntityUtil.getLivingWithinRadius(radius, ctx.caster().getX(), ctx.caster().getY(), ctx.caster().getZ(), ctx.world()));
         targets.removeIf(t -> !AllyDesignation.isValidTarget(ctx.caster(), t));
         for (LivingEntity target : targets) {
             target.hurt(

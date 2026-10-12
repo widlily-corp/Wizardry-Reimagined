@@ -77,7 +77,7 @@ public class Banish extends RaySpell {
             if (world.getBlockState(new BlockPos(x, y + 1, z)).blocksMotion()
                     || world.getBlockState(new BlockPos(x, y + 2, z)).blocksMotion()) return;
 
-            if (!world.isClientSide) entity.moveTo(x + 0.5, y + 1, z + 0.5);
+            if (!world.isClientSide) entity.teleportTo(x + 0.5, y + 1, z + 0.5);
             this.playSound(world, entity, 0, -1);
         }
     }

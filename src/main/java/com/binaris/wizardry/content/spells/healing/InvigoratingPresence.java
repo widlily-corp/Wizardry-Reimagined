@@ -34,7 +34,7 @@ public class InvigoratingPresence extends AreaEffectSpell {
                     (int) (ctx.modifiers().get(SpellModifiers.DURATION, property(DefaultProperties.EFFECT_DURATION))),
                     property(DefaultProperties.EFFECT_STRENGTH) + bonusAmplifier));
         }
-        return false;
+        return true;
     }
 
     @Override

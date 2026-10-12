@@ -66,7 +66,7 @@ public abstract class AreaEffectSpell extends Spell {
 
     protected boolean findAndAffectEntities(CastContext ctx, Vec3 origin) {
         double radius = ctx.modifiers().get(SpellModifiers.BLAST, property(DefaultProperties.EFFECT_RADIUS));
-        List<LivingEntity> targets = EntityUtil.getLivingWithinRadius(radius, origin.x, origin.y, origin.z, ctx.world());
+        List<LivingEntity> targets = new java.util.ArrayList<>(EntityUtil.getLivingWithinRadius(radius, origin.x, origin.y, origin.z, ctx.world()));
 
         if (targetAllies) {
             targets.removeIf(target -> target != ctx.caster() && !AllyDesignation.isAllied(ctx.caster(), target));
@@ -83,7 +83,7 @@ public abstract class AreaEffectSpell extends Spell {
             if (affectEntity(ctx, origin, target, i++)) result = true;
         }
 
-        if (ctx.world().isClientSide) spawnParticleEffect(ctx, origin, radius);
+        spawnParticleEffect(ctx, origin, radius);
         return result;
     }
 

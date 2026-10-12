@@ -20,6 +20,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 @Mod(WizardryMod.MODID)
 public class WizardryMod {
     public static final String MODID = "ebwizardry";
+    public static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
 
     public WizardryMod(IEventBus modBus) {
         // 1. Core custom registries (Elements, Tiers, Spells)

@@ -110,7 +110,7 @@ public abstract class RaySpell extends Spell {
     public boolean cast(LocationCastContext ctx) {
         Vec3 vec = new Vec3(ctx.direction().step());
 
-        if (shootSpell(ctx, ctx.vec3(), vec)) return false;
+        if (!shootSpell(ctx, ctx.vec3(), vec)) return false;
         this.playSoundAt(ctx.world(), ctx.x() - ctx.direction().getStepX(),
                 ctx.y() - ctx.direction().getStepY(), ctx.z() - ctx.direction().getStepZ(),
                 ctx.castingTicks(), (float) ctx.duration());
