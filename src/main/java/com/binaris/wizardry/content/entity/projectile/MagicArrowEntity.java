@@ -111,13 +111,24 @@ public abstract class MagicArrowEntity extends AbstractArrow {
     }
 
     public void aim(LivingEntity caster, float speed) {
+        aim(caster, null, speed, 1.0f);
+    }
+
+    public void aim(LivingEntity caster, @Nullable LivingEntity target, float speed, float inaccuracy) {
         Vec3 lookVector = caster.getLookAngle();
         this.setPos(
                 caster.getX() + lookVector.x * FORWARD_OFFSET,
                 caster.getY() + caster.getEyeHeight() - LAUNCH_Y_OFFSET,
                 caster.getZ() + lookVector.z * FORWARD_OFFSET
         );
-        this.shootFromRotation(caster, caster.getXRot(), caster.getYRot(), 0.0f, speed, 1.0f);
+        if (target != null) {
+            double d0 = target.getX() - this.getX();
+            double d1 = target.getEyeY() - this.getY();
+            double d2 = target.getZ() - this.getZ();
+            this.shoot(d0, d1, d2, speed, inaccuracy);
+        } else {
+            this.shootFromRotation(caster, caster.getXRot(), caster.getYRot(), 0.0f, speed, inaccuracy);
+        }
         this.setOwner(caster);
     }
 

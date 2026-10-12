@@ -28,6 +28,14 @@ public final class SpellTiers {
         return null;
     }
 
+    public static SpellTier fromName(String name) {
+        if (name == null) return NOVICE.get();
+        for (DeferredHolder<SpellTier, SpellTier> holder : ALL) {
+            if (holder.get().getName().equalsIgnoreCase(name)) return holder.get();
+        }
+        return NOVICE.get();
+    }
+
     public static void init() {}
 
     private SpellTiers() {}

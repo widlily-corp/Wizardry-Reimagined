@@ -28,6 +28,8 @@ public class WizardryMod {
         SpellTiers.init();
         Spells.init();
         com.binaris.wizardry.registry.EBSpells.init();
+        com.binaris.wizardry.registry.EBMobEffects.register(modBus);
+        com.binaris.wizardry.registry.EBParticles.register(modBus);
 
         // 2. Entities
         com.binaris.wizardry.registry.EBEntities.register(modBus);

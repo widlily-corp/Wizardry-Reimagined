@@ -24,6 +24,14 @@ public final class Elements {
         return EBRegistries.ELEMENTS.register(name, () -> new Element(name, formatting, colors));
     }
 
+    public static Element fromName(String name) {
+        if (name == null) return MAGIC.get();
+        for (DeferredHolder<Element, Element> holder : ALL) {
+            if (holder.get().getName().equalsIgnoreCase(name)) return holder.get();
+        }
+        return MAGIC.get();
+    }
+
     public static void init() {}
 
     private Elements() {}
