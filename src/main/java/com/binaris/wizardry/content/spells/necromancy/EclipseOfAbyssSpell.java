@@ -18,66 +18,62 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import com.binaris.wizardry.api.content.util.BlockUtil;
+import net.minecraft.core.BlockPos;
+
 public class EclipseOfAbyssSpell extends Spell {
-    private static final int CHANNEL_TICKS_REQUIRED = 25; // 1.25 seconds chargeup
 
     @Override
     public boolean isInstantCast() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean cast(PlayerCastContext ctx) {
         Vec3 look = ctx.caster().getLookAngle();
         Vec3 origin = ctx.caster().getEyePosition();
-        double maxRange = 45.0;
+        double maxRange = 50.0;
         Vec3 endpoint = origin.add(look.scale(maxRange));
 
         HitResult hit = RayTracer.rayTrace(ctx.world(), ctx.caster(), origin, endpoint, 0, false, net.minecraft.world.entity.Entity.class, RayTracer.ignoreEntityFilter(ctx.caster()));
         Vec3 targetPos = hit != null && hit.getType() != HitResult.Type.MISS ? hit.getLocation() : endpoint;
 
+        // Snap target to ground floor if in air
+        Integer floorY = BlockUtil.getNearestFloor(ctx.world(), BlockPos.containing(targetPos), 20);
+        double finalY = floorY != null ? floorY : targetPos.y;
+
         double tx = targetPos.x;
-        double ty = targetPos.y + 0.1;
         double tz = targetPos.z;
 
-        // Visual shadowy abyssal reticle on ground
-        if (ctx.world().isClientSide) {
-            float progress = (float) ctx.castingTicks() / (float) CHANNEL_TICKS_REQUIRED;
-            float radius = 5.0f * Math.min(1.0f, progress + 0.25f);
-            for (int i = 0; i < 8; i++) {
-                float angle = (ctx.castingTicks() * 0.25f) + (float) (i * Math.PI / 4.0);
-                ctx.world().addParticle(ParticleTypes.SQUID_INK, tx + radius * Mth.cos(angle), ty, tz + radius * Mth.sin(angle), 0, 0.03, 0);
-                ctx.world().addParticle(ParticleTypes.PORTAL, tx + (radius * 0.6) * Mth.cos(-angle), ty, tz + (radius * 0.6) * Mth.sin(-angle), 0, 0.05, 0);
-            }
-        }
+        if (!ctx.world().isClientSide) {
+            AbyssEyeEntity eye = new AbyssEyeEntity(ctx.world(), tx, finalY, tz);
+            eye.setCaster(ctx.caster());
+            ctx.world().addFreshEntity(eye);
 
-        if (ctx.castingTicks() % 7 == 1) {
+            ctx.world().playSound(null, tx, finalY + 4.0, tz,
+                    SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.5f, 0.7f);
             ctx.world().playSound(null, ctx.caster().getX(), ctx.caster().getY(), ctx.caster().getZ(),
-                    SoundEvents.WITHER_SHOOT, SoundSource.PLAYERS, 0.9f, 0.7f + (ctx.castingTicks() * 0.03f));
-        }
-
-        // On full charge: summon the Eclipse of the Abyss!
-        if (ctx.castingTicks() >= CHANNEL_TICKS_REQUIRED) {
-            if (!ctx.world().isClientSide) {
-                AbyssEyeEntity eye = new AbyssEyeEntity(ctx.world(), tx, targetPos.y, tz);
-                eye.setCaster(ctx.caster());
-                ctx.world().addFreshEntity(eye);
-
-                ctx.world().playSound(null, tx, targetPos.y + 4.0, tz,
-                        SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.5f, 0.7f);
+                    SoundEvents.WITHER_SHOOT, SoundSource.PLAYERS, 1.5f, 0.6f);
+        } else {
+            for (int i = 0; i < 16; i++) {
+                double angle = (i * Math.PI / 8.0);
+                double rx = tx + 5.0 * Math.cos(angle);
+                double rz = tz + 5.0 * Math.sin(angle);
+                ctx.world().addParticle(ParticleTypes.SQUID_INK, rx, finalY + 0.1, rz, 0, 0.03, 0);
+                ctx.world().addParticle(ParticleTypes.PORTAL, rx, finalY + 0.1, rz, 0, 0.05, 0);
             }
-            return true;
         }
 
-        return false;
+        ctx.caster().swing(ctx.hand(), true);
+        return true;
     }
 
     @Override
     protected @NotNull SpellProperties properties() {
         return SpellProperties.builder()
-                .assignBaseProperties(SpellTiers.GRAND, Elements.NECROMANCY, SpellTypes.CONSTRUCT, SpellAction.SUMMON, 72, 340, CHANNEL_TICKS_REQUIRED)
-                .add(DefaultProperties.DAMAGE, 45.0F)
-                .add(DefaultProperties.RANGE, 45.0F)
+                .assignBaseProperties(SpellTiers.GRAND, Elements.NECROMANCY, SpellTypes.CONSTRUCT, SpellAction.SUMMON, 75, 0, 300)
+                .add(DefaultProperties.DAMAGE, 60.0F)
+                .add(DefaultProperties.RANGE, 50.0F)
                 .add(DefaultProperties.EFFECT_RADIUS, 14)
                 .add(DefaultProperties.DURATION, 100)
                 .build();

@@ -9,6 +9,7 @@ import com.binaris.wizardry.registry.EBDataComponents;
 import com.binaris.wizardry.registry.EBRegistries;
 import com.binaris.wizardry.registry.Spell;
 import com.binaris.wizardry.registry.SpellTier;
+import com.binaris.wizardry.registry.SpellTiers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -77,7 +78,7 @@ public final class WorkbenchUtils {
             Spell spell = EBRegistries.SPELL_REGISTRY.get(spellId);
             if (spell == null) continue;
 
-            if (spell.getTier().getLevel() <= wandTier.getLevel()) {
+            if (spell.getTier().getLevel() <= wandTier.getLevel() || wandTier == SpellTiers.MASTER.get()) {
                 if (!spellId.equals(spells.get(i))) {
                     spells.set(i, spellId);
                     changed = true;

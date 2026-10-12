@@ -20,66 +20,62 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import com.binaris.wizardry.api.content.util.BlockUtil;
+import net.minecraft.core.BlockPos;
+
 public class TectonicShatterSpell extends Spell {
-    private static final int CHANNEL_TICKS_REQUIRED = 25; // 1.25 seconds chargeup
 
     @Override
     public boolean isInstantCast() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean cast(PlayerCastContext ctx) {
         Vec3 look = ctx.caster().getLookAngle();
         Vec3 origin = ctx.caster().getEyePosition();
-        double maxRange = 45.0;
+        double maxRange = 50.0;
         Vec3 endpoint = origin.add(look.scale(maxRange));
 
         HitResult hit = RayTracer.rayTrace(ctx.world(), ctx.caster(), origin, endpoint, 0, false, net.minecraft.world.entity.Entity.class, RayTracer.ignoreEntityFilter(ctx.caster()));
         Vec3 targetPos = hit != null && hit.getType() != HitResult.Type.MISS ? hit.getLocation() : endpoint;
 
+        // Snap target to ground floor if in air
+        Integer floorY = BlockUtil.getNearestFloor(ctx.world(), BlockPos.containing(targetPos), 20);
+        double finalY = floorY != null ? floorY : targetPos.y;
+
         double tx = targetPos.x;
-        double ty = targetPos.y + 0.1;
         double tz = targetPos.z;
 
-        // Visual seismic geoglyph reticle on ground
-        if (ctx.world().isClientSide) {
-            float progress = (float) ctx.castingTicks() / (float) CHANNEL_TICKS_REQUIRED;
-            float radius = 5.0f * Math.min(1.0f, progress + 0.25f);
-            var deepslatePart = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DEEPSLATE.defaultBlockState());
-            for (int i = 0; i < 8; i++) {
-                float angle = (ctx.castingTicks() * 0.2f) + (float) (i * Math.PI / 4.0);
-                ctx.world().addParticle(deepslatePart, tx + radius * Mth.cos(angle), ty, tz + radius * Mth.sin(angle), 0, 0.05, 0);
-            }
-        }
+        if (!ctx.world().isClientSide) {
+            TectonicShatterEntity shatter = new TectonicShatterEntity(ctx.world(), tx, finalY, tz);
+            shatter.setCaster(ctx.caster());
+            ctx.world().addFreshEntity(shatter);
 
-        if (ctx.castingTicks() % 6 == 1) {
+            ctx.world().playSound(null, tx, finalY, tz,
+                    SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 3.5f, 0.5f);
             ctx.world().playSound(null, ctx.caster().getX(), ctx.caster().getY(), ctx.caster().getZ(),
-                    SoundEvents.STONE_HIT, SoundSource.PLAYERS, 0.9f, 0.5f + (ctx.castingTicks() * 0.03f));
-        }
-
-        // On full charge: trigger the Tectonic Shatter!
-        if (ctx.castingTicks() >= CHANNEL_TICKS_REQUIRED) {
-            if (!ctx.world().isClientSide) {
-                TectonicShatterEntity shatter = new TectonicShatterEntity(ctx.world(), tx, targetPos.y, tz);
-                shatter.setCaster(ctx.caster());
-                ctx.world().addFreshEntity(shatter);
-
-                ctx.world().playSound(null, tx, targetPos.y, tz,
-                        SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 3.5f, 0.5f);
+                    SoundEvents.STONE_HIT, SoundSource.PLAYERS, 1.5f, 0.6f);
+        } else {
+            var deepslatePart = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DEEPSLATE.defaultBlockState());
+            for (int i = 0; i < 16; i++) {
+                double angle = (i * Math.PI / 8.0);
+                double rx = tx + 4.5 * Math.cos(angle);
+                double rz = tz + 4.5 * Math.sin(angle);
+                ctx.world().addParticle(deepslatePart, rx, finalY + 0.1, rz, 0, 0.05, 0);
             }
-            return true;
         }
 
-        return false;
+        ctx.caster().swing(ctx.hand(), true);
+        return true;
     }
 
     @Override
     protected @NotNull SpellProperties properties() {
         return SpellProperties.builder()
-                .assignBaseProperties(SpellTiers.GRAND, Elements.EARTH, SpellTypes.ATTACK, SpellAction.SUMMON, 70, 320, CHANNEL_TICKS_REQUIRED)
-                .add(DefaultProperties.DAMAGE, 55.0F)
-                .add(DefaultProperties.RANGE, 45.0F)
+                .assignBaseProperties(SpellTiers.GRAND, Elements.EARTH, SpellTypes.ATTACK, SpellAction.SUMMON, 70, 0, 300)
+                .add(DefaultProperties.DAMAGE, 60.0F)
+                .add(DefaultProperties.RANGE, 50.0F)
                 .add(DefaultProperties.EFFECT_RADIUS, 12)
                 .add(DefaultProperties.DURATION, 60)
                 .build();

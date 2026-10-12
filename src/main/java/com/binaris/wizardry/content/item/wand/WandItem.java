@@ -290,7 +290,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
 
     public boolean canCastRequirements(ItemStack stack, Spell spell, Player player, Level level) {
         if (spell == null || spell == Spells.NONE.get()) return false;
-        if (spell.getTier().getLevel() > getTier().getLevel()) return false;
+        if (spell.getTier().getLevel() > getTier().getLevel() && getTier() != SpellTiers.MASTER.get()) return false;
         if (!player.isCreative() && spell.getCost() > getMana(stack)) return false;
         return player.isCreative() || getCurrentCooldown(stack, level) == 0;
     }
