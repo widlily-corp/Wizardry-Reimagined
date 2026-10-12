@@ -175,7 +175,8 @@ public final class EBSpells {
     public static final Spell OAKFLESH;
 
     static {
-NONE = spell("none", NoneSpell::new);
+        NONE = Spells.NONE.get();
+        SPELLS.put("none", NONE);
 
         MAGIC_MISSILE = spell("magic_missile", () -> new ArrowSpell<>(MagicMissileEntity::new).assignProperties(
                 SpellProperties.builder()
