@@ -56,9 +56,22 @@ public class MagicDamageSource extends DamageSource {
     }
 
     private static DamageSource createMagicDamage(Entity source, Entity indirect, ResourceKey<DamageType> type) {
-        Holder<DamageType> holder = source.level().registryAccess()
-                .lookupOrThrow(Registries.DAMAGE_TYPE)
-                .getOrThrow(type);
-        return new MagicDamageSource(holder, source, indirect);
+        try {
+            var lookup = source.level().registryAccess().lookup(Registries.DAMAGE_TYPE);
+            if (lookup.isPresent()) {
+                var optionalHolder = lookup.get().get(type);
+                if (optionalHolder.isPresent()) {
+                    return new MagicDamageSource(optionalHolder.get(), source, indirect);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+
+        if (indirect instanceof LivingEntity livingIndirect) {
+            return source.level().damageSources().indirectMagic(source, livingIndirect);
+        } else if (source instanceof LivingEntity livingSource) {
+            return source.level().damageSources().indirectMagic(source, livingSource);
+        }
+        return source.level().damageSources().magic();
     }
 }

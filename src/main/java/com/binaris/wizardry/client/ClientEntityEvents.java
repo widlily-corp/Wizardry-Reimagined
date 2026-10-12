@@ -100,8 +100,8 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.WizardRenderer::new);
         event.registerEntityRenderer(EBEntities.EVIL_WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);
         event.registerEntityRenderer(EBEntities.REMNANT.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);
-        event.registerEntityRenderer(EBEntities.ICE_GIANT.get(), BlankRenderer::new);
-        event.registerEntityRenderer(EBEntities.LIGHTNING_WRAITH.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ICE_GIANT.get(), com.binaris.wizardry.client.renderer.entity.mob.IceGiantRenderer::new);
+        event.registerEntityRenderer(EBEntities.LIGHTNING_WRAITH.get(), com.binaris.wizardry.client.renderer.entity.mob.LightningWraithRenderer::new);
     }
 
     @SubscribeEvent

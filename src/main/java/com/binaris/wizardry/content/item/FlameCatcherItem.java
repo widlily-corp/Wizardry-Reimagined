@@ -66,6 +66,19 @@ public class FlameCatcherItem extends BowItem {
     }
 
     @Override
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull java.util.List<net.minecraft.network.chat.Component> tooltip, @NotNull net.minecraft.world.item.TooltipFlag flag) {
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        int shotsLeft = 5;
+        int maxShots = 5;
+        if (customData != null && customData.copyTag().contains("ShotsLeft")) {
+            shotsLeft = customData.copyTag().getInt("ShotsLeft");
+            maxShots = customData.copyTag().getInt("MaxShots");
+        }
+        tooltip.add(net.minecraft.network.chat.Component.translatable("item.ebwizardry.flamecatcher.shots", shotsLeft, maxShots).withStyle(net.minecraft.ChatFormatting.GOLD));
+        tooltip.add(net.minecraft.network.chat.Component.translatable("item.ebwizardry.flamecatcher.info").withStyle(net.minecraft.ChatFormatting.GRAY));
+    }
+
+    @Override
     public boolean isValidRepairItem(@NotNull ItemStack stack, @NotNull ItemStack stack1) {
         return false;
     }
