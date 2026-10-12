@@ -47,9 +47,58 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.POISON_BOMB.get(),
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/dart.png"), 0.6f));
 
+        event.registerEntityRenderer(EBEntities.FIRE_BOLT.get(),
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/firebolt.png"), 0.5f));
+
+        event.registerEntityRenderer(EBEntities.FLAME_CATCHER_ARROW.get(),
+                ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/flamecatcher_arrow.png")));
+
+        event.registerEntityRenderer(EBEntities.THUNDERBOLT.get(), BlankRenderer::new);
+
+        event.registerEntityRenderer(EBEntities.SPARK_BOMB.get(),
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/spark.png"), 0.5f));
+
+        event.registerEntityRenderer(EBEntities.SMOKE_BOMB.get(),
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/dart.png"), 0.5f));
+
+        event.registerEntityRenderer(EBEntities.LIGHTNING_ARROW.get(),
+                ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/lightning_arrow.png")));
+
+        event.registerEntityRenderer(EBEntities.ICE_LANCE.get(),
+                ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/ice_lance.png")));
+
+        event.registerEntityRenderer(EBEntities.ICE_BALL.get(),
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/iceball.png"), 0.6f));
+
+        event.registerEntityRenderer(EBEntities.FORCE_ARROW.get(),
+                ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/force_arrow.png")));
+
+        event.registerEntityRenderer(EBEntities.CONJURED_ARROW.get(),
+                ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/conjured_arrow.png")));
+
+        event.registerEntityRenderer(EBEntities.RING_OF_FIRE.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.FIRE_SIGIL.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.COMBUSTION_RUNE.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.METEOR.get(), net.minecraft.client.renderer.entity.FallingBlockRenderer::new);
+        event.registerEntityRenderer(EBEntities.BLIZZARD.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.HAILSTORM.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.FROST_SIGIL.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ICE_SPIKE.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ICE_BARRIER.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.LIGHTNING_SIGIL.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.TORNADO.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.HEAL_AURA.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.BUBBLE.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.BOULDER.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.DECAY.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ARROW_RAIN.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ZOMBIE_SPAWNER.get(), BlankRenderer::new);
+
         event.registerEntityRenderer(EBEntities.WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.WizardRenderer::new);
         event.registerEntityRenderer(EBEntities.EVIL_WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);
         event.registerEntityRenderer(EBEntities.REMNANT.get(), com.binaris.wizardry.client.renderer.entity.mob.EvilWizardRenderer::new);
+        event.registerEntityRenderer(EBEntities.ICE_GIANT.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.LIGHTNING_WRAITH.get(), BlankRenderer::new);
     }
 
     @SubscribeEvent

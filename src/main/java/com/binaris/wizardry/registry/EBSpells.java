@@ -624,7 +624,7 @@ public final class EBSpells {
 
         CURSE_OF_SOULBINDING = spell("curse_of_soulbinding", CurseOfSoulbinding::new);
 
-        GREATER_TELEKINESIS = spell("greater_telekinesis", BlockWithSurprise::new); // todo
+        GREATER_TELEKINESIS = spell("greater_telekinesis", GreaterTelekinesis::new);
 
         LIGHTNING_PULSE = spell("lightning_pulse", LightningPulse::new);
 
@@ -642,15 +642,7 @@ public final class EBSpells {
                         .build()
         ));
 
-        OJOSPOCOS = spell("ojospocos", () -> new MinionSpell<>((l) -> new EnderMan(EntityType.ENDERMAN, l)).assignProperties(
-                SpellProperties.builder()
-                        .assignBaseProperties(SpellTiers.MASTER, Elements.NECROMANCY, SpellTypes.MINION, SpellAction.POINT, 80, 30, 400)
-                        .add(DefaultProperties.MINION_COUNT, 1)
-                        .add(DefaultProperties.MINION_LIFETIME, -1)
-                        .add(DefaultProperties.SUMMON_RADIUS, 4)
-                        .add(DefaultProperties.SENSIBLE, true)
-                        .build()
-        ));
+        OJOSPOCOS = spell("ojospocos", Ojospocos::new);
 
         FLAMECATCHER = spell("flamecatcher", () -> new Flamecatcher().assignProperties(
                 SpellProperties.builder()
