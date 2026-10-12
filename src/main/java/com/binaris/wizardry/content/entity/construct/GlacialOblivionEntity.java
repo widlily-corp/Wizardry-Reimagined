@@ -65,37 +65,59 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
             stormTicks++;
 
             if (level().isClientSide) {
-                // Freezing mist and ground blizzard
-                for (int i = 0; i < 4; i++) {
-                    double angle = random.nextDouble() * Math.PI * 2;
-                    double r = random.nextDouble() * 9.0;
-                    double px = getX() + Math.cos(angle) * r;
-                    double pz = getZ() + Math.sin(angle) * r;
-                    level().addParticle(ParticleTypes.SNOWFLAKE, px, getY() + 0.15, pz, (random.nextDouble() - 0.5) * 0.1, 0.02, (random.nextDouble() - 0.5) * 0.1);
-                    level().addParticle(ParticleTypes.ITEM_SNOWBALL, px, getY() + 0.1, pz, 0, 0.01, 0);
+                // Triple swirling concentric blizzard rings (radii 15, 30, 48 blocks)
+                double angle1 = (stormTicks * 0.12);
+                double angle2 = -(stormTicks * 0.08);
+                double angle3 = (stormTicks * 0.05);
+
+                for (int i = 0; i < 6; i++) {
+                    double offset = (i * Math.PI / 3.0);
+                    // Outer blizzard ring (radius 48)
+                    level().addParticle(ParticleTypes.SNOWFLAKE, getX() + 48.0 * Math.cos(angle1 + offset), getY() + 0.3, getZ() + 48.0 * Math.sin(angle1 + offset), -Math.sin(angle1 + offset) * 0.4, 0.05, Math.cos(angle1 + offset) * 0.4);
+
+                    // Mid blizzard ring (radius 30)
+                    level().addParticle(ParticleTypes.SNOWFLAKE, getX() + 30.0 * Math.cos(angle2 + offset), getY() + 0.3, getZ() + 30.0 * Math.sin(angle2 + offset), Math.sin(angle2 + offset) * 0.3, 0.05, -Math.cos(angle2 + offset) * 0.3);
+                    level().addParticle(ParticleTypes.ITEM_SNOWBALL, getX() + 30.0 * Math.cos(angle2 + offset), getY() + 0.5, getZ() + 30.0 * Math.sin(angle2 + offset), 0, 0.02, 0);
+
+                    // Inner frost ring (radius 15)
+                    level().addParticle(ParticleTypes.CLOUD, getX() + 15.0 * Math.cos(angle3 + offset), getY() + 0.2, getZ() + 15.0 * Math.sin(angle3 + offset), 0, 0.02, 0);
+                }
+
+                // Swirling ground snow across the 50-block dome
+                for (int i = 0; i < 5; i++) {
+                    double rx = getX() + (random.nextDouble() - 0.5) * 80.0;
+                    double rz = getZ() + (random.nextDouble() - 0.5) * 80.0;
+                    if ((rx - getX()) * (rx - getX()) + (rz - getZ()) * (rz - getZ()) <= 2300) {
+                        level().addParticle(ParticleTypes.SNOWFLAKE, rx, getY() + 0.2 + random.nextDouble() * 2.0, rz, (random.nextDouble() - 0.5) * 0.2, 0.05, (random.nextDouble() - 0.5) * 0.2);
+                    }
                 }
             } else if (level() instanceof ServerLevel serverLevel) {
-                // Every 10 ticks (~0.5s): Absolute Zero Frostbite Pulse
+                // Howling arctic tempest audio (volume 10.0f audible across 160 blocks)
+                if (stormTicks % 20 == 0) {
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_HURT_FREEZE, SoundSource.WEATHER, 10.0f, 0.6f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.GLASS_BREAK, SoundSource.WEATHER, 8.0f, 0.6f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.WEATHER, 10.0f, 0.7f);
+                }
+
+                // Every 10 ticks (~0.5s): 48-Block Absolute Zero Frostbite Hazard Pulse
                 if (stormTicks % 10 == 0) {
-                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(9.5),
+                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(48.0),
                             this::isValidTarget);
                     for (LivingEntity enemy : enemies) {
-                        enemy.hurt(level().damageSources().freeze(), 5.0f);
+                        enemy.hurt(level().damageSources().freeze(), 5.5f);
                         enemy.setTicksFrozen(350);
                         enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3, false, false));
                         enemy.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 2, false, false));
-                        serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, enemy.getX(), enemy.getY() + 0.5, enemy.getZ(), 6, 0.3, 0.3, 0.3, 0.02);
-                    }
-
-                    if (stormTicks % 30 == 0) {
-                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.WEATHER, 1.8f, 0.7f);
+                        serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, enemy.getX(), enemy.getY() + 0.5, enemy.getZ(), 5, 0.3, 0.3, 0.3, 0.05);
                     }
                 }
 
-                // Discard after 240 ticks post-shatter
+                // Discard after 240 ticks post-shatter with final frost explosion
                 if (stormTicks >= STORM_DURATION + 240) {
-                    serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, getX(), getY() + 1.0, getZ(), 60, 4.0, 1.0, 4.0, 0.05);
-                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.WEATHER, 2.0f, 1.2f);
+                    serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, getX(), getY() + 2.0, getZ(), 200, 8.0, 3.0, 8.0, 0.2);
+                    serverLevel.sendParticles(ParticleTypes.ITEM_SNOWBALL, getX(), getY() + 2.0, getZ(), 100, 6.0, 3.0, 6.0, 0.25);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.GLASS_BREAK, SoundSource.WEATHER, 12.0f, 0.5f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.WEATHER, 10.0f, 0.8f);
                     discard();
                 }
             }

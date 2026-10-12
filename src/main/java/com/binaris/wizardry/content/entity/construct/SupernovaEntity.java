@@ -114,42 +114,63 @@ public class SupernovaEntity extends MagicConstructEntity {
                 }
             }
         } else {
-            // ==========================================
-            // Phase 2: Scorched Supernova Crater (Lingering Aftermath Zone - 12s)
-            // ==========================================
+            // =========================================================================
+            // Phase 2: 50-BLOCK SCORCHED SUPERNOVA CRATER (LINGERING AFTERMATH - 12S)
+            // =========================================================================
             postImpactTicks++;
 
+            // Volcanic vent positions across radii 10, 22, 35, 48 blocks
+            double[][] vents = {
+                    {8.0, 5.0}, {-7.0, 9.0}, {6.0, -9.0}, {-9.0, -6.0},
+                    {18.0, 10.0}, {-19.0, 11.0}, {14.0, -17.0}, {-16.0, -15.0},
+                    {32.0, 14.0}, {-33.0, 12.0}, {20.0, -30.0}, {-28.0, -25.0}
+            };
+
             if (level().isClientSide) {
-                // Rising volcanic smoke pillars and lava cinders across the crater
-                for (int i = 0; i < 3; i++) {
-                    double angle = random.nextDouble() * Math.PI * 2;
-                    double r = random.nextDouble() * 8.0;
-                    double px = getX() + Math.cos(angle) * r;
-                    double pz = getZ() + Math.sin(angle) * r;
-                    level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, px, getY() + 0.2, pz, 0, 0.08, 0);
-                    level().addParticle(ParticleTypes.FLAME, px, getY() + 0.1, pz, (random.nextDouble() - 0.5) * 0.05, 0.05, (random.nextDouble() - 0.5) * 0.05);
+                // Rising fire pillars & volcanic smoke columns
+                for (int g = 0; g < 4; g++) {
+                    int vIdx = (postImpactTicks * 3 + g) % vents.length;
+                    double vx = vents[vIdx][0] + (random.nextDouble() - 0.5) * 2.0;
+                    double vz = vents[vIdx][1] + (random.nextDouble() - 0.5) * 2.0;
+
+                    level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX() + vx, getY() + 0.2, getZ() + vz, 0, 0.45 + random.nextDouble() * 0.4, 0);
+                    level().addParticle(ParticleTypes.FLAME, getX() + vx, getY() + 0.1, getZ() + vz, 0, 0.2, 0);
+                    level().addParticle(ParticleTypes.LAVA, getX() + vx, getY() + 0.3, getZ() + vz, (random.nextDouble() - 0.5) * 0.1, 0.25, (random.nextDouble() - 0.5) * 0.1);
+                }
+
+                // Core crater boiling heat distortion
+                for (int i = 0; i < 4; i++) {
+                    double ox = (random.nextDouble() - 0.5) * 6.0;
+                    double oz = (random.nextDouble() - 0.5) * 6.0;
+                    level().addParticle(ParticleTypes.LAVA, getX() + ox, getY() + 0.2, getZ() + oz, 0, 0.1, 0);
+                    level().addParticle(ParticleTypes.FLAME, getX() + ox, getY() + 0.1, getZ() + oz, (random.nextDouble() - 0.5) * 0.05, 0.05, (random.nextDouble() - 0.5) * 0.05);
                 }
             } else if (level() instanceof ServerLevel serverLevel) {
-                // Every 10 ticks (~0.5s): Scorched Crater Hazard Pulse
+                // Roaring inferno audio (volume 10.0f audible across 160 blocks)
+                if (postImpactTicks % 20 == 0) {
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_AMBIENT, SoundSource.WEATHER, 10.0f, 0.8f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.WEATHER, 8.0f, 0.7f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.LAVA_AMBIENT, SoundSource.WEATHER, 8.0f, 0.9f);
+                }
+
+                // Every 10 ticks (~0.5s): 48-Block Scorched Crater Hazard Pulse
                 if (postImpactTicks % 10 == 0) {
-                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10.0),
+                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(48.0),
                             this::isValidTarget);
                     for (LivingEntity enemy : enemies) {
                         enemy.hurt(level().damageSources().inFire(), 6.0f);
                         enemy.setRemainingFireTicks(160);
                         enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, false));
-                        serverLevel.sendParticles(ParticleTypes.LAVA, enemy.getX(), enemy.getY() + 0.5, enemy.getZ(), 3, 0.2, 0.2, 0.2, 0.02);
-                    }
-
-                    if (postImpactTicks % 30 == 0) {
-                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_AMBIENT, SoundSource.WEATHER, 1.8f, 0.8f);
+                        serverLevel.sendParticles(ParticleTypes.LAVA, enemy.getX(), enemy.getY() + 0.5, enemy.getZ(), 4, 0.2, 0.2, 0.2, 0.05);
                     }
                 }
 
-                // Discard after 240 ticks (12 full seconds)
+                // Discard after 240 ticks (12 full seconds) with massive steam quenching detonation
                 if (postImpactTicks >= 240) {
-                    serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 1.0, getZ(), 60, 4.0, 1.0, 4.0, 0.05);
-                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.WEATHER, 2.5f, 0.8f);
+                    serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 1.0, getZ(), 200, 8.0, 2.0, 8.0, 0.1);
+                    serverLevel.sendParticles(ParticleTypes.CLOUD, getX(), getY() + 1.5, getZ(), 150, 6.0, 2.0, 6.0, 0.15);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.WEATHER, 12.0f, 0.7f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 8.0f, 0.8f);
                     discard();
                 }
             }
@@ -159,10 +180,10 @@ public class SupernovaEntity extends MagicConstructEntity {
     private void onImpact() {
         Vec3 pos = position();
 
-        // 1. Play cataclysmic explosion sounds
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 6.0f, 0.55f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5.0f, 0.7f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 3.5f, 0.5f);
+        // 1. Play cataclysmic explosion sounds (volume 12.0f audible across 190 blocks)
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 12.0f, 0.55f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 10.0f, 0.7f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 8.0f, 0.5f);
         level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.FIRECHARGE_USE, SoundSource.WEATHER, 4.0f, 0.6f);
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {

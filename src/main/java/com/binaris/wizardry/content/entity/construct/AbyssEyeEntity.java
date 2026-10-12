@@ -113,44 +113,61 @@ public class AbyssEyeEntity extends MagicConstructEntity {
             if (drainTicks > DRAIN_DURATION) {
                 int aftermathTicks = drainTicks - DRAIN_DURATION;
 
-                // Soul mist rising from corrupted soil
+                // =========================================================================
+                // Phase 2: 50-BLOCK ABYSSAL DESOLATION (LINGERING AFTERMATH - 12S)
+                // =========================================================================
                 if (level().isClientSide) {
-                    for (int i = 0; i < 3; i++) {
-                        double angle = random.nextDouble() * Math.PI * 2;
-                        double r = random.nextDouble() * 9.0;
-                        double px = getX() + Math.cos(angle) * r;
-                        double pz = getZ() + Math.sin(angle) * r;
-                        level().addParticle(ParticleTypes.SOUL, px, getY() + 0.1, pz, 0, 0.04, 0);
-                        level().addParticle(ParticleTypes.SQUID_INK, px, getY() + 0.1, pz, 0, 0.02, 0);
+                    // Swirling void darkness rings (radii 15, 30, 48 blocks)
+                    double angle1 = (aftermathTicks * 0.08);
+                    double angle2 = -(aftermathTicks * 0.05);
+
+                    for (int i = 0; i < 5; i++) {
+                        double offset = (i * Math.PI * 2.0 / 5.0);
+                        level().addParticle(ParticleTypes.SOUL, getX() + 48.0 * Math.cos(angle1 + offset), getY() + 0.2, getZ() + 48.0 * Math.sin(angle1 + offset), 0, 0.06, 0);
+                        level().addParticle(ParticleTypes.SQUID_INK, getX() + 28.0 * Math.cos(angle2 + offset), getY() + 0.2, getZ() + 28.0 * Math.sin(angle2 + offset), 0, 0.03, 0);
+                    }
+
+                    // Souls rising from corrupted ground across 50 blocks
+                    for (int i = 0; i < 5; i++) {
+                        double rx = getX() + (random.nextDouble() - 0.5) * 80.0;
+                        double rz = getZ() + (random.nextDouble() - 0.5) * 80.0;
+                        if ((rx - getX()) * (rx - getX()) + (rz - getZ()) * (rz - getZ()) <= 2300) {
+                            level().addParticle(ParticleTypes.SOUL, rx, getY() + 0.2, rz, 0, 0.05, 0);
+                            level().addParticle(ParticleTypes.SQUID_INK, rx, getY() + 0.2, rz, 0, 0.02, 0);
+                        }
                     }
                 } else {
-                    // Every 12 ticks (~0.6s): Abyssal Desolation Curse
+                    // Howling void souls audio (volume 10.0f audible across 160 blocks)
+                    if (aftermathTicks % 25 == 0) {
+                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.WEATHER, 10.0f, 0.8f);
+                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.WEATHER, 8.0f, 0.6f);
+                    }
+
+                    // Every 12 ticks (~0.6s): 48-Block Abyssal Desolation Curse
                     if (aftermathTicks % 12 == 0) {
-                        List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10.0),
+                        List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(48.0),
                                 this::isValidTarget);
                         for (LivingEntity enemy : enemies) {
-                            enemy.hurt(level().damageSources().wither(), 5.0f);
+                            enemy.hurt(level().damageSources().wither(), 5.5f);
                             enemy.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 60, 0, false, false));
                             enemy.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40, 0, false, false));
                             enemy.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 1, false, false));
                         }
 
-                        // Passive siphon to caster if nearby
+                        // Passive siphon to caster anywhere within 48 blocks
                         caster = getCaster();
-                        if (caster != null && caster.isAlive() && caster.distanceToSqr(this) <= 400) {
-                            caster.heal(1.5f);
-                            serverLevel.sendParticles(ParticleTypes.SOUL, caster.getX(), caster.getY() + 1.0, caster.getZ(), 2, 0.2, 0.2, 0.2, 0.02);
-                        }
-
-                        if (aftermathTicks % 36 == 0) {
-                            level().playSound(null, getX(), getY(), getZ(), SoundEvents.SOUL_ESCAPE.value(), SoundSource.WEATHER, 1.8f, 0.8f);
+                        if (caster != null && caster.isAlive() && caster.distanceToSqr(this) <= 2300) {
+                            caster.heal(2.0f);
+                            serverLevel.sendParticles(ParticleTypes.SOUL, caster.getX(), caster.getY() + 1.0, caster.getZ(), 3, 0.2, 0.2, 0.2, 0.03);
                         }
                     }
 
-                    // Discard after 240 ticks post-collapse
+                    // Discard after 240 ticks post-collapse with final void implosion
                     if (aftermathTicks >= 240) {
-                        serverLevel.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 1.0, getZ(), 60, 3.0, 2.0, 3.0, 0.1);
-                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.ENDER_EYE_DEATH, SoundSource.PLAYERS, 2.0f, 0.7f);
+                        serverLevel.sendParticles(ParticleTypes.FLASH, getX(), getY() + 2.0, getZ(), 6, 1.0, 1.0, 1.0, 0);
+                        serverLevel.sendParticles(ParticleTypes.PORTAL, getX(), getY() + 2.0, getZ(), 200, 8.0, 3.0, 8.0, 0.25);
+                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.ENDER_EYE_DEATH, SoundSource.PLAYERS, 12.0f, 0.6f);
+                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.WITHER_DEATH, SoundSource.WEATHER, 10.0f, 0.7f);
                         discard();
                     }
                 }
@@ -161,8 +178,8 @@ public class AbyssEyeEntity extends MagicConstructEntity {
     private void onVoidCollapse(ServerLevel serverLevel) {
         Vec3 pos = position();
 
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 5.0f, 0.75f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WITHER_DEATH, SoundSource.WEATHER, 4.0f, 0.6f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 12.0f, 0.75f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WITHER_DEATH, SoundSource.WEATHER, 10.0f, 0.6f);
         level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.ENDER_DRAGON_GROWL, SoundSource.WEATHER, 3.5f, 0.8f);
 
         // Sonic boom + void blastwave

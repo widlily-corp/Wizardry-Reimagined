@@ -94,50 +94,66 @@ public class TitansHammerEntity extends MagicConstructEntity {
                 setPos(getX(), getY() - 2.2, getZ());
             }
         } else {
-            // ==========================================
-            // Phase 2: Static Tempest Crater (Lingering Aftermath Zone - 12s)
-            // ==========================================
+            // =========================================================================
+            // Phase 2: 50-BLOCK STATIC TEMPEST CRATER (LINGERING AFTERMATH - 12S)
+            // =========================================================================
             postImpactTicks++;
 
             if (level().isClientSide) {
-                // Electric sparks crawling across the crater ground
-                for (int i = 0; i < 4; i++) {
-                    double angle = random.nextDouble() * Math.PI * 2;
-                    double r = random.nextDouble() * 9.0;
-                    double px = getX() + Math.cos(angle) * r;
-                    double pz = getZ() + Math.sin(angle) * r;
-                    level().addParticle(ParticleTypes.ELECTRIC_SPARK, px, getY() + 0.15, pz, (random.nextDouble() - 0.5) * 0.1, 0.05, (random.nextDouble() - 0.5) * 0.1);
+                // Expanding electric discharge rings (radii 15, 30, 48 blocks)
+                double angle1 = (postImpactTicks * 0.15);
+                double angle2 = -(postImpactTicks * 0.1);
+
+                for (int i = 0; i < 5; i++) {
+                    double offset = (i * Math.PI * 2.0 / 5.0);
+                    level().addParticle(ParticleTypes.ELECTRIC_SPARK, getX() + 48.0 * Math.cos(angle1 + offset), getY() + 0.2, getZ() + 48.0 * Math.sin(angle1 + offset), 0, 0.05, 0);
+                    level().addParticle(ParticleTypes.ELECTRIC_SPARK, getX() + 28.0 * Math.cos(angle2 + offset), getY() + 0.2, getZ() + 28.0 * Math.sin(angle2 + offset), 0, 0.05, 0);
+                }
+
+                // Sparks crawling across the 50-block floor
+                for (int i = 0; i < 6; i++) {
+                    double rx = getX() + (random.nextDouble() - 0.5) * 80.0;
+                    double rz = getZ() + (random.nextDouble() - 0.5) * 80.0;
+                    if ((rx - getX()) * (rx - getX()) + (rz - getZ()) * (rz - getZ()) <= 2300) {
+                        level().addParticle(ParticleTypes.ELECTRIC_SPARK, rx, getY() + 0.15, rz, (random.nextDouble() - 0.5) * 0.15, 0.08, (random.nextDouble() - 0.5) * 0.15);
+                    }
                 }
             } else if (level() instanceof ServerLevel serverLevel) {
-                // Every 40 ticks (2 seconds): Secondary Lightning Strike from charged clouds!
-                if (postImpactTicks % 40 == 0) {
-                    double ox = (random.nextDouble() - 0.5) * 8.0;
-                    double oz = (random.nextDouble() - 0.5) * 8.0;
+                // Secondary Lightning Strikes across the 50-block perimeter!
+                if (postImpactTicks % 30 == 0) {
+                    double pAngle = random.nextDouble() * Math.PI * 2.0;
+                    double pDist = 12.0 + random.nextDouble() * 26.0;
+                    double lx = getX() + Math.cos(pAngle) * pDist;
+                    double lz = getZ() + Math.sin(pAngle) * pDist;
+
                     LightningBolt secondaryBolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
                     if (secondaryBolt != null) {
-                        secondaryBolt.moveTo(getX() + ox, getY(), getZ() + oz);
+                        secondaryBolt.moveTo(lx, getY(), lz);
                         secondaryBolt.setVisualOnly(true);
                         serverLevel.addFreshEntity(secondaryBolt);
                     }
-                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 3.5f, 1.4f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 10.0f, 1.3f);
+                    level().playSound(null, lx, getY(), lz, SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.WEATHER, 10.0f, 1.0f);
+                }
 
-                    // Chain shock pulse to all enemies in crater
-                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10.0),
+                // Every 10 ticks (~0.5s): 48-Block Static Shock Hazard Pulse
+                if (postImpactTicks % 10 == 0) {
+                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(48.0),
                             this::isValidTarget);
                     for (LivingEntity enemy : enemies) {
-                        enemy.hurt(level().damageSources().magic(), 8.0f);
+                        enemy.hurt(level().damageSources().magic(), 6.5f);
                         enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2, false, false));
-                        enemy.setDeltaMovement(enemy.getDeltaMovement().multiply(0.2, 1.0, 0.2)); // Micro-paralysis
-                        serverLevel.sendParticles(ParticleTypes.FLASH, enemy.getX(), enemy.getY() + 1.0, enemy.getZ(), 1, 0, 0, 0, 0);
-                        serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, enemy.getX(), enemy.getY() + 1.0, enemy.getZ(), 15, 0.3, 0.3, 0.3, 0.1);
+                        enemy.setDeltaMovement(enemy.getDeltaMovement().multiply(0.3, 1.0, 0.3)); // Micro-paralysis
+                        serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, enemy.getX(), enemy.getY() + 0.8, enemy.getZ(), 8, 0.3, 0.3, 0.3, 0.1);
                     }
                 }
 
-                // Discard after 240 ticks (12 full seconds)
+                // Discard after 240 ticks (12 full seconds) with massive electromagnetic pulse
                 if (postImpactTicks >= 240) {
-                    serverLevel.sendParticles(ParticleTypes.FLASH, getX(), getY() + 1.0, getZ(), 3, 0.2, 0.2, 0.2, 0);
-                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY() + 1.0, getZ(), 60, 3.0, 1.0, 3.0, 0.1);
-                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 2.0f, 1.5f);
+                    serverLevel.sendParticles(ParticleTypes.FLASH, getX(), getY() + 2.0, getZ(), 8, 1.0, 1.0, 1.0, 0);
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY() + 2.0, getZ(), 200, 8.0, 3.0, 8.0, 0.3);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.WEATHER, 12.0f, 1.2f);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 10.0f, 1.5f);
                     discard();
                 }
             }

@@ -28,7 +28,43 @@ public class SupernovaRenderer extends EntityRenderer<SupernovaEntity> {
     @Override
     public void render(@NotNull SupernovaEntity entity, float entityYaw, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
         if (entity.hasImpacted()) {
-            return; // Particles handle the blast effect after impact
+            // Render boiling stellar crater core during aftermath
+            poseStack.pushPose();
+            float age = entity.tickCount + partialTicks;
+            float pulse = 0.2F * Mth.sin(age * 0.4F);
+            float craterScale = 2.8F + pulse;
+
+            poseStack.scale(craterScale, 0.35F, craterScale); // Flattened glowing magma disc
+            poseStack.mulPose(Axis.YP.rotationDegrees(age * 8.0F));
+
+            BlockState magmaState = Blocks.MAGMA_BLOCK.defaultBlockState();
+            BlockState shroomState = Blocks.SHROOMLIGHT.defaultBlockState();
+            var magmaModel = this.dispatcher.getBlockModel(magmaState);
+            var shroomModel = this.dispatcher.getBlockModel(shroomState);
+
+            poseStack.pushPose();
+            poseStack.translate(-0.5D, 0.1D, -0.5D);
+            this.dispatcher.getModelRenderer().tesselateBlock(
+                    entity.level(), magmaModel, magmaState, entity.blockPosition(),
+                    poseStack, bufferSource.getBuffer(RenderType.cutout()), false,
+                    entity.getRandom(), entity.getId(), OverlayTexture.NO_OVERLAY
+            );
+            poseStack.popPose();
+
+            poseStack.pushPose();
+            poseStack.scale(0.7F, 1.3F, 0.7F);
+            poseStack.translate(-0.5D, 0.15D, -0.5D);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-age * 12.0F));
+            this.dispatcher.getModelRenderer().tesselateBlock(
+                    entity.level(), shroomModel, shroomState, entity.blockPosition(),
+                    poseStack, bufferSource.getBuffer(RenderType.cutout()), false,
+                    entity.getRandom(), entity.getId(), OverlayTexture.NO_OVERLAY
+            );
+            poseStack.popPose();
+
+            poseStack.popPose();
+            super.render(entity, entityYaw, partialTicks, poseStack, bufferSource, packedLight);
+            return;
         }
 
         poseStack.pushPose();

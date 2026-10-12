@@ -122,34 +122,66 @@ public class CelestialMonolithEntity extends MagicConstructEntity {
             }
         } else {
             // ==========================================
-            // Phase 2: Holy Sanctuary of Astraea (Lingering Aftermath Zone - 12s)
-            // ==========================================
+            // =========================================================================
+            // Phase 2: 50-BLOCK HOLY SANCTUARY OF ASTRAEA (LINGERING AFTERMATH - 12S)
+            // =========================================================================
             postImpactTicks++;
 
             if (level().isClientSide) {
-                // Sacred rotating ground mandala
-                double radius = 8.5;
-                for (int i = 0; i < 4; i++) {
-                    double angle = (postImpactTicks * 0.05) + (i * Math.PI / 2.0);
-                    level().addParticle(ParticleTypes.END_ROD, tx + radius * Math.cos(angle), ty + 0.15, tz + radius * Math.sin(angle), 0, 0.04, 0);
-                    level().addParticle(ParticleTypes.GLOW, tx + (radius * 0.5) * Math.cos(-angle), ty + 0.2, tz + (radius * 0.5) * Math.sin(-angle), 0, 0.02, 0);
+                // 1. Triple concentric rotating celestial sacred geometry mandalas (radii 10, 25, 45 blocks)
+                double angleOuter = (postImpactTicks * 0.03);
+                double angleMid = -(postImpactTicks * 0.05);
+                double angleInner = (postImpactTicks * 0.08);
+
+                for (int i = 0; i < 6; i++) {
+                    double offset = (i * Math.PI / 3.0);
+                    // Outer ring (radius 45)
+                    level().addParticle(ParticleTypes.END_ROD, tx + 45.0 * Math.cos(angleOuter + offset), ty + 0.2, tz + 45.0 * Math.sin(angleOuter + offset), 0, 0.05, 0);
+                    level().addParticle(ParticleTypes.GLOW, tx + 45.0 * Math.cos(angleOuter + offset), ty + 0.3, tz + 45.0 * Math.sin(angleOuter + offset), 0, 0.02, 0);
+
+                    // Mid ring (radius 25)
+                    level().addParticle(ParticleTypes.END_ROD, tx + 25.0 * Math.cos(angleMid + offset), ty + 0.2, tz + 25.0 * Math.sin(angleMid + offset), 0, 0.04, 0);
+
+                    // Inner mandala (radius 10)
+                    level().addParticle(ParticleTypes.GLOW, tx + 10.0 * Math.cos(angleInner + offset), ty + 0.2, tz + 10.0 * Math.sin(angleInner + offset), 0, 0.03, 0);
                 }
-                // Light beams rising from the monolith core
-                if (random.nextInt(3) == 0) {
-                    level().addParticle(ParticleTypes.FIREWORK, tx + (random.nextDouble() - 0.5) * 1.5, ty + 0.5, tz + (random.nextDouble() - 0.5) * 1.5, 0, 0.25, 0);
+
+                // 2. Eight perimeter celestial beacon light pillars (radius 45 blocks)
+                int pillarIdx = (postImpactTicks / 2) % 8;
+                double pAngle = pillarIdx * (Math.PI / 4.0);
+                double px = tx + 45.0 * Math.cos(pAngle);
+                double pz = tz + 45.0 * Math.sin(pAngle);
+                level().addParticle(ParticleTypes.END_ROD, px, ty + 0.5, pz, 0, 0.6, 0);
+                level().addParticle(ParticleTypes.FLASH, px, ty + 0.5, pz, 0, 0, 0);
+
+                // 3. Ambient falling celestial stars across the 50-block dome
+                for (int i = 0; i < 4; i++) {
+                    double rx = tx + (random.nextDouble() - 0.5) * 80.0;
+                    double rz = tz + (random.nextDouble() - 0.5) * 80.0;
+                    if ((rx - tx) * (rx - tx) + (rz - tz) * (rz - tz) <= 2200) {
+                        level().addParticle(ParticleTypes.END_ROD, rx, ty + 8.0 + random.nextDouble() * 6.0, rz, 0, -0.06, 0);
+                        level().addParticle(ParticleTypes.INSTANT_EFFECT, rx, ty + 1.0, rz, 0, 0.02, 0);
+                    }
                 }
             } else if (level() instanceof ServerLevel serverLevel) {
-                // Every 15 ticks (~0.75s): Holy Sanctuary Aura Pulses
+                // Cathedral bells and divine resonance audio (volume 10.0f audible across 160 blocks)
+                if (postImpactTicks % 20 == 0) {
+                    level().playSound(null, tx, ty, tz, SoundEvents.BEACON_AMBIENT, SoundSource.PLAYERS, 10.0f, 1.2f);
+                    level().playSound(null, tx, ty, tz, SoundEvents.BELL_RESONATE, SoundSource.PLAYERS, 10.0f, 1.4f);
+                    level().playSound(null, tx, ty, tz, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 8.0f, 1.1f);
+                }
+
+                // Every 15 ticks (~0.75s): 48-Block Holy Sanctuary Aura Pulses
                 if (postImpactTicks % 15 == 0) {
                     LivingEntity caster = getCaster();
 
-                    // 1. Bless caster and allies
-                    List<LivingEntity> allies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(12.0),
+                    // 1. Bless caster and allies anywhere within 48 blocks
+                    List<LivingEntity> allies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(48.0),
                             e -> e == caster || (caster != null && caster.isAlliedTo(e)));
                     for (LivingEntity ally : allies) {
-                        ally.heal(4.0f);
+                        ally.heal(6.0f);
                         ally.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 80, 1, false, false, true));
-                        ally.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 80, 0, false, false, true));
+                        ally.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 80, 1, false, false, true));
                         ally.removeEffect(MobEffects.WITHER);
                         ally.removeEffect(MobEffects.POISON);
                         ally.removeEffect(MobEffects.BLINDNESS);
@@ -157,29 +189,24 @@ public class CelestialMonolithEntity extends MagicConstructEntity {
                         serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, ally.getX(), ally.getY() + 1.0, ally.getZ(), 4, 0.3, 0.3, 0.3, 0.02);
                     }
 
-                    // 2. Smite enemies in sanctuary zone
-                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10.0),
+                    // 2. Smite enemies across 48 blocks
+                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(48.0),
                             this::isValidTarget);
                     for (LivingEntity enemy : enemies) {
-                        float holyDamage = enemy.isInvertedHealAndHarm() ? 10.0f : 5.0f; // Extra smite against undead
+                        float holyDamage = enemy.isInvertedHealAndHarm() ? 12.0f : 6.0f; // Massive smite against undead
                         enemy.hurt(level().damageSources().magic(), holyDamage);
                         enemy.addEffect(new MobEffectInstance(MobEffects.GLOWING, 60, 0, false, false));
                         enemy.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 1, false, false));
                         serverLevel.sendParticles(ParticleTypes.GLOW, enemy.getX(), enemy.getY() + enemy.getBbHeight() / 2, enemy.getZ(), 6, 0.2, 0.2, 0.2, 0.02);
                     }
-
-                    // Audio pulse
-                    if (postImpactTicks % 30 == 0) {
-                        level().playSound(null, tx, ty, tz, SoundEvents.BEACON_AMBIENT, SoundSource.PLAYERS, 1.6f, 1.5f);
-                    }
                 }
 
-                // Despawn after 240 ticks (12 full seconds)
+                // Despawn after 240 ticks (12 full seconds) with grand celestial nova
                 if (postImpactTicks >= 240) {
-                    serverLevel.sendParticles(ParticleTypes.END_ROD, tx, ty + 3.0, tz, 120, 3.0, 4.0, 3.0, 0.3);
-                    serverLevel.sendParticles(ParticleTypes.FLASH, tx, ty + 3.0, tz, 4, 0.5, 0.5, 0.5, 0);
-                    level().playSound(null, tx, ty, tz, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, 2.5f, 1.1f);
-                    level().playSound(null, tx, ty, tz, SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 2.0f, 1.4f);
+                    serverLevel.sendParticles(ParticleTypes.END_ROD, tx, ty + 4.0, tz, 250, 8.0, 6.0, 8.0, 0.35);
+                    serverLevel.sendParticles(ParticleTypes.FLASH, tx, ty + 4.0, tz, 8, 1.0, 1.0, 1.0, 0);
+                    level().playSound(null, tx, ty, tz, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, 12.0f, 1.1f);
+                    level().playSound(null, tx, ty, tz, SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 10.0f, 1.3f);
                     this.discard();
                 }
             }
@@ -188,11 +215,11 @@ public class CelestialMonolithEntity extends MagicConstructEntity {
 
     private void performCataclysmicImpact(float x, float y, float z) {
         if (level() instanceof ServerLevel serverLevel) {
-            // Cataclysmic Multi-layer Audio
-            level().playSound(null, x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 4.0f, 0.6f);
-            level().playSound(null, x, y, z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 3.5f, 0.85f);
-            level().playSound(null, x, y, z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 3.0f, 0.75f);
-            level().playSound(null, x, y, z, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 3.0f, 1.6f);
+            // Cataclysmic Multi-layer Audio (volume 12.0f audible across 190 blocks)
+            level().playSound(null, x, y, z, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 12.0f, 0.6f);
+            level().playSound(null, x, y, z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 10.0f, 0.85f);
+            level().playSound(null, x, y, z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 10.0f, 0.75f);
+            level().playSound(null, x, y, z, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 8.0f, 1.6f);
 
             // Blinding visual shockwave explosion
             serverLevel.sendParticles(ParticleTypes.FLASH, x, y + 1.0, z, 8, 1.0, 1.0, 1.0, 0);

@@ -37,14 +37,29 @@ public class TectonicShatterRenderer extends EntityRenderer<TectonicShatterEntit
         var basaltModel = this.dispatcher.getBlockModel(basaltState);
         var tuffModel = this.dispatcher.getBlockModel(tuffState);
 
-        // Render 5 jagged seismic stone pillars thrusting from earth
+        // Colossal monolith formation spanning up to 14 blocks with massive heights
         double[][] pillarOffsets = {
-                {0.0, 0.0, 4.5, 0.0},
-                {2.2, 1.8, 3.5, 15.0},
-                {-2.0, 1.5, 3.8, -20.0},
-                {1.8, -2.2, 3.2, 35.0},
-                {-1.9, -1.9, 4.0, -15.0}
+                {0.0, 0.0, 8.5, 0.0},
+                {4.5, 3.2, 7.0, 18.0},
+                {-4.2, 3.5, 7.5, -22.0},
+                {3.8, -4.5, 6.5, 30.0},
+                {-4.0, -4.2, 7.8, -18.0},
+                {8.5, 0.5, 5.5, 12.0},
+                {-8.2, -1.0, 6.0, -15.0},
+                {0.5, 8.8, 5.8, -10.0},
+                {-1.2, -8.5, 6.2, 14.0}
         };
+
+        float age = entity.tickCount + partialTicks;
+        float shakeX = 0.0F;
+        float shakeZ = 0.0F;
+        float sinkY = 0.0F;
+        if (entity.tickCount > 210) {
+            float progress = Math.min((entity.tickCount - 210 + partialTicks) / 30.0F, 1.0F);
+            shakeX = (float) Math.sin(age * 3.5F) * 0.45F * progress;
+            shakeZ = (float) Math.cos(age * 3.5F) * 0.45F * progress;
+            sinkY = -progress * 2.8F; // Monoliths sink into the earth before catastrophic collapse
+        }
 
         for (int p = 0; p < pillarOffsets.length; p++) {
             double ox = pillarOffsets[p][0];
@@ -53,13 +68,13 @@ public class TectonicShatterRenderer extends EntityRenderer<TectonicShatterEntit
             float tilt = (float) pillarOffsets[p][3];
 
             poseStack.pushPose();
-            poseStack.translate(ox, 0.0D, oz);
+            poseStack.translate(ox + shakeX, sinkY, oz + shakeZ);
             poseStack.mulPose(Axis.YP.rotationDegrees(tilt * 2.0F));
             poseStack.mulPose(Axis.XP.rotationDegrees(tilt * 0.4F));
 
             for (int y = 0; y < (int) height; y++) {
                 poseStack.pushPose();
-                float scaleXZ = 1.3F - (y * 0.15F);
+                float scaleXZ = 1.4F - (y * 0.1F);
                 poseStack.translate(-0.5D * scaleXZ, y * 0.95D, -0.5D * scaleXZ);
                 poseStack.scale(scaleXZ, 1.0F, scaleXZ);
 
