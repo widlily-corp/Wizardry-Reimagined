@@ -1,0 +1,48 @@
+package com.binaris.wizardry.content.spells.lightning;
+
+import com.binaris.wizardry.api.client.ParticleBuilder;
+import com.binaris.wizardry.api.content.spell.SpellAction;
+import com.binaris.wizardry.api.content.spell.SpellTypes;
+import com.binaris.wizardry.api.content.spell.internal.CastContext;
+import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
+import com.binaris.wizardry.api.content.spell.properties.SpellProperties;
+import com.binaris.wizardry.content.spells.DefaultProperties;
+import com.binaris.wizardry.content.spells.abstr.AreaEffectSpell;
+import com.binaris.wizardry.registry.EBParticles;
+import com.binaris.wizardry.registry.Elements;
+import com.binaris.wizardry.registry.SpellTiers;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+
+public class BlindingFlash extends AreaEffectSpell {
+    public BlindingFlash() {
+        this.alwaysSucceed(true);
+    }
+
+    @Override
+    protected boolean affectEntity(CastContext ctx, Vec3 origin, LivingEntity target, int targetCount) {
+        if (target != null) {
+            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
+                    (int) (ctx.modifiers().get(SpellModifiers.DURATION, property(DefaultProperties.EFFECT_DURATION))), 0));
+        }
+        return true;
+    }
+
+    @Override
+    protected void spawnParticleEffect(CastContext ctx, Vec3 origin, double radius) {
+        if (ctx.caster() != null) origin = origin.add(0, ctx.caster().getBbHeight() + 1, 0);
+        ParticleBuilder.create(EBParticles.SPHERE.get()).pos(origin).scale((float) radius * 0.8f).spawn(ctx.world());
+    }
+
+    @Override
+    protected @NotNull SpellProperties properties() {
+        return SpellProperties.builder()
+                .assignBaseProperties(SpellTiers.APPRENTICE, Elements.LIGHTNING, SpellTypes.ATTACK, SpellAction.POINT_UP, 20, 0, 60)
+                .add(DefaultProperties.EFFECT_RADIUS, 5)
+                .add(DefaultProperties.EFFECT_DURATION, 300)
+                .build();
+    }
+}

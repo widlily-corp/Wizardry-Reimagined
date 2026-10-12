@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import com.binaris.wizardry.content.item.*;
 
 public final class EBItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(WizardryMod.MODID);
@@ -199,6 +200,42 @@ public final class EBItems {
             registerBannerPattern("sorcery");
     public static final DeferredItem<BannerPatternItem> HEALING_BANNER_PATTERN =
             registerBannerPattern("healing");
+
+    // Spectral and Magic Weapons
+    public static final DeferredItem<Item> SPECTRAL_SWORD =
+            ITEMS.register("spectral_sword", SpectralSwordItem::new);
+    public static final DeferredItem<Item> SPECTRAL_BOW =
+            ITEMS.register("spectral_bow", SpectralBowItem::new);
+    public static final DeferredItem<Item> SPECTRAL_PICKAXE =
+            ITEMS.register("spectral_pickaxe", SpectralPickaxeItem::new);
+    public static final DeferredItem<Item> SPECTRAL_HELMET =
+            ITEMS.register("spectral_helmet", () -> new net.minecraft.world.item.ArmorItem(
+                    net.minecraft.world.item.ArmorMaterials.IRON, net.minecraft.world.item.ArmorItem.Type.HELMET, new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_CHESTPLATE =
+            ITEMS.register("spectral_chestplate", () -> new net.minecraft.world.item.ArmorItem(
+                    net.minecraft.world.item.ArmorMaterials.IRON, net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_LEGGINGS =
+            ITEMS.register("spectral_leggings", () -> new net.minecraft.world.item.ArmorItem(
+                    net.minecraft.world.item.ArmorMaterials.IRON, net.minecraft.world.item.ArmorItem.Type.LEGGINGS, new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_BOOTS =
+            ITEMS.register("spectral_boots", () -> new net.minecraft.world.item.ArmorItem(
+                    net.minecraft.world.item.ArmorMaterials.IRON, net.minecraft.world.item.ArmorItem.Type.BOOTS, new Item.Properties()));
+    public static final DeferredItem<Item> FLAMECATCHER =
+            ITEMS.register("flamecatcher", FlameCatcherItem::new);
+    public static final DeferredItem<Item> FLAMING_AXE =
+            ITEMS.register("flaming_axe", FlamingAxeItem::new);
+    public static final DeferredItem<Item> FROST_AXE =
+            ITEMS.register("frost_axe", FrostAxeItem::new);
+
+    // Bombs
+    public static final DeferredItem<Item> FIREBOMB =
+            ITEMS.register("firebomb", () -> new BombItem(EBEntities.FIREBOMB, EBSounds.ENTITY_FIREBOMB_THROW));
+    public static final DeferredItem<Item> POISON_BOMB =
+            ITEMS.register("poison_bomb", () -> new BombItem(EBEntities.POISON_BOMB, EBSounds.ENTITY_POISON_BOMB_THROW));
+    public static final DeferredItem<Item> SMOKE_BOMB =
+            ITEMS.register("smoke_bomb", () -> new BombItem(EBEntities.SMOKE_BOMB, EBSounds.ENTITY_SMOKE_BOMB_THROW));
+    public static final DeferredItem<Item> SPARK_BOMB =
+            ITEMS.register("spark_bomb", () -> new BombItem(EBEntities.SPARK_BOMB, EBSounds.ENTITY_SPARK_BOMB_THROW));
 
     private static DeferredItem<BannerPatternItem> registerBannerPattern(String name) {
         return ITEMS.register(name + "_banner_pattern", () -> new BannerPatternItem(

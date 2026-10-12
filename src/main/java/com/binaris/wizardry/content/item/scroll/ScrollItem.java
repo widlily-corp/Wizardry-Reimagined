@@ -48,6 +48,9 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
         SpellData data = stack.get(EBDataComponents.SPELL_DATA.get());
         if (data == null || data.isEmpty()) return Spells.NONE.get();
         Spell spell = EBRegistries.SPELL_REGISTRY.get(data.spellId());
+        if (spell == null && data.spellId() != null) {
+            spell = com.binaris.wizardry.registry.EBSpells.SPELLS.get(data.spellId().getPath());
+        }
         return spell != null ? spell : Spells.NONE.get();
     }
 

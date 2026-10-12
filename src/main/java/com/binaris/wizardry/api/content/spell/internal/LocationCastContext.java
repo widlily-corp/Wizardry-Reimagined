@@ -38,4 +38,8 @@ public class LocationCastContext extends CastContext {
     public Direction direction() {
         return direction;
     }
+
+    public int duration() {
+        return -1;
+    }
 }

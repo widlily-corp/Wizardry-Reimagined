@@ -18,11 +18,11 @@ import java.util.function.Supplier;
 
 public class BuffSpell extends Spell {
     protected final float r, g, b;
-    protected final List<Supplier<MobEffect>> effectSuppliers = new ArrayList<>();
+    protected final List<Supplier<?>> effectSuppliers = new ArrayList<>();
     protected float particleCount = 10;
 
     @SafeVarargs
-    public BuffSpell(float r, float g, float b, Supplier<MobEffect>... effects) {
+    public BuffSpell(float r, float g, float b, Supplier<?>... effects) {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -75,10 +75,20 @@ public class BuffSpell extends Spell {
         if (ctx.world().isClientSide) return true;
         int bonusAmplifier = (int) ((ctx.modifiers().getFactor(SpellModifiers.POTENCY) - 1.0f) / 0.4f);
 
-        for (Supplier<MobEffect> supplier : effectSuppliers) {
-            MobEffect effect = supplier.get();
-            if (effect == null) continue;
-            Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
+        for (Supplier<?> supplier : effectSuppliers) {
+            Object obj = supplier.get();
+            if (obj == null) continue;
+            Holder<MobEffect> holder;
+            MobEffect effect;
+            if (obj instanceof Holder<?> h) {
+                holder = (Holder<MobEffect>) h;
+                effect = holder.value();
+            } else if (obj instanceof MobEffect me) {
+                effect = me;
+                holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
+            } else {
+                continue;
+            }
             int duration = hasProperty(getEffectDurationProperty(effect))
                     ? (int) (property(getEffectDurationProperty(effect)) * ctx.modifiers().getFactor(SpellModifiers.DURATION))
                     : 600;
@@ -115,5 +125,9 @@ public class BuffSpell extends Spell {
 
     public static SpellProperty<Integer> getEffectStrengthProperty(Holder<MobEffect> effect) {
         return getEffectStrengthProperty(effect.value());
+    }
+
+    public static int getStandardBonusAmplifier(float potencyModifier) {
+        return (int) ((potencyModifier - 1.0f) / 0.4f);
     }
 }

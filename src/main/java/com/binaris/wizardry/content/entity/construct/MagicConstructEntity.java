@@ -22,6 +22,14 @@ public abstract class MagicConstructEntity extends Entity implements OwnableEnti
         this.noPhysics = true;
     }
 
+    public void setLifetime(int lifetime) {
+        this.lifetime = lifetime;
+    }
+
+    public int getLifetime() {
+        return lifetime;
+    }
+
     public void setCaster(@Nullable LivingEntity caster) {
         this.casterUUID = caster != null ? caster.getUUID() : null;
     }
@@ -43,6 +51,14 @@ public abstract class MagicConstructEntity extends Entity implements OwnableEnti
 
     public void despawn() {
         this.discard();
+    }
+
+    public boolean isValidTarget(Entity target) {
+        if (target == null || target == this) return false;
+        LivingEntity caster = getCaster();
+        if (target == caster) return false;
+        if (caster != null && caster.isAlliedTo(target)) return false;
+        return target.isAlive();
     }
 
     @Override

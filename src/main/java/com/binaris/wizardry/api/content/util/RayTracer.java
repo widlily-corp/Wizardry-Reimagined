@@ -53,5 +53,18 @@ public final class RayTracer {
         return hit.orElse(null);
     }
 
+    public static Predicate<Entity> ignoreEntityFilter(@Nullable Entity caster) {
+        return entity -> entity == caster;
+    }
+
+    public static HitResult standardBlockRayTrace(Level world, net.minecraft.world.entity.LivingEntity caster, double range, boolean hitLiquids, boolean ignoreUncollidables, boolean invertNormal) {
+        Vec3 eyePos = caster.getEyePosition(1.0F);
+        Vec3 lookAngle = caster.getLookAngle();
+        Vec3 endPos = eyePos.add(lookAngle.scale(range));
+        ClipContext.Fluid fluidMode = hitLiquids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE;
+        ClipContext.Block blockMode = ignoreUncollidables ? ClipContext.Block.COLLIDER : ClipContext.Block.OUTLINE;
+        return world.clip(new ClipContext(eyePos, endPos, blockMode, fluidMode, caster));
+    }
+
     private RayTracer() {}
 }

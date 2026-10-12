@@ -70,6 +70,10 @@ public class WizardryMod {
                 com.binaris.wizardry.content.entity.mob.EvilWizardEntity.createAttributes().build());
         event.put(com.binaris.wizardry.registry.EBEntities.REMNANT.get(),
                 com.binaris.wizardry.content.entity.mob.EvilWizardEntity.createAttributes().build());
+        event.put(com.binaris.wizardry.registry.EBEntities.ICE_GIANT.get(),
+                com.binaris.wizardry.content.entity.mob.IceGiant.createAttributes().build());
+        event.put(com.binaris.wizardry.registry.EBEntities.LIGHTNING_WRAITH.get(),
+                net.minecraft.world.entity.monster.Blaze.createAttributes().build());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

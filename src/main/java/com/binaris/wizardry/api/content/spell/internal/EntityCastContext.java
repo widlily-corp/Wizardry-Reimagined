@@ -15,4 +15,8 @@ public class EntityCastContext extends CastContext {
     public @Nullable LivingEntity target() {
         return target;
     }
+
+    public net.minecraft.world.InteractionHand hand() {
+        return net.minecraft.world.InteractionHand.MAIN_HAND;
+    }
 }

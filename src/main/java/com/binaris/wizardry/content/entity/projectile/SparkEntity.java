@@ -24,6 +24,11 @@ public class SparkEntity extends MagicProjectileEntity {
         this.setLifetime(50);
     }
 
+    public SparkEntity(Level level) {
+        super(EBEntities.SPARK.get(), level);
+        this.setLifetime(50);
+    }
+
     public SparkEntity(Level level, LivingEntity shooter) {
         super(EBEntities.SPARK.get(), level);
         this.setLifetime(50);

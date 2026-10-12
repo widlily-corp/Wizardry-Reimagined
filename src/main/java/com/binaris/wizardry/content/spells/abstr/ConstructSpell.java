@@ -7,8 +7,10 @@ import com.binaris.wizardry.content.entity.construct.ScaledConstructEntity;
 import com.binaris.wizardry.content.spells.DefaultProperties;
 import com.binaris.wizardry.registry.Spell;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -79,22 +81,34 @@ public class ConstructSpell<T extends MagicConstructEntity> extends Spell {
         return true;
     }
 
+    protected void addConstructExtras(CastContext ctx, T construct, Direction side) {
+    }
+
     protected void spawnConstruct(CastContext ctx, Vec3 pos) {
-        T construct = constructFactory.apply(ctx.world());
-        construct.setPos(pos);
-        construct.setCaster(ctx.caster());
-        construct.damageMultiplier = ctx.modifiers().getFactor(SpellModifiers.POTENCY);
+        spawnConstruct(ctx, pos, Direction.UP);
+    }
 
-        if (construct instanceof ScaledConstructEntity scaled) {
-            scaled.setSizeMultiplier(ctx.modifiers().getFactor(SpellModifiers.BLAST));
+    protected boolean spawnConstruct(CastContext ctx, Vec3 pos, @Nullable Direction side) {
+        if (!ctx.world().isClientSide) {
+            T construct = constructFactory.apply(ctx.world());
+            construct.setPos(pos);
+            if (ctx.caster() != null) construct.setCaster(ctx.caster());
+
+            construct.setLifetime(permanent ? -1 : (int) (ctx.modifiers().get(SpellModifiers.DURATION, hasProperty(DefaultProperties.DURATION) ? property(DefaultProperties.DURATION) : 200)));
+            construct.damageMultiplier = ctx.modifiers().getFactor(SpellModifiers.POTENCY);
+
+            if (construct instanceof ScaledConstructEntity scaled) {
+                scaled.setSizeMultiplier(ctx.modifiers().getFactor(SpellModifiers.BLAST));
+            }
+
+            addConstructExtras(ctx, construct, side != null ? side : Direction.UP);
+
+            if (!allowOverlap && !ctx.world().getEntitiesOfClass(construct.getClass(), construct.getBoundingBox()).isEmpty()) {
+                return false;
+            }
+
+            ctx.world().addFreshEntity(construct);
         }
-
-        if (!permanent && hasProperty(DefaultProperties.DURATION)) {
-            construct.lifetime = (int) (property(DefaultProperties.DURATION) * ctx.modifiers().getFactor(SpellModifiers.DURATION));
-        } else if (permanent) {
-            construct.lifetime = -1;
-        }
-
-        ctx.world().addFreshEntity(construct);
+        return true;
     }
 }

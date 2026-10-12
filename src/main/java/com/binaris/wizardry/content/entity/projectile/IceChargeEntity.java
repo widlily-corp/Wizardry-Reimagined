@@ -19,9 +19,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class IceChargeEntity extends MagicProjectileEntity {
+    public static final com.binaris.wizardry.api.content.spell.properties.SpellProperty<Integer> ICE_SHARDS = com.binaris.wizardry.api.content.spell.properties.SpellProperty.intProperty("ice_shards");
 
     public IceChargeEntity(EntityType<? extends ThrowableProjectile> entityType, Level level) {
         super(entityType, level);
+        this.setLifetime(60);
+    }
+
+    public IceChargeEntity(Level level) {
+        super(EBEntities.ICE_CHARGE.get(), level);
         this.setLifetime(60);
     }
 

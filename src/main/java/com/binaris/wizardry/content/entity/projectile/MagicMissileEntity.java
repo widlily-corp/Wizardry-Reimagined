@@ -19,6 +19,11 @@ public class MagicMissileEntity extends MagicArrowEntity {
         this.setLifetime(40);
     }
 
+    public MagicMissileEntity(Level level) {
+        super(EBEntities.MAGIC_MISSILE.get(), level);
+        this.setLifetime(40);
+    }
+
     public MagicMissileEntity(Level level, LivingEntity shooter) {
         super(EBEntities.MAGIC_MISSILE.get(), level);
         this.setLifetime(40);

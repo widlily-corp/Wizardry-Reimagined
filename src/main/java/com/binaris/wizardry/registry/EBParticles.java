@@ -28,6 +28,8 @@ public final class EBParticles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LIGHTNING_PULSE = particle("lightning_pulse");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SPHERE = particle("sphere");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FLASH = particle("flash");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> SCORCH = particle("scorch");
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> PATH = particle("path");
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LIGHTNING = particle("lightning");
 
     private static DeferredHolder<ParticleType<?>, SimpleParticleType> particle(String name) {

@@ -21,6 +21,11 @@ public class DarknessOrbEntity extends MagicProjectileEntity {
         this.setLifetime(60);
     }
 
+    public DarknessOrbEntity(Level level) {
+        super(EBEntities.DARKNESS_ORB.get(), level);
+        this.setLifetime(60);
+    }
+
     public DarknessOrbEntity(Level level, LivingEntity shooter) {
         super(EBEntities.DARKNESS_ORB.get(), level);
         this.setLifetime(60);

@@ -59,6 +59,10 @@ public class SpellProperties {
             return this;
         }
 
+        public Builder assignBaseProperties(java.util.function.Supplier<SpellTier> tier, java.util.function.Supplier<Element> element, SpellType type, SpellAction action, int cost, int charge, int cooldown) {
+            return assignBaseProperties(tier != null ? tier.get() : null, element != null ? element.get() : null, type, action, cost, charge, cooldown);
+        }
+
         public <T> Builder add(SpellProperty<T> property) {
             if (property != null) {
                 builder.add(property.copyOf());

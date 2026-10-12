@@ -1,6 +1,8 @@
 package com.binaris.wizardry.registry;
 
 import com.binaris.wizardry.WizardryMod;
+import com.binaris.wizardry.content.entity.MeteorEntity;
+import com.binaris.wizardry.content.entity.construct.*;
 import com.binaris.wizardry.content.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
@@ -47,6 +49,87 @@ public final class EBEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<PoisonBombEntity>> POISON_BOMB =
             register("poison_bomb", PoisonBombEntity::new, 0.4f, 0.4f);
 
+    public static final DeferredHolder<EntityType<?>, EntityType<FireBoltEntity>> FIRE_BOLT =
+            register("firebolt", FireBoltEntity::new, 0.25f, 0.25f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FlamecatcherArrow>> FLAME_CATCHER_ARROW =
+            register("flamecatcher_arrow", FlamecatcherArrow::new, 0.5f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ThunderboltEntity>> THUNDERBOLT =
+            register("thunderbolt", ThunderboltEntity::new, 0.25f, 0.25f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SparkBombEntity>> SPARK_BOMB =
+            register("spark_bomb", SparkBombEntity::new, 0.25f, 0.25f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SmokeBombEntity>> SMOKE_BOMB =
+            register("smoke_bomb", SmokeBombEntity::new, 0.25f, 0.25f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LightningArrow>> LIGHTNING_ARROW =
+            register("lightning_arrow", LightningArrow::new, 0.5f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IceLanceEntity>> ICE_LANCE =
+            register("ice_lance", IceLanceEntity::new, 0.5f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IceBall>> ICE_BALL =
+            register("iceball", IceBall::new, 0.5f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ForceArrow>> FORCE_ARROW =
+            register("force_arrow", ForceArrow::new, 0.5f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ConjuredArrowEntity>> CONJURED_ARROW =
+            register("conjured_arrow", ConjuredArrowEntity::new, 0.5f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FireRingConstruct>> RING_OF_FIRE =
+            register("ring_of_fire", FireRingConstruct::new, 3.0f, 1.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FireSigilConstruct>> FIRE_SIGIL =
+            register("fire_sigil", FireSigilConstruct::new, 1.0f, 0.2f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<CombustionRuneConstruct>> COMBUSTION_RUNE =
+            register("combustion_rune", CombustionRuneConstruct::new, 2.0f, 0.2f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<MeteorEntity>> METEOR =
+            register("meteor", MeteorEntity::new, 0.98f, 0.98f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BlizzardConstruct>> BLIZZARD =
+            register("blizzard", BlizzardConstruct::new, 6.0f, 3.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HailstormConstruct>> HAILSTORM =
+            register("hailstorm", HailstormConstruct::new, 4.0f, 5.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FrostSigilConstruct>> FROST_SIGIL =
+            register("frost_sigil", FrostSigilConstruct::new, 2.0f, 0.2f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IceSpikeConstruct>> ICE_SPIKE =
+            register("ice_spikes", IceSpikeConstruct::new, 0.5f, 1.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<IceBarrierConstruct>> ICE_BARRIER =
+            register("ice_barrier", IceBarrierConstruct::new, 3.0f, 3.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<LightningSigilConstruct>> LIGHTNING_SIGIL =
+            register("lightning_sigil", LightningSigilConstruct::new, 2.0f, 0.2f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<TornadoConstruct>> TORNADO =
+            register("tornado", TornadoConstruct::new, 4.0f, 8.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<HealAuraConstruct>> HEAL_AURA =
+            register("heal_aura", HealAuraConstruct::new, 6.0f, 1.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BubbleConstruct>> BUBBLE =
+            register("bubble", BubbleConstruct::new, 1.0f, 1.0f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<BoulderConstruct>> BOULDER =
+            register("boulder", BoulderConstruct::new, 2.375f, 2.375f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<DecayConstruct>> DECAY =
+            register("decay", DecayConstruct::new, 2.0f, 0.2f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ArrowRainConstruct>> ARROW_RAIN =
+            register("arrow_rain", ArrowRainConstruct::new, 8.0f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ZombieSpawnerConstruct>> ZOMBIE_SPAWNER =
+            register("zombie_spawner", ZombieSpawnerConstruct::new, 1.0f, 1.0f);
+
     public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.mob.WizardEntity>> WIZARD =
             ENTITIES.register("wizard", () -> EntityType.Builder.of(com.binaris.wizardry.content.entity.mob.WizardEntity::new, MobCategory.CREATURE)
                     .sized(0.6f, 1.8f)
@@ -67,6 +150,20 @@ public final class EBEntities {
                     .clientTrackingRange(64)
                     .updateInterval(3)
                     .build("remnant"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.mob.IceGiant>> ICE_GIANT =
+            ENTITIES.register("ice_giant", () -> EntityType.Builder.<com.binaris.wizardry.content.entity.mob.IceGiant>of(com.binaris.wizardry.content.entity.mob.IceGiant::new, MobCategory.CREATURE)
+                    .sized(1.4f, 2.7f)
+                    .clientTrackingRange(64)
+                    .updateInterval(3)
+                    .build("ice_giant"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.binaris.wizardry.content.entity.mob.LightningWraith>> LIGHTNING_WRAITH =
+            ENTITIES.register("lightning_wraith", () -> EntityType.Builder.<com.binaris.wizardry.content.entity.mob.LightningWraith>of(com.binaris.wizardry.content.entity.mob.LightningWraith::new, MobCategory.MONSTER)
+                    .sized(0.6f, 1.8f)
+                    .clientTrackingRange(64)
+                    .updateInterval(3)
+                    .build("lightning_wraith"));
 
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(
             String name, EntityType.EntityFactory<T> factory, float width, float height) {

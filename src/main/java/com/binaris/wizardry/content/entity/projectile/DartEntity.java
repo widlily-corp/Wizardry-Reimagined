@@ -21,6 +21,11 @@ public class DartEntity extends MagicArrowEntity {
         this.setLifetime(60);
     }
 
+    public DartEntity(Level level) {
+        super(EBEntities.DART.get(), level);
+        this.setLifetime(60);
+    }
+
     public DartEntity(Level level, LivingEntity shooter) {
         super(EBEntities.DART.get(), level);
         this.setLifetime(60);

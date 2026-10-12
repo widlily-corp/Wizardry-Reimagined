@@ -24,6 +24,11 @@ public class ForceOrbEntity extends MagicProjectileEntity {
         this.setLifetime(50);
     }
 
+    public ForceOrbEntity(Level level) {
+        super(EBEntities.FORCE_ORB.get(), level);
+        this.setLifetime(50);
+    }
+
     public ForceOrbEntity(Level level, LivingEntity shooter) {
         super(EBEntities.FORCE_ORB.get(), level);
         this.setLifetime(50);

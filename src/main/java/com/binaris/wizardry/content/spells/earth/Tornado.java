@@ -1,0 +1,40 @@
+package com.binaris.wizardry.content.spells.earth;
+
+import com.binaris.wizardry.api.content.spell.SpellAction;
+import com.binaris.wizardry.api.content.spell.SpellTypes;
+import com.binaris.wizardry.api.content.spell.internal.CastContext;
+import com.binaris.wizardry.api.content.spell.properties.SpellProperties;
+import com.binaris.wizardry.content.entity.construct.TornadoConstruct;
+import com.binaris.wizardry.content.spells.DefaultProperties;
+import com.binaris.wizardry.content.spells.abstr.ConstructSpell;
+import com.binaris.wizardry.registry.Elements;
+import com.binaris.wizardry.registry.SpellTiers;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+
+public class Tornado extends ConstructSpell<TornadoConstruct> {
+    public Tornado() {
+        super(TornadoConstruct::new, false);
+        floor(true);
+    }
+
+    @Override
+    protected void addConstructExtras(CastContext ctx, TornadoConstruct construct, Direction side) {
+        float speed = property(DefaultProperties.SPEED);
+        Vec3 direction = ctx.caster() == null ? new Vec3(side.getStepX(), side.getStepY(), side.getStepZ()) : ctx.caster().getLookAngle();
+        construct.setDeltaMovement(direction.x * speed, 0, direction.z * speed);
+    }
+
+    @Override
+    protected @NotNull SpellProperties properties() {
+        return SpellProperties.builder()
+                .assignBaseProperties(SpellTiers.ADVANCED, Elements.EARTH, SpellTypes.ATTACK, SpellAction.POINT, 35, 10, 80)
+                .add(DefaultProperties.DURATION, 200)
+                .add(DefaultProperties.SPEED, 0.33F)
+                .add(DefaultProperties.EFFECT_RADIUS, 4)
+                .add(DefaultProperties.DAMAGE, 1F)
+                .add(DefaultProperties.ACCELERATION, 0.22F)
+                .build();
+    }
+}

@@ -13,11 +13,17 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public abstract class Spell {
+public abstract class Spell implements Supplier<Spell> {
+    @Override
+    public Spell get() {
+        return this;
+    }
+
     protected float volume = 1.0f;
     protected float pitch = 1.0f;
     protected float pitchVariation = 0.0f;
@@ -166,6 +172,40 @@ public abstract class Spell {
             float v = customVolume > 0 ? customVolume : volume;
             float p = pitch + (level.random.nextFloat() - 0.5f) * pitchVariation;
             level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), sound, SoundSource.PLAYERS, v, p);
+        }
+    }
+
+    public void playSoundAt(Level level, double x, double y, double z, int castingTicks, float customVolume) {
+        if (level == null) return;
+        SoundEvent sound = getSpellSound();
+        if (sound != null) {
+            float v = customVolume > 0 ? customVolume : volume;
+            float p = pitch + (level.random.nextFloat() - 0.5f) * pitchVariation;
+            level.playSound(null, x, y, z, sound, SoundSource.PLAYERS, v, p);
+        }
+    }
+
+    public void playSoundAt(Level level, Vec3 pos, int castingTicks, float customVolume) {
+        if (pos != null) playSoundAt(level, pos.x, pos.y, pos.z, castingTicks, customVolume);
+    }
+
+    protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration) {
+        playSoundAt(world, x, y, z, ticksInUse, 1.0f);
+    }
+
+    protected void playSound(Level world, LivingEntity entity, int castTicks, int duration) {
+        playSound(world, entity, castTicks, 1.0f);
+    }
+
+    protected void playSoundLoop(Level world, LivingEntity entity, int castTicks) {
+        if (castTicks % 20 == 1) {
+            playSound(world, entity, castTicks, 1.0f);
+        }
+    }
+
+    protected void playSoundLoop(Level world, double x, double y, double z, int castTicks, int duration) {
+        if (castTicks % 20 == 1) {
+            playSound(world, x, y, z, castTicks, duration);
         }
     }
 

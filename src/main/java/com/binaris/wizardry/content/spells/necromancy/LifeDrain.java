@@ -1,0 +1,71 @@
+package com.binaris.wizardry.content.spells.necromancy;
+
+import com.binaris.wizardry.api.client.ParticleBuilder;
+import com.binaris.wizardry.api.content.spell.SpellAction;
+import com.binaris.wizardry.api.content.spell.SpellTypes;
+import com.binaris.wizardry.api.content.spell.internal.CastContext;
+import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
+import com.binaris.wizardry.api.content.spell.properties.SpellProperties;
+import com.binaris.wizardry.api.content.util.EntityUtil;
+import com.binaris.wizardry.api.content.util.MagicDamageSource;
+import com.binaris.wizardry.content.spells.DefaultProperties;
+import com.binaris.wizardry.content.spells.abstr.RaySpell;
+import com.binaris.wizardry.registry.EBDamageSources;
+import com.binaris.wizardry.registry.Elements;
+import com.binaris.wizardry.registry.SpellTiers;
+import com.binaris.wizardry.registry.EBParticles;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+
+public class LifeDrain extends RaySpell {
+    public LifeDrain() {
+        this.particleVelocity(-0.5);
+        this.particleSpacing(0.4);
+        this.soundValues(0.6f, 1, 0);
+    }
+
+    @Override
+    protected boolean onEntityHit(CastContext ctx, EntityHitResult entityHit, Vec3 origin) {
+        if (!(entityHit.getEntity() instanceof LivingEntity target) || ctx.castingTicks() % 12 != 0) return false;
+        float damage = ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.DAMAGE));
+        DamageSource source = ctx.caster() != null ? MagicDamageSource.causeDirectMagicDamage(ctx.caster(), EBDamageSources.SORCERY)
+                : target.damageSources().magic();
+
+        EntityUtil.attackEntityWithoutKnockback(target, source, damage);
+        if (ctx.caster() != null) ctx.caster().heal(damage * property(DefaultProperties.HEALTH));
+        return true;
+    }
+
+    @Override
+    protected boolean onMiss(CastContext ctx, Vec3 origin, Vec3 direction) {
+        return true;
+    }
+
+    @Override
+    protected boolean onBlockHit(CastContext ctx, BlockHitResult blockHit, Vec3 origin) {
+        return false;
+    }
+
+    @Override
+    protected void spawnParticle(CastContext ctx, double x, double y, double z, double vx, double vy, double vz) {
+        if (ctx.world().random.nextInt(5) == 0) {
+            ParticleBuilder.create(EBParticles.DARK_MAGIC).pos(x, y, z).color(0.1f, 0, 0).spawn(ctx.world());
+        }
+        ParticleBuilder.create(EBParticles.SPARKLE).pos(x, y, z).velocity(vx, vy, vz).time(8 + ctx.world().random.nextInt(6))
+                .color(0.5f, 0, 0).spawn(ctx.world());
+    }
+
+    @Override
+    protected @NotNull SpellProperties properties() {
+        return SpellProperties.builder()
+                .assignBaseProperties(SpellTiers.APPRENTICE, Elements.NECROMANCY, SpellTypes.ATTACK, SpellAction.POINT, 2, 0, 0)
+                .add(DefaultProperties.RANGE, 8F)
+                .add(DefaultProperties.DAMAGE, 1.5f)
+                .add(DefaultProperties.HEALTH, 0.4f)
+                .build();
+    }
+}

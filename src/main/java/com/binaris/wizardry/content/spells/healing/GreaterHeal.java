@@ -1,0 +1,36 @@
+package com.binaris.wizardry.content.spells.healing;
+
+import com.binaris.wizardry.api.content.spell.SpellAction;
+import com.binaris.wizardry.api.content.spell.SpellTypes;
+import com.binaris.wizardry.api.content.spell.internal.CastContext;
+import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
+import com.binaris.wizardry.api.content.spell.properties.SpellProperties;
+import com.binaris.wizardry.content.spells.DefaultProperties;
+import com.binaris.wizardry.content.spells.abstr.BuffSpell;
+import com.binaris.wizardry.registry.Elements;
+import com.binaris.wizardry.registry.SpellTiers;
+import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
+
+public class GreaterHeal extends BuffSpell {
+    public GreaterHeal() {
+        super(1, 1, 0.3f);
+        this.soundValues(0.7f, 1.2f, 0.4f);
+    }
+
+    @Override
+    protected boolean applyEffects(CastContext ctx, LivingEntity caster) {
+        if (caster.getHealth() < caster.getMaxHealth() && caster.getHealth() > 0) {
+            Heal.heal(caster, ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.HEALTH)));
+            return true;
+        }
+        return super.applyEffects(ctx, caster);
+    }
+
+    @Override
+    protected @NotNull SpellProperties properties() {
+        return SpellProperties.builder()
+                .assignBaseProperties(SpellTiers.ADVANCED, Elements.HEALING, SpellTypes.DEFENCE, SpellAction.POINT_UP, 30, 20, 60)
+                .add(DefaultProperties.HEALTH, 8F).build();
+    }
+}

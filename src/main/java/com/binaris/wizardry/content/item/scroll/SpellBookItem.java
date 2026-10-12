@@ -31,6 +31,9 @@ public class SpellBookItem extends Item {
     public static Spell getSpell(ItemStack stack) {
         ResourceLocation id = getSpellId(stack);
         Spell spell = EBRegistries.SPELL_REGISTRY.get(id);
+        if (spell == null && id != null) {
+            spell = com.binaris.wizardry.registry.EBSpells.SPELLS.get(id.getPath());
+        }
         return spell != null ? spell : Spells.NONE.get();
     }
 

@@ -24,6 +24,11 @@ public class IceShardEntity extends MagicArrowEntity {
         this.setLifetime(45);
     }
 
+    public IceShardEntity(Level level) {
+        super(EBEntities.ICE_SHARD.get(), level);
+        this.setLifetime(45);
+    }
+
     public IceShardEntity(Level level, LivingEntity shooter) {
         super(EBEntities.ICE_SHARD.get(), level);
         this.setLifetime(45);

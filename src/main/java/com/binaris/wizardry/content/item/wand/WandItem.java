@@ -147,6 +147,9 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
         for (int i = 0; i < slotCount; i++) {
             if (i < spellIds.size() && spellIds.get(i) != null) {
                 Spell spell = EBRegistries.SPELL_REGISTRY.get(spellIds.get(i));
+                if (spell == null) {
+                    spell = EBSpells.SPELLS.get(spellIds.get(i).getPath());
+                }
                 spells[i] = spell != null ? spell : Spells.NONE.get();
             } else {
                 spells[i] = Spells.NONE.get();
@@ -160,6 +163,9 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
         WandData data = getWandData(stack);
         ResourceLocation id = data.getSelectedSpellId();
         Spell spell = EBRegistries.SPELL_REGISTRY.get(id);
+        if (spell == null && id != null) {
+            spell = EBSpells.SPELLS.get(id.getPath());
+        }
         return spell != null ? spell : Spells.NONE.get();
     }
 

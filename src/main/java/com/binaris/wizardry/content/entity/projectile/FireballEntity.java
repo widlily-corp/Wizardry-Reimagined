@@ -23,6 +23,11 @@ public class FireballEntity extends MagicProjectileEntity {
         this.setLifetime(60);
     }
 
+    public FireballEntity(Level level) {
+        super(EBEntities.FIREBALL.get(), level);
+        this.setLifetime(60);
+    }
+
     public FireballEntity(Level level, LivingEntity shooter) {
         super(EBEntities.FIREBALL.get(), level);
         this.setLifetime(60);

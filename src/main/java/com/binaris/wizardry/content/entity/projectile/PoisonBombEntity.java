@@ -25,6 +25,11 @@ public class PoisonBombEntity extends MagicProjectileEntity {
         this.setLifetime(100);
     }
 
+    public PoisonBombEntity(Level level) {
+        super(EBEntities.POISON_BOMB.get(), level);
+        this.setLifetime(100);
+    }
+
     public PoisonBombEntity(Level level, LivingEntity shooter) {
         super(EBEntities.POISON_BOMB.get(), level);
         this.setLifetime(100);
