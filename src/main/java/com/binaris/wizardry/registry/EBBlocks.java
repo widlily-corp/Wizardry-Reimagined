@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.WebBlock;
 import com.binaris.wizardry.content.block.crust.ObsidianCrustBlock;
 import com.binaris.wizardry.content.block.ice.PermafrostBlock;
 import com.binaris.wizardry.content.block.lectern.WizardryLecternBlock;
+import com.binaris.wizardry.content.block.BookshelfBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -102,19 +103,19 @@ public final class EBBlocks {
     // Library & Decorative Worldgen Blocks
     // ==========================================
     public static final DeferredBlock<Block> OAK_BOOKSHELF =
-            BLOCKS.register("oak_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+            BLOCKS.register("oak_bookshelf", () -> new BookshelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> SPRUCE_BOOKSHELF =
-            BLOCKS.register("spruce_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+            BLOCKS.register("spruce_bookshelf", () -> new BookshelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> BIRCH_BOOKSHELF =
-            BLOCKS.register("birch_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+            BLOCKS.register("birch_bookshelf", () -> new BookshelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> JUNGLE_BOOKSHELF =
-            BLOCKS.register("jungle_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+            BLOCKS.register("jungle_bookshelf", () -> new BookshelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> ACACIA_BOOKSHELF =
-            BLOCKS.register("acacia_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+            BLOCKS.register("acacia_bookshelf", () -> new BookshelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> DARK_OAK_BOOKSHELF =
-            BLOCKS.register("dark_oak_bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+            BLOCKS.register("dark_oak_bookshelf", () -> new BookshelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
     public static final DeferredBlock<Block> BOOKSHELF =
-            BLOCKS.register("bookshelf", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
+            BLOCKS.register("bookshelf", () -> new BookshelfBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5F).sound(SoundType.WOOD)));
 
     public static final DeferredBlock<Block> GILDED_WOOD =
             BLOCKS.register("gilded_wood", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0F).sound(SoundType.WOOD)));

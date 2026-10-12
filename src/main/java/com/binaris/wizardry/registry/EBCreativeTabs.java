@@ -29,6 +29,9 @@ public final class EBCreativeTabs {
                     .title(Component.translatable("creativetab.ebwizardry"))
                     .icon(() -> new ItemStack(EBItems.MAGIC_CRYSTAL.get()))
                     .displayItems((parameters, output) -> {
+                        // Guide Handbook
+                        output.accept(EBItems.WIZARD_HANDBOOK.get());
+
                         // Crystals & Shards
                         output.accept(EBItems.MAGIC_CRYSTAL_SHARD.get());
                         output.accept(EBItems.MAGIC_CRYSTAL.get());

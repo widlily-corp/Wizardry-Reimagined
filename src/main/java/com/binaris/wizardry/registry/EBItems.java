@@ -226,6 +226,8 @@ public final class EBItems {
             ITEMS.register("flaming_axe", FlamingAxeItem::new);
     public static final DeferredItem<Item> FROST_AXE =
             ITEMS.register("frost_axe", FrostAxeItem::new);
+    public static final DeferredItem<Item> WIZARD_HANDBOOK =
+            ITEMS.register("wizard_handbook", WizardHandbookItem::new);
 
     // Bombs
     public static final DeferredItem<Item> FIREBOMB =
