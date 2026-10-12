@@ -1507,5 +1507,9 @@
   "item.ebwizardry.ring_ice_protection": "Ring of Ice Protection",
   "block.ebwizardry.bookshelf": "Bookshelf",
   "block.ebwizardry.gilded_wood": "Gilded Wood",
-  "block.ebwizardry.potted_crystal_flower": "Potted Crystal Flower"
+  "block.ebwizardry.potted_crystal_flower": "Potted Crystal Flower",
+  "spell.ebwizardry.earth_tremor": "Earth Tremor",
+  "spell.ebwizardry.earth_tremor.desc": "Causes a violent tremor in the ground around you, damaging and launching nearby enemies into the air.",
+  "spell.ebwizardry.spark": "Spark Bomb",
+  "spell.ebwizardry.spark.desc": "Launches a shock charge in the direction you are pointing which releases sparks at nearby enemies on impact."
 }
