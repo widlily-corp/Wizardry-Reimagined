@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_spell_book"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_earth"
+    },
+    {
+      "item": "minecraft:flint"
+    }
+  ],
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:dart"
+      }
+    },
+    "count": 1,
+    "id": "ebwizardry:spell_book"
+  }
+}

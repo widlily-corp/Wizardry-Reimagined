@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_blank_scroll": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ebwizardry:blank_scroll"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ebwizardry:scroll_arc"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_blank_scroll"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ebwizardry:scroll_arc"
+    ]
+  }
+}

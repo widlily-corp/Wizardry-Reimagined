@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_blank_spell_book": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ebwizardry:blank_spell_book"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ebwizardry:spell_book_frost_ray"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_blank_spell_book"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ebwizardry:spell_book_frost_ray"
+    ]
+  }
+}

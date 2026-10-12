@@ -14,16 +14,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class ConjureArmor extends ConjureItemSpell {
-    private static final Map<EquipmentSlot, Item> SPECTRAL_ARMOUR_MAP = ImmutableMap.of(
-            EquipmentSlot.HEAD, EBItems.SPECTRAL_HELMET.get(),
-            EquipmentSlot.CHEST, EBItems.SPECTRAL_CHESTPLATE.get(),
-            EquipmentSlot.LEGS, EBItems.SPECTRAL_LEGGINGS.get(),
-            EquipmentSlot.FEET, EBItems.SPECTRAL_BOOTS.get());
+    private static final Map<EquipmentSlot, Supplier<? extends Item>> SPECTRAL_ARMOUR_MAP = ImmutableMap.of(
+            EquipmentSlot.HEAD, EBItems.SPECTRAL_HELMET,
+            EquipmentSlot.CHEST, EBItems.SPECTRAL_CHESTPLATE,
+            EquipmentSlot.LEGS, EBItems.SPECTRAL_LEGGINGS,
+            EquipmentSlot.FEET, EBItems.SPECTRAL_BOOTS);
 
     public ConjureArmor() {
-        super(EBItems.SPECTRAL_HELMET.get());
+        super(EBItems.SPECTRAL_HELMET);
     }
 
     @Override
@@ -35,7 +36,9 @@ public class ConjureArmor extends ConjureItemSpell {
                 continue;
             }
 
-            ItemStack armor = new ItemStack(SPECTRAL_ARMOUR_MAP.get(slot));
+            Supplier<? extends Item> supplier = SPECTRAL_ARMOUR_MAP.get(slot);
+            if (supplier == null) continue;
+            ItemStack armor = new ItemStack(supplier.get());
             armor = addItemExtras(ctx, armor);
 
             int duration = hasProperty(DefaultProperties.ITEM_LIFETIME) ? property(DefaultProperties.ITEM_LIFETIME) : 1800;

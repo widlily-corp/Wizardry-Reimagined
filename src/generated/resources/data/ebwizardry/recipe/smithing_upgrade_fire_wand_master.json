@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "base": {
+    "item": "ebwizardry:wand_advanced_fire"
+  },
+  "result": {
+    "count": 1,
+    "id": "ebwizardry:wand_master_fire"
+  },
+  "template": {
+    "item": "ebwizardry:arcane_upgrade_smithing_template"
+  }
+}

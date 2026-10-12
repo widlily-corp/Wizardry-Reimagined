@@ -10,7 +10,7 @@ import net.minecraft.world.item.component.CustomData;
 
 public class ConjurePickaxe extends ConjureItemSpell {
     public ConjurePickaxe() {
-        super(EBItems.SPECTRAL_PICKAXE.get());
+        super(EBItems.SPECTRAL_PICKAXE);
     }
 
     @Override

@@ -7,7 +7,7 @@ import net.minecraft.core.particles.ParticleTypes;
 
 public class FlamingAxe extends ConjureItemSpell {
     public FlamingAxe() {
-        super(EBItems.FLAMING_AXE.get());
+        super(EBItems.FLAMING_AXE);
     }
 
     @Override

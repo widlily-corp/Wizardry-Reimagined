@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "ebwizardry:magic_crystal_grand"
+  },
+  "base": {
+    "item": "ebwizardry:wand_novice_ice"
+  },
+  "result": {
+    "count": 1,
+    "id": "ebwizardry:wand_apprentice_ice"
+  },
+  "template": {
+    "item": "ebwizardry:arcane_upgrade_smithing_template"
+  }
+}

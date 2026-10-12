@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_scroll"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_fire"
+    },
+    {
+      "item": "minecraft:blaze_rod"
+    }
+  ],
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:fireball"
+      }
+    },
+    "count": 1,
+    "id": "ebwizardry:scroll"
+  }
+}

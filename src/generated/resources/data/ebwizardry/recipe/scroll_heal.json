@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_scroll"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_healing"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    }
+  ],
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:heal"
+      }
+    },
+    "count": 1,
+    "id": "ebwizardry:scroll"
+  }
+}

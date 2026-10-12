@@ -89,11 +89,11 @@ public class BuffSpell extends Spell {
             } else {
                 continue;
             }
-            int duration = hasProperty(getEffectDurationProperty(effect))
-                    ? (int) (property(getEffectDurationProperty(effect)) * ctx.modifiers().getFactor(SpellModifiers.DURATION))
+            int duration = hasProperty(getEffectDurationProperty(holder))
+                    ? (int) (property(getEffectDurationProperty(holder)) * ctx.modifiers().getFactor(SpellModifiers.DURATION))
                     : 600;
-            int strength = hasProperty(getEffectStrengthProperty(effect))
-                    ? property(getEffectStrengthProperty(effect)) + bonusAmplifier
+            int strength = hasProperty(getEffectStrengthProperty(holder))
+                    ? property(getEffectStrengthProperty(holder)) + bonusAmplifier
                     : bonusAmplifier;
 
             target.addEffect(new MobEffectInstance(holder, Math.max(20, duration), Math.max(0, strength), false, true));
@@ -111,6 +111,16 @@ public class BuffSpell extends Spell {
         ParticleBuilder.create(EBParticles.BUFF).entity(target).color(r, g, b).spawn(world);
     }
 
+    private static String getEffectKey(Holder<MobEffect> effect) {
+        if (effect instanceof net.neoforged.neoforge.registries.DeferredHolder<?, ?> dh) {
+            return dh.getId().toLanguageKey("effect");
+        }
+        if (effect.unwrapKey().isPresent()) {
+            return effect.unwrapKey().get().location().toLanguageKey("effect");
+        }
+        return effect.value().getDescriptionId();
+    }
+
     public static SpellProperty<Integer> getEffectDurationProperty(MobEffect effect) {
         return SpellProperty.intProperty(effect.getDescriptionId() + "_duration", 600);
     }
@@ -120,11 +130,11 @@ public class BuffSpell extends Spell {
     }
 
     public static SpellProperty<Integer> getEffectDurationProperty(Holder<MobEffect> effect) {
-        return getEffectDurationProperty(effect.value());
+        return SpellProperty.intProperty(getEffectKey(effect) + "_duration", 600);
     }
 
     public static SpellProperty<Integer> getEffectStrengthProperty(Holder<MobEffect> effect) {
-        return getEffectStrengthProperty(effect.value());
+        return SpellProperty.intProperty(getEffectKey(effect) + "_strength", 0);
     }
 
     public static int getStandardBonusAmplifier(float potencyModifier) {

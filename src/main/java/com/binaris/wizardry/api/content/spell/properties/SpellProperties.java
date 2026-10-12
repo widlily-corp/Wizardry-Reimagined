@@ -60,7 +60,34 @@ public class SpellProperties {
         }
 
         public Builder assignBaseProperties(java.util.function.Supplier<SpellTier> tier, java.util.function.Supplier<Element> element, SpellType type, SpellAction action, int cost, int charge, int cooldown) {
-            return assignBaseProperties(tier != null ? tier.get() : null, element != null ? element.get() : null, type, action, cost, charge, cooldown);
+            String tierName = "novice";
+            if (tier instanceof net.neoforged.neoforge.registries.DeferredHolder<?, ?> dh) {
+                tierName = dh.getId().getPath();
+            } else if (tier != null) {
+                try {
+                    SpellTier t = tier.get();
+                    if (t != null) tierName = t.getName();
+                } catch (Exception ignored) {}
+            }
+
+            String elementName = "magic";
+            if (element instanceof net.neoforged.neoforge.registries.DeferredHolder<?, ?> dh) {
+                elementName = dh.getId().getPath();
+            } else if (element != null) {
+                try {
+                    Element e = element.get();
+                    if (e != null) elementName = e.getName();
+                } catch (Exception ignored) {}
+            }
+
+            add(DefaultProperties.ELEMENT, elementName);
+            add(DefaultProperties.SPELL_TYPE, type != null && type.getLocation() != null ? type.getLocation().toString() : "ebwizardry:attack");
+            add(DefaultProperties.TIER, tierName);
+            add(DefaultProperties.SPELL_ACTION, action != null && action.location != null ? action.location.toString() : "ebwizardry:point");
+            add(DefaultProperties.COST, cost);
+            add(DefaultProperties.COOLDOWN, cooldown);
+            add(DefaultProperties.CHARGEUP, charge);
+            return this;
         }
 
         public <T> Builder add(SpellProperty<T> property) {

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_spell_book"
+    },
+    {
+      "item": "ebwizardry:magic_crystal"
+    },
+    {
+      "item": "minecraft:amethyst_shard"
+    }
+  ],
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:magic_missile"
+      }
+    },
+    "count": 1,
+    "id": "ebwizardry:spell_book"
+  }
+}

@@ -12,7 +12,7 @@ public class Flamecatcher extends ConjureItemSpell {
     public static final SpellProperty<Integer> SHOT_COUNT = SpellProperty.intProperty("shot_count", 5);
 
     public Flamecatcher() {
-        super(EBItems.FLAMECATCHER.get());
+        super(EBItems.FLAMECATCHER);
     }
 
     @Override

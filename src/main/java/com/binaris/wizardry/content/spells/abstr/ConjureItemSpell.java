@@ -14,14 +14,27 @@ import net.minecraft.world.item.component.CustomData;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class ConjureItemSpell extends Spell {
     public static final Set<Item> SUPPORTED_ITEMS = new HashSet<>();
-    private final Item item;
+    private final Supplier<? extends Item> itemSupplier;
 
     public ConjureItemSpell(Item item) {
-        this.item = item;
-        SUPPORTED_ITEMS.add(item);
+        this(() -> item);
+    }
+
+    public ConjureItemSpell(Supplier<? extends Item> itemSupplier) {
+        this.itemSupplier = itemSupplier;
+    }
+
+    public Item getItem() {
+        if (itemSupplier == null) return null;
+        Item resolved = itemSupplier.get();
+        if (resolved != null) {
+            SUPPORTED_ITEMS.add(resolved);
+        }
+        return resolved;
     }
 
     @Override
@@ -35,6 +48,8 @@ public class ConjureItemSpell extends Spell {
     }
 
     protected boolean conjureItem(PlayerCastContext ctx) {
+        Item item = getItem();
+        if (item == null) return false;
         ItemStack stack = new ItemStack(item);
         stack = addItemExtras(ctx, stack);
 
@@ -69,7 +84,7 @@ public class ConjureItemSpell extends Spell {
     }
 
     public static boolean isSummoned(ItemStack stack) {
-        if (stack.isEmpty() || !SUPPORTED_ITEMS.contains(stack.getItem())) return false;
+        if (stack == null || stack.isEmpty()) return false;
         CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         return customData != null && customData.copyTag().getBoolean("ebwizardry:conjured");
     }

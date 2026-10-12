@@ -17,7 +17,7 @@ public class ConjureSword extends ConjureItemSpell {
     private static final double BASE_DAMAGE = 5.0D;
 
     public ConjureSword() {
-        super(EBItems.SPECTRAL_SWORD.get());
+        super(EBItems.SPECTRAL_SWORD);
     }
 
     @Override

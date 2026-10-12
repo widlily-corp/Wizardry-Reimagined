@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_scroll"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_necromancy"
+    },
+    {
+      "item": "minecraft:rotten_flesh"
+    }
+  ],
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:summon_zombie"
+      }
+    },
+    "count": 1,
+    "id": "ebwizardry:scroll"
+  }
+}

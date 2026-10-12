@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_scroll"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_lightning"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    }
+  ],
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:arc"
+      }
+    },
+    "count": 1,
+    "id": "ebwizardry:scroll"
+  }
+}

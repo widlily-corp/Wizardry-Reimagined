@@ -8,7 +8,7 @@ import com.binaris.wizardry.registry.EBParticles;
 
 public class FrostAxe extends ConjureItemSpell {
     public FrostAxe() {
-        super(EBItems.FROST_AXE.get());
+        super(EBItems.FROST_AXE);
     }
 
     @Override

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_spell_book"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_sorcery"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    }
+  ],
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:telekinesis"
+      }
+    },
+    "count": 1,
+    "id": "ebwizardry:spell_book"
+  }
+}
