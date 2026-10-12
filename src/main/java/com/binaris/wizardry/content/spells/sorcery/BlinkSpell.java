@@ -39,9 +39,12 @@ public class BlinkSpell extends Spell {
         }
 
         BlockPos targetBlock = BlockPos.containing(target);
-        if (!level.getBlockState(targetBlock).isAir() && !level.getBlockState(targetBlock.above()).isAir()) {
+        while (level.getBlockState(targetBlock).isSolid() && targetBlock.getY() < level.getMaxBuildHeight()) {
             targetBlock = targetBlock.above();
         }
+        double targetX = targetBlock.getX() + 0.5;
+        double targetY = targetBlock.getY();
+        double targetZ = targetBlock.getZ() + 0.5;
 
         level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), EBSounds.SPELL_BLINK.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         if (level.isClientSide) {
@@ -51,8 +54,8 @@ public class BlinkSpell extends Spell {
             }
         }
 
-        caster.teleportTo(target.x, target.y, target.z);
-        level.playSound(null, target.x, target.y, target.z, EBSounds.SPELL_BLINK.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+        caster.teleportTo(targetX, targetY, targetZ);
+        level.playSound(null, targetX, targetY, targetZ, EBSounds.SPELL_BLINK.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         return true;
     }
 }

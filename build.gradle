@@ -15,6 +15,10 @@ group = mod_group_id
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        name = "BlameJared Maven"
+        url = "https://maven.blamejared.com/"
+    }
 }
 
 base {
@@ -68,6 +72,7 @@ configurations {
 }
 
 dependencies {
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.21.0.246"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

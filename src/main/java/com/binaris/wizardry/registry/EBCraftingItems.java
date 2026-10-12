@@ -14,7 +14,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -90,7 +89,6 @@ public final class EBCraftingItems {
     public static void register(IEventBus modBus) {
         ITEMS.register(modBus);
         EBRecipeSerializers.register(modBus);
-        modBus.addListener(EBCraftingItems::onBuildCreativeTab);
         modBus.addListener(EBCraftingItems::commonSetup);
         modBus.addListener(com.binaris.wizardry.datagen.WizardryRecipeProvider::gatherData);
     }
@@ -106,30 +104,6 @@ public final class EBCraftingItems {
             WandUpgrades.register(ATTUNEMENT_UPGRADE.get(), WandUpgrades.ATTUNEMENT);
             WandUpgrades.register(DURATION_UPGRADE.get(), WandUpgrades.DURATION);
         });
-    }
-
-    private static void onBuildCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == EBCreativeTabs.TAB.getKey()) {
-            event.accept(BLANK_SCROLL.get());
-            event.accept(BLANK_SPELL_BOOK.get());
-            event.accept(SCROLL.get());
-            event.accept(SPELL_BOOK.get());
-
-            event.accept(STORAGE_UPGRADE.get());
-            event.accept(SIPHON_UPGRADE.get());
-            event.accept(RANGE_UPGRADE.get());
-            event.accept(BLAST_UPGRADE.get());
-            event.accept(COOLDOWN_UPGRADE.get());
-            event.accept(CONDENSER_UPGRADE.get());
-            event.accept(ATTUNEMENT_UPGRADE.get());
-            event.accept(DURATION_UPGRADE.get());
-
-            event.accept(APPRENTICE_TOME.get());
-            event.accept(ADVANCED_TOME.get());
-            event.accept(MASTER_TOME.get());
-
-            event.accept(ARCANE_UPGRADE_SMITHING_TEMPLATE.get());
-        }
     }
 
     private EBCraftingItems() {}

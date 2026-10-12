@@ -256,4 +256,8 @@ public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkben
     public @NotNull ArcaneWorkbenchMenu getMenu() {
         return menu;
     }
+
+    public int getImageHeight() {
+        return imageHeight;
+    }
 }

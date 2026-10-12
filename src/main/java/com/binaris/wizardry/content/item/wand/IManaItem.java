@@ -13,11 +13,11 @@ public interface IManaItem {
 
     default void consumeMana(ItemStack stack, int amount, @Nullable Player player) {
         if (player != null && player.isCreative()) return;
-        setMana(stack, getMana(stack) - amount);
+        setMana(stack, Math.max(0, getMana(stack) - amount));
     }
 
     default void rechargeMana(ItemStack stack, int amount) {
-        setMana(stack, getMana(stack) + amount);
+        setMana(stack, Math.min(getManaCapacity(stack), getMana(stack) + amount));
     }
 
     default boolean isManaFull(ItemStack stack) {

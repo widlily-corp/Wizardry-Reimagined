@@ -2,8 +2,15 @@ package com.binaris.wizardry.registry;
 
 import com.binaris.wizardry.WizardryMod;
 import com.binaris.wizardry.content.item.material.CrystalItem;
+import com.binaris.wizardry.content.item.flask.ManaFlaskItem;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BannerPatternItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -114,6 +121,91 @@ public final class EBItems {
     public static final DeferredItem<BlockItem> IMBUEMENT_ALTAR_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.IMBUEMENT_ALTAR);
     public static final DeferredItem<BlockItem> RECEPTACLE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.RECEPTACLE);
     public static final DeferredItem<BlockItem> WALL_RECEPTACLE_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.WALL_RECEPTACLE);
+
+    // Lectern Items
+    public static final DeferredItem<BlockItem> ACACIA_LECTERN_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.ACACIA_LECTERN);
+    public static final DeferredItem<BlockItem> BIRCH_LECTERN_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.BIRCH_LECTERN);
+    public static final DeferredItem<BlockItem> DARK_OAK_LECTERN_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.DARK_OAK_LECTERN);
+    public static final DeferredItem<BlockItem> JUNGLE_LECTERN_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.JUNGLE_LECTERN);
+    public static final DeferredItem<BlockItem> OAK_LECTERN_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.OAK_LECTERN);
+    public static final DeferredItem<BlockItem> SPRUCE_LECTERN_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.SPRUCE_LECTERN);
+
+    // Special Block Items
+    public static final DeferredItem<BlockItem> OBSIDIAN_CRUST_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.OBSIDIAN_CRUST);
+    public static final DeferredItem<BlockItem> PERMAFROST_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.PERMAFROST);
+    public static final DeferredItem<BlockItem> SPECTRAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.SPECTRAL_BLOCK);
+    public static final DeferredItem<BlockItem> VANISHING_COBWEB_ITEM = ITEMS.registerSimpleBlockItem(EBBlocks.VANISHING_COBWEB);
+
+    // Mana Flasks
+    public static final DeferredItem<ManaFlaskItem> MANA_FLASK_SMALL =
+            ITEMS.register("mana_flask_small", () -> new ManaFlaskItem(140, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<ManaFlaskItem> MANA_FLASK_MEDIUM =
+            ITEMS.register("mana_flask_medium", () -> new ManaFlaskItem(350, new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<ManaFlaskItem> MANA_FLASK_LARGE =
+            ITEMS.register("mana_flask_large", () -> new ManaFlaskItem(700, new Item.Properties().stacksTo(16)));
+
+    // Crafting Materials
+    public static final DeferredItem<Item> MAGIC_SILK =
+            ITEMS.register("magic_silk", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> RUINED_SPELL_BOOK =
+            ITEMS.register("ruined_spell_book", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
+
+    // Spectral Dusts
+    public static final DeferredItem<Item> SPECTRAL_DUST =
+            ITEMS.register("spectral_dust", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_DUST_FIRE =
+            ITEMS.register("spectral_dust_fire", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_DUST_ICE =
+            ITEMS.register("spectral_dust_ice", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_DUST_LIGHTNING =
+            ITEMS.register("spectral_dust_lightning", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_DUST_NECROMANCY =
+            ITEMS.register("spectral_dust_necromancy", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_DUST_EARTH =
+            ITEMS.register("spectral_dust_earth", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_DUST_SORCERY =
+            ITEMS.register("spectral_dust_sorcery", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SPECTRAL_DUST_HEALING =
+            ITEMS.register("spectral_dust_healing", () -> new Item(new Item.Properties()));
+
+    // Elemental Dusts
+    public static final DeferredItem<Item> FIRE_ELEMENTAL_DUST =
+            ITEMS.register("fire_elemental_dust", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> ICE_ELEMENTAL_DUST =
+            ITEMS.register("ice_elemental_dust", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> LIGHTNING_ELEMENTAL_DUST =
+            ITEMS.register("lightning_elemental_dust", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> NECROMANCY_ELEMENTAL_DUST =
+            ITEMS.register("necromancy_elemental_dust", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> EARTH_ELEMENTAL_DUST =
+            ITEMS.register("earth_elemental_dust", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SORCERY_ELEMENTAL_DUST =
+            ITEMS.register("sorcery_elemental_dust", () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> HEALING_ELEMENTAL_DUST =
+            ITEMS.register("healing_elemental_dust", () -> new Item(new Item.Properties()));
+
+    // Banner Patterns
+    public static final DeferredItem<BannerPatternItem> FIRE_BANNER_PATTERN =
+            registerBannerPattern("fire");
+    public static final DeferredItem<BannerPatternItem> ICE_BANNER_PATTERN =
+            registerBannerPattern("ice");
+    public static final DeferredItem<BannerPatternItem> LIGHTNING_BANNER_PATTERN =
+            registerBannerPattern("lightning");
+    public static final DeferredItem<BannerPatternItem> NECROMANCY_BANNER_PATTERN =
+            registerBannerPattern("necromancy");
+    public static final DeferredItem<BannerPatternItem> EARTH_BANNER_PATTERN =
+            registerBannerPattern("earth");
+    public static final DeferredItem<BannerPatternItem> SORCERY_BANNER_PATTERN =
+            registerBannerPattern("sorcery");
+    public static final DeferredItem<BannerPatternItem> HEALING_BANNER_PATTERN =
+            registerBannerPattern("healing");
+
+    private static DeferredItem<BannerPatternItem> registerBannerPattern(String name) {
+        return ITEMS.register(name + "_banner_pattern", () -> new BannerPatternItem(
+                TagKey.create(Registries.BANNER_PATTERN, ResourceLocation.fromNamespaceAndPath(WizardryMod.MODID, "pattern_item/" + name)),
+                new Item.Properties().stacksTo(1)
+        ));
+    }
 
     public static void register(IEventBus modBus) {
         ITEMS.register(modBus);

@@ -11,6 +11,10 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.block.WebBlock;
+import com.binaris.wizardry.content.block.crust.ObsidianCrustBlock;
+import com.binaris.wizardry.content.block.ice.PermafrostBlock;
+import com.binaris.wizardry.content.block.lectern.WizardryLecternBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -133,6 +137,46 @@ public final class EBBlocks {
             BLOCKS.register("receptacle", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0F).sound(SoundType.STONE).noOcclusion()));
     public static final DeferredBlock<Block> WALL_RECEPTACLE =
             BLOCKS.register("wall_receptacle", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0F).sound(SoundType.STONE).noOcclusion()));
+
+    // ==========================================
+    // Lecterns
+    // ==========================================
+    public static final DeferredBlock<WizardryLecternBlock> ACACIA_LECTERN =
+            BLOCKS.register("acacia_lectern", () -> new WizardryLecternBlock());
+    public static final DeferredBlock<WizardryLecternBlock> BIRCH_LECTERN =
+            BLOCKS.register("birch_lectern", () -> new WizardryLecternBlock());
+    public static final DeferredBlock<WizardryLecternBlock> DARK_OAK_LECTERN =
+            BLOCKS.register("dark_oak_lectern", () -> new WizardryLecternBlock());
+    public static final DeferredBlock<WizardryLecternBlock> JUNGLE_LECTERN =
+            BLOCKS.register("jungle_lectern", () -> new WizardryLecternBlock());
+    public static final DeferredBlock<WizardryLecternBlock> OAK_LECTERN =
+            BLOCKS.register("oak_lectern", () -> new WizardryLecternBlock());
+    public static final DeferredBlock<WizardryLecternBlock> SPRUCE_LECTERN =
+            BLOCKS.register("spruce_lectern", () -> new WizardryLecternBlock());
+
+    // ==========================================
+    // Special Blocks
+    // ==========================================
+    public static final DeferredBlock<ObsidianCrustBlock> OBSIDIAN_CRUST =
+            BLOCKS.register("obsidian_crust", () -> new ObsidianCrustBlock());
+
+    public static final DeferredBlock<PermafrostBlock> PERMAFROST =
+            BLOCKS.register("permafrost", () -> new PermafrostBlock());
+
+    public static final DeferredBlock<Block> SPECTRAL_BLOCK =
+            BLOCKS.register("spectral_block", () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .strength(1.5F)
+                    .sound(SoundType.GLASS)
+                    .noOcclusion()));
+
+    public static final DeferredBlock<WebBlock> VANISHING_COBWEB =
+            BLOCKS.register("vanishing_cobweb", () -> new WebBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOL)
+                    .forceSolidOn()
+                    .noCollission()
+                    .strength(4.0F)
+                    .pushReaction(PushReaction.DESTROY)));
 
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);

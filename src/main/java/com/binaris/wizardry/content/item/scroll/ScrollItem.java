@@ -95,8 +95,8 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
 
-        castInstant(level, player, stack, spell);
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        boolean success = castInstant(level, player, stack, spell);
+        return success ? InteractionResultHolder.sidedSuccess(stack, level.isClientSide()) : InteractionResultHolder.fail(stack);
     }
 
     @Override
@@ -116,12 +116,13 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
         }
     }
 
-    protected void castInstant(Level level, Player player, ItemStack stack, Spell spell) {
-        spell.cast(level, player);
-        if (!player.isCreative()) {
+    protected boolean castInstant(Level level, Player player, ItemStack stack, Spell spell) {
+        boolean success = spell.cast(level, player);
+        if (success && !player.isCreative()) {
             stack.shrink(1);
             player.getCooldowns().addCooldown(this, Math.max(10, spell.getCooldown()));
         }
+        return success;
     }
 
     @Override

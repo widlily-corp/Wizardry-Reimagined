@@ -35,9 +35,17 @@ public final class SpellRayHelper {
         Vec3 lookVec = caster.getLookAngle();
         Vec3 endPos = eyePos.add(lookVec.scale(range));
 
+        BlockHitResult blockHit = level.clip(new ClipContext(eyePos, endPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, caster));
+        double maxDist = blockHit.getType() != HitResult.Type.MISS ? blockHit.getLocation().distanceTo(eyePos) : range;
+
         AABB box = caster.getBoundingBox().expandTowards(lookVec.scale(range)).inflate(1.0);
-        return ProjectileUtil.getEntityHitResult(level, caster, eyePos, endPos, box,
+        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(level, caster, eyePos, endPos, box,
                 e -> !e.isSpectator() && e.isPickable() && e != caster);
+
+        if (entityHit != null && entityHit.getLocation().distanceTo(eyePos) <= maxDist) {
+            return entityHit;
+        }
+        return null;
     }
 
     private SpellRayHelper() {}

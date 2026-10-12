@@ -307,8 +307,8 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
             return InteractionResultHolder.success(stack);
         }
 
-        castInstant(level, player, hand, stack, spell);
-        return InteractionResultHolder.success(stack);
+        boolean success = castInstant(level, player, hand, stack, spell);
+        return success ? InteractionResultHolder.success(stack) : InteractionResultHolder.fail(stack);
     }
 
     public void castCurrentSpell(Level level, Player player, InteractionHand hand, ItemStack stack) {
@@ -346,7 +346,10 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
         return MAX_USE_DURATION;
     }
 
-    protected void castInstant(Level level, Player player, InteractionHand hand, ItemStack stack, Spell spell) {
+    protected boolean castInstant(Level level, Player player, InteractionHand hand, ItemStack stack, Spell spell) {
+        boolean success = spell.cast(level, player);
+        if (!success) return false;
+
         consumeMana(stack, spell.getCost(), player);
 
         int cd = spell.getCooldown();
@@ -362,7 +365,7 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
             checkLevelUp(player, stack, prog);
         }
 
-        spell.cast(level, player);
+        return true;
     }
 
     @Override

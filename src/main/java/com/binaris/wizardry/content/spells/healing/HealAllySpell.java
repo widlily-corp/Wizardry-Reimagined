@@ -27,6 +27,7 @@ public class HealAllySpell extends Spell {
     public boolean cast(Level level, LivingEntity caster) {
         EntityHitResult hit = SpellRayHelper.rayTraceEntity(level, caster, 16.0);
         if (hit != null && hit.getEntity() instanceof LivingEntity ally) {
+            if (ally.getHealth() >= ally.getMaxHealth()) return false;
             ally.heal(8.0f);
             level.playSound(null, ally.getX(), ally.getY(), ally.getZ(), EBSounds.SPELL_HEAL_ALLY.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
             if (level.isClientSide) {
