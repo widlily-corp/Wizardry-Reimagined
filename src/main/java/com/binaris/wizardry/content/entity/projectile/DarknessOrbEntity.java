@@ -63,8 +63,11 @@ public class DarknessOrbEntity extends MagicProjectileEntity {
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            this.level().addParticle(ParticleTypes.SQUID_INK, getX(), getY(), getZ(), 0, 0, 0);
-            this.level().addParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), 0, 0, 0);
+            this.level().addParticle(ParticleTypes.PORTAL, getX(), getY() + 0.1, getZ(),
+                    (random.nextDouble() - 0.5) * 0.2, (random.nextDouble() - 0.5) * 0.2, (random.nextDouble() - 0.5) * 0.2);
+            if (this.tickCount % 2 == 0) {
+                this.level().addParticle(ParticleTypes.WITCH, getX(), getY() + 0.1, getZ(), 0, 0, 0);
+            }
         }
     }
 }

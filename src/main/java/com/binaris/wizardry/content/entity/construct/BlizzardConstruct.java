@@ -13,6 +13,7 @@ import com.binaris.wizardry.registry.EBSpells;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -54,15 +55,28 @@ public class BlizzardConstruct extends ScaledConstructEntity {
             }
 
         } else {
-            for (int i = 0; i < 6; i++) {
-                double speed = (random.nextBoolean() ? 1 : -1) * (0.1 + 0.05 * random.nextDouble());
-                ParticleBuilder.create(EBParticles.SNOW.get()).pos(this.getX(), this.getY() + random.nextDouble() * getBbHeight(), this.getZ()).velocity(0, 0, 0)
-                        .time(100).scale(2).spin(random.nextDouble() * (radius - 0.5) + 0.5, speed).shaded(true).spawn(level());
+            // Authentic swirling snowstorm vortex
+            for (int i = 0; i < 8; i++) {
+                double angle = (this.tickCount * 0.18 + i * (Math.PI * 2 / 8));
+                double dist = 0.4 + random.nextDouble() * (radius - 0.4);
+                double px = this.getX() + dist * Math.cos(angle);
+                double pz = this.getZ() + dist * Math.sin(angle);
+                double py = this.getY() + random.nextDouble() * getBbHeight();
+
+                double vx = -Math.sin(angle) * 0.22;
+                double vz = Math.cos(angle) * 0.22;
+                double vy = -0.04 + random.nextDouble() * 0.08;
+
+                level().addParticle(ParticleTypes.SNOWFLAKE, px, py, pz, vx, vy, vz);
+                if (random.nextInt(3) == 0) {
+                    level().addParticle(ParticleTypes.ITEM_SNOWBALL, px, py, pz, vx * 0.5, vy, vz * 0.5);
+                }
             }
 
-            for (int i = 0; i < 3; i++) {
-                double speed = (random.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * random.nextDouble());
-                ParticleBuilder.create(EBParticles.CLOUD.get()).pos(this.getX(), this.getY() + random.nextDouble() * (getBbHeight() - 0.5), this.getZ()).color(0xffffff).shaded(true).spin(random.nextDouble() * (radius - 1) + 0.5, speed).spawn(level());
+            if (random.nextInt(2) == 0) {
+                double angle = random.nextDouble() * Math.PI * 2;
+                double dist = random.nextDouble() * radius;
+                level().addParticle(ParticleTypes.CLOUD, this.getX() + dist * Math.cos(angle), this.getY() + random.nextDouble() * (getBbHeight() * 0.8), this.getZ() + dist * Math.sin(angle), 0, 0.03, 0);
             }
         }
     }

@@ -77,7 +77,10 @@ public class ForceOrbEntity extends MagicProjectileEntity {
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            this.level().addParticle(ParticleTypes.POOF, getX(), getY(), getZ(), 0, 0, 0);
+            this.level().addParticle(ParticleTypes.ENCHANTED_HIT, getX(), getY() + 0.1, getZ(), 0, 0, 0);
+            if (this.tickCount % 2 == 0) {
+                this.level().addParticle(ParticleTypes.CRIT, getX(), getY() + 0.1, getZ(), 0, 0, 0);
+            }
         }
     }
 }

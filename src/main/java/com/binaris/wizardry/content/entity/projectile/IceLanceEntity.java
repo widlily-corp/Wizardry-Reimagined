@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.Level;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -42,11 +43,26 @@ public class IceLanceEntity extends MagicArrowEntity {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if (this.level().isClientSide) {
+            this.level().addParticle(ParticleTypes.SNOWFLAKE, getX(), getY(), getZ(),
+                    -getDeltaMovement().x * 0.15, -getDeltaMovement().y * 0.15, -getDeltaMovement().z * 0.15);
+            if (this.tickCount % 2 == 0) {
+                this.level().addParticle(ParticleTypes.ITEM_SNOWBALL, getX(), getY(), getZ(), 0, 0, 0);
+            }
+        }
+    }
+
+    @Override
     protected void onHitBlock(@NotNull BlockHitResult blockHitResult) {
         super.onHitBlock(blockHitResult);
         if (this.level().isClientSide) {
-            for (int j = 0; j < 10; j++) {
-                ParticleBuilder.create(EBParticles.ICE.get()).pos(position()).count(1).spread(0.5, 0.5, 0.5).spawn(level());
+            for (int j = 0; j < 12; j++) {
+                this.level().addParticle(ParticleTypes.ITEM_SNOWBALL, getX(), getY(), getZ(),
+                        (random.nextDouble() - 0.5) * 0.3, random.nextDouble() * 0.2, (random.nextDouble() - 0.5) * 0.3);
+                this.level().addParticle(ParticleTypes.SNOWFLAKE, getX(), getY(), getZ(),
+                        (random.nextDouble() - 0.5) * 0.2, random.nextDouble() * 0.1, (random.nextDouble() - 0.5) * 0.2);
             }
         }
     }

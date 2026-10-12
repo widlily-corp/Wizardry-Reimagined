@@ -16,6 +16,10 @@ import com.binaris.wizardry.registry.EBDamageSources;
 import com.binaris.wizardry.registry.EBParticles;
 import com.binaris.wizardry.registry.Elements;
 import com.binaris.wizardry.registry.SpellTiers;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +30,6 @@ public class LightningPulse extends Spell {
 
     @Override
     public boolean cast(PlayerCastContext ctx) {
-        if (!ctx.caster().onGround()) return false;
         float radius = ctx.modifiers().get(SpellModifiers.BLAST, property(DefaultProperties.EFFECT_RADIUS));
 
         List<LivingEntity> targets = new java.util.ArrayList<>(EntityUtil.getLivingWithinRadius(radius, ctx.caster().getX(), ctx.caster().getY(), ctx.caster().getZ(), ctx.world()));
@@ -45,16 +48,25 @@ public class LightningPulse extends Spell {
                     dx /= vectorLength;
                     dz /= vectorLength;
                 }
-                target.setDeltaMovement(property(REPULSION_VELOCITY) * dx, 0.2, property(REPULSION_VELOCITY) * dz);
+                target.setDeltaMovement(property(REPULSION_VELOCITY) * dx, 0.35, property(REPULSION_VELOCITY) * dz);
                 target.hurtMarked = true;
             }
         }
 
         if (ctx.world().isClientSide()) {
-            ParticleBuilder.create(EBParticles.LIGHTNING_PULSE.get())
-                    .pos(ctx.caster().getX(), ctx.caster().getY() + 0.05, ctx.caster().getZ())
-                    .scale(ctx.modifiers().getFactor(SpellModifiers.BLAST))
-                    .spawn(ctx.world());
+            ctx.world().addParticle(ParticleTypes.FLASH, ctx.caster().getX(), ctx.caster().getY() + 0.5, ctx.caster().getZ(), 0, 0, 0);
+            for (int i = 0; i < 32; i++) {
+                double angle = i * (Math.PI * 2 / 32);
+                double px = ctx.caster().getX() + Math.cos(angle) * radius * 0.4;
+                double pz = ctx.caster().getZ() + Math.sin(angle) * radius * 0.4;
+                double vx = Math.cos(angle) * 0.4;
+                double vz = Math.sin(angle) * 0.4;
+                ctx.world().addParticle(ParticleTypes.ELECTRIC_SPARK, px, ctx.caster().getY() + 0.2, pz, vx, 0.08, vz);
+            }
+        } else {
+            ServerLevel serverLevel = (ServerLevel) ctx.world();
+            serverLevel.playSound(null, ctx.caster().getX(), ctx.caster().getY(), ctx.caster().getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 2.0f, 1.4f);
+            serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, ctx.caster().getX(), ctx.caster().getY() + 0.5, ctx.caster().getZ(), 40, radius * 0.6, 0.3, radius * 0.6, 0.15);
         }
 
         this.playSound(ctx.world(), ctx.caster(), ctx.castingTicks(), -1);

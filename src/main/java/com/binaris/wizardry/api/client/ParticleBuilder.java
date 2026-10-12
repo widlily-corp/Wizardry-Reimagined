@@ -237,9 +237,30 @@ public final class ParticleBuilder {
         double baseZ = entity != null ? entity.getZ() + z : z;
 
         ParticleOptions toSpawn = particle;
-        if (toSpawn == null || toSpawn == EBParticles.BUFF.get() || toSpawn == EBParticles.SPARKLE.get()
-                || toSpawn == EBParticles.DARK_MAGIC.get() || toSpawn == EBParticles.SPHERE.get()) {
-            toSpawn = new DustParticleOptions(new Vector3f(red, green, blue), scale);
+        if (toSpawn == null) {
+            toSpawn = new DustParticleOptions(new Vector3f(red, green, blue), Math.max(0.8f, scale));
+        } else if (toSpawn == EBParticles.SNOW.get()) {
+            toSpawn = ParticleTypes.SNOWFLAKE;
+        } else if (toSpawn == EBParticles.ICE.get()) {
+            toSpawn = ParticleTypes.ITEM_SNOWBALL;
+        } else if (toSpawn == EBParticles.CLOUD.get()) {
+            toSpawn = ParticleTypes.CLOUD;
+        } else if (toSpawn == EBParticles.MAGIC_BUBBLE.get()) {
+            toSpawn = ParticleTypes.BUBBLE;
+        } else if (toSpawn == EBParticles.MAGIC_FIRE.get()) {
+            toSpawn = ParticleTypes.FLAME;
+        } else if (toSpawn == EBParticles.LIGHTNING_PULSE.get() || toSpawn == EBParticles.SPARK.get() || toSpawn == EBParticles.LIGHTNING.get()) {
+            toSpawn = ParticleTypes.ELECTRIC_SPARK;
+        } else if (toSpawn == EBParticles.LEAF.get()) {
+            toSpawn = ParticleTypes.CHERRY_LEAVES;
+        } else if (toSpawn == EBParticles.FLASH.get()) {
+            toSpawn = ParticleTypes.FLASH;
+        } else if (toSpawn == EBParticles.BUFF.get() || toSpawn == EBParticles.SPARKLE.get()
+                || toSpawn == EBParticles.DARK_MAGIC.get() || toSpawn == EBParticles.SPHERE.get()
+                || toSpawn == EBParticles.BEAM.get() || toSpawn == EBParticles.GUARDIAN_BEAM.get()
+                || toSpawn == EBParticles.DUST.get() || toSpawn == EBParticles.SCORCH.get()
+                || toSpawn == EBParticles.PATH.get()) {
+            toSpawn = new DustParticleOptions(new Vector3f(red, green, blue), Math.max(0.8f, scale));
         }
 
         for (int i = 0; i < count; i++) {

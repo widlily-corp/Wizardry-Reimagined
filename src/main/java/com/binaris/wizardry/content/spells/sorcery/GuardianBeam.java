@@ -33,17 +33,22 @@ public class GuardianBeam extends RaySpell {
 
     @Override
     protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration) {
-        if (ticksInUse % 50 == 1) super.playSound(world, x, y, z, ticksInUse, duration);
+        if (ticksInUse <= 1 || ticksInUse % 15 == 1) super.playSound(world, x, y, z, ticksInUse, duration);
     }
 
     @Override
     protected boolean onEntityHit(CastContext ctx, EntityHitResult entityHit, Vec3 origin) {
         if (entityHit.getEntity() instanceof LivingEntity livingEntity) {
+            boolean isInitialOrScroll = ctx.castingTicks() <= 1;
+            boolean isContinuousTick = (ctx.castingTicks() % 8 == 0);
 
-            if (ctx.castingTicks() % 50 == 1) {
+            if (isInitialOrScroll || isContinuousTick) {
+                float damageMultiplier = isInitialOrScroll ? 1.5f : 0.6f;
+                float dmg = property(DefaultProperties.DAMAGE) * ctx.modifiers().getFactor(SpellModifiers.POTENCY) * damageMultiplier;
+                
                 EntityUtil.attackEntityWithoutKnockback(livingEntity,
                         MagicDamageSource.causeDirectMagicDamage(ctx.caster() != null ? ctx.caster() : livingEntity, EBDamageSources.MAGIC),
-                        property(DefaultProperties.DAMAGE) * ctx.modifiers().getFactor(SpellModifiers.POTENCY));
+                        dmg);
 
                 if (!livingEntity.canBreatheUnderwater() && !livingEntity.hasEffect(MobEffects.WATER_BREATHING)) {
                     livingEntity.setAirSupply(Math.max(-20, livingEntity.getAirSupply() - property(AIR_DEPLETION)));
@@ -55,19 +60,22 @@ public class GuardianBeam extends RaySpell {
             }
 
             if (ctx.world().isClientSide) {
-                float t = (ctx.castingTicks() % 50) / 50f;
-                float yellowness = t * t;
-                int r = 64 + (int) (yellowness * 191.0F);
-                int g = 32 + (int) (yellowness * 191.0F);
-                int b = 128 - (int) (yellowness * 64.0F);
+                Vec3 targetPos = livingEntity.getBoundingBox().getCenter();
+                Vec3 diff = targetPos.subtract(origin);
+                double dist = diff.length();
+                Vec3 step = diff.normalize().scale(0.5);
 
-                if (ctx.castingTicks() % 3 == 0) ParticleBuilder.create(EBParticles.GUARDIAN_BEAM).entity(ctx.caster())
-                        .pos(ctx.caster() != null ? origin.subtract(ctx.caster().position()) : origin).target(livingEntity)
-                        .color(r, g, b).spawn(ctx.world());
+                // Dense laser line from origin to target
+                for (double d = 0; d < dist; d += 0.5) {
+                    Vec3 beamPoint = origin.add(diff.scale(d / Math.max(1.0, dist)));
+                    ParticleBuilder.create(EBParticles.GUARDIAN_BEAM)
+                            .pos(beamPoint.x, beamPoint.y, beamPoint.z)
+                            .color(0.2f, 0.9f, 0.8f)
+                            .scale(1.2f)
+                            .spawn(ctx.world());
+                }
 
-                Vec3 direction = livingEntity.getBoundingBox().getCenter().subtract(origin);
-                Vec3 pos = origin.add(direction.scale(ctx.world().random.nextFloat()));
-                ParticleBuilder.create(EBParticles.MAGIC_BUBBLE, ctx.world().random, pos.x, pos.y, pos.z, 0.15, false).spawn(ctx.world());
+                ParticleBuilder.create(EBParticles.MAGIC_BUBBLE, ctx.world().random, targetPos.x, targetPos.y, targetPos.z, 0.4, true).spawn(ctx.world());
             }
         }
 

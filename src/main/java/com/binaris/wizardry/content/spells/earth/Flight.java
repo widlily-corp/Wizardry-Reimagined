@@ -11,6 +11,11 @@ import com.binaris.wizardry.registry.EBParticles;
 import com.binaris.wizardry.registry.Elements;
 import com.binaris.wizardry.registry.Spell;
 import com.binaris.wizardry.registry.SpellTiers;
+import com.binaris.wizardry.registry.EBMobEffects;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +24,22 @@ public class Flight extends Spell {
     @Override
     public boolean cast(PlayerCastContext ctx) {
         if (ctx.caster().isInWater() || ctx.caster().isInLava() || ctx.caster().isFallFlying()) return false;
+
+        // One-time cast (from Scroll or single cast) gives full 30 seconds of flight!
+        if (ctx.castingTicks() <= 1) {
+            if (!ctx.caster().level().isClientSide) {
+                ctx.caster().addEffect(new MobEffectInstance(EBMobEffects.FLIGHT, 600, 0));
+                ctx.caster().addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 660, 0));
+                ctx.caster().fallDistance = 0.0f;
+                if (ctx.caster() instanceof Player player) {
+                    player.getAbilities().mayfly = true;
+                    player.onUpdateAbilities();
+                    player.displayClientMessage(Component.literal("§b✦ Магический полёт дарован на 30 секунд! ✦"), true);
+                }
+            }
+            playSound(ctx.world(), ctx.caster(), 1, -1);
+            return true;
+        }
 
         // Particles
         if (ctx.caster().level().isClientSide) {

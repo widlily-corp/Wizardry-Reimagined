@@ -20,42 +20,46 @@ import org.jetbrains.annotations.NotNull;
 public class Meteor extends RaySpell {
     @Override
     protected boolean onBlockHit(CastContext ctx, BlockHitResult blockHit, Vec3 origin) {
-        if (ctx.world().canSeeSky(blockHit.getBlockPos().above())) {
-            if (!ctx.world().isClientSide()) {
-                MeteorEntity meteor = new MeteorEntity(ctx.world(),
-                        blockHit.getBlockPos().getX() + 0.5,
-                        blockHit.getBlockPos().getY() + 40,
-                        blockHit.getBlockPos().getZ() + 0.5,
-                        ctx.modifiers().getFactor(SpellModifiers.BLAST),
-                        EntityUtil.canDamageBlocks(ctx.caster(), ctx.world()));
-                ctx.world().addFreshEntity(meteor);
-            }
-            return true;
+        if (!ctx.world().isClientSide()) {
+            Vec3 target = blockHit.getLocation();
+            spawnAngledMeteor(ctx, target);
         }
-        return false;
+        return true;
     }
 
     @Override
     protected boolean onEntityHit(CastContext ctx, EntityHitResult entityHit, Vec3 origin) {
-        BlockPos pos = entityHit.getEntity().blockPosition();
-        if (ctx.world().canSeeSky(pos.above())) {
-            if (!ctx.world().isClientSide()) {
-                MeteorEntity meteor = new MeteorEntity(ctx.world(),
-                        pos.getX() + 0.5,
-                        pos.getY() + 40,
-                        pos.getZ() + 0.5,
-                        ctx.modifiers().getFactor(SpellModifiers.BLAST),
-                        EntityUtil.canDamageBlocks(ctx.caster(), ctx.world()));
-                ctx.world().addFreshEntity(meteor);
-            }
-            return true;
+        if (!ctx.world().isClientSide()) {
+            Vec3 target = entityHit.getEntity().position();
+            spawnAngledMeteor(ctx, target);
         }
-        return false;
+        return true;
+    }
+
+    private void spawnAngledMeteor(CastContext ctx, Vec3 target) {
+        double spawnHeight = 35.0;
+        double spawnOffsetX = -12.0;
+        double spawnOffsetZ = -12.0;
+
+        Vec3 spawnPos = target.add(spawnOffsetX, spawnHeight, spawnOffsetZ);
+        Vec3 velocity = target.subtract(spawnPos).normalize().scale(1.8);
+
+        MeteorEntity meteor = new MeteorEntity(ctx.world(),
+                spawnPos.x, spawnPos.y, spawnPos.z,
+                ctx.modifiers().getFactor(SpellModifiers.BLAST),
+                EntityUtil.canDamageBlocks(ctx.caster(), ctx.world()));
+
+        meteor.setDeltaMovement(velocity);
+        ctx.world().addFreshEntity(meteor);
     }
 
     @Override
     protected boolean onMiss(CastContext ctx, Vec3 origin, Vec3 direction) {
-        return false;
+        if (!ctx.world().isClientSide()) {
+            Vec3 target = origin.add(direction.scale(25.0));
+            spawnAngledMeteor(ctx, target);
+        }
+        return true;
     }
 
     @Override

@@ -39,10 +39,10 @@ public final class ClientEntityEvents {
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/ice_charge.png"), 0.6f));
 
         event.registerEntityRenderer(EBEntities.FORCE_ORB.get(),
-                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/force_orb.png"), 0.7f));
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/force_orb.png"), 1.1f));
 
         event.registerEntityRenderer(EBEntities.DARKNESS_ORB.get(),
-                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/darkness_orb.png"), 0.7f));
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/darkness_orb.png"), 1.1f));
 
         event.registerEntityRenderer(EBEntities.POISON_BOMB.get(),
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/dart.png"), 0.6f));
@@ -85,13 +85,13 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.BLIZZARD.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.HAILSTORM.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.FROST_SIGIL.get(), BlankRenderer::new);
-        event.registerEntityRenderer(EBEntities.ICE_SPIKE.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ICE_SPIKE.get(), com.binaris.wizardry.client.renderer.entity.construct.IceSpikeRenderer::new);
         event.registerEntityRenderer(EBEntities.ICE_BARRIER.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.LIGHTNING_SIGIL.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.TORNADO.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.HEAL_AURA.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.BUBBLE.get(), BlankRenderer::new);
-        event.registerEntityRenderer(EBEntities.BOULDER.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.BOULDER.get(), com.binaris.wizardry.client.renderer.entity.construct.BoulderRenderer::new);
         event.registerEntityRenderer(EBEntities.DECAY.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.ARROW_RAIN.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.ARROW_ORB.get(), BlankRenderer::new);

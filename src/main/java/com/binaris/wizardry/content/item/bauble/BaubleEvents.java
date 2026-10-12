@@ -48,8 +48,40 @@ public final class BaubleEvents {
             }
         }
 
+        // Curse of Soulbinding - transfer 50% damage to bound targets nearby
+        if (!player.level().isClientSide) {
+            var boundTargets = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(16.0),
+                    e -> e != player && e.hasEffect(com.binaris.wizardry.registry.EBMobEffects.CURSE_OF_SOULBINDING));
+            if (!boundTargets.isEmpty()) {
+                float sharedDamage = event.getAmount() * 0.5F;
+                event.setAmount(event.getAmount() * 0.5F);
+                for (LivingEntity bound : boundTargets) {
+                    bound.hurt(player.damageSources().magic(), sharedDamage);
+                    ((net.minecraft.server.level.ServerLevel) player.level()).sendParticles(
+                            net.minecraft.core.particles.ParticleTypes.SOUL,
+                            bound.getX(), bound.getY() + bound.getBbHeight() / 2, bound.getZ(),
+                            6, 0.2, 0.2, 0.2, 0.05);
+                }
+            }
+        }
+
         // Retaliation effects when hit by living attacker
         if (event.getSource().getEntity() instanceof LivingEntity attacker && attacker != player) {
+            // Static Aura retaliation shock
+            if (player.hasEffect(com.binaris.wizardry.registry.EBMobEffects.STATIC_AURA)) {
+                attacker.hurt(player.damageSources().magic(), 3.5F);
+                if (!player.level().isClientSide) {
+                    ((net.minecraft.server.level.ServerLevel) player.level()).sendParticles(
+                            net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                            attacker.getX(), attacker.getY() + attacker.getBbHeight() / 2, attacker.getZ(),
+                            10, 0.3, 0.3, 0.3, 0.1);
+                    if (com.binaris.wizardry.registry.EBSounds.SPELL_STATIC_AURA_RETALIATE != null && com.binaris.wizardry.registry.EBSounds.SPELL_STATIC_AURA_RETALIATE.get() != null) {
+                        player.level().playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(),
+                                com.binaris.wizardry.registry.EBSounds.SPELL_STATIC_AURA_RETALIATE.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+                    }
+                }
+            }
+
             // Amulet of Potential - 15% chance to strike attacker with lightning
             if (BaubleItem.hasBauble(player, EBBaubleItems.AMULET_POTENTIAL.get()) && player.getRandom().nextFloat() < 0.15F) {
                 if (!player.level().isClientSide) {
@@ -100,6 +132,20 @@ public final class BaubleEvents {
         // Ring of Combustion - ignites target
         if (BaubleItem.hasBauble(player, EBBaubleItems.RING_COMBUSTION.get())) {
             target.igniteForSeconds(4.0F);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide) return;
+        if (!player.isCreative() && !player.isSpectator()) {
+            if (player.getAbilities().mayfly && !player.hasEffect(com.binaris.wizardry.registry.EBMobEffects.FLIGHT)) {
+                player.getAbilities().mayfly = false;
+                player.getAbilities().flying = false;
+                player.onUpdateAbilities();
+                player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 100, 0));
+            }
         }
     }
 

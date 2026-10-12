@@ -10,6 +10,10 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -50,11 +54,22 @@ public final class EBMobEffects {
             MOB_EFFECTS.register("static_aura", () -> new MagicMobEffect(MobEffectCategory.BENEFICIAL, 0x00ffff) {
                 @Override
                 public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
+                    if (entity.tickCount % 5 == 0) {
+                        for (int i = 0; i < 2; i++) {
+                            double px = entity.getX() + (entity.getRandom().nextDouble() - 0.5) * entity.getBbWidth() * 1.6;
+                            double py = entity.getY() + entity.getRandom().nextDouble() * entity.getBbHeight();
+                            double pz = entity.getZ() + (entity.getRandom().nextDouble() - 0.5) * entity.getBbWidth() * 1.6;
+                            level.sendParticles(ParticleTypes.ELECTRIC_SPARK, px, py, pz, 1, 0, 0.05, 0, 0.05);
+                        }
+                    }
+
                     if (entity.tickCount % 20 == 0) {
-                        level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(3.0))
+                        level.getEntitiesOfClass(LivingEntity.class, entity.getBoundingBox().inflate(3.5))
                                 .forEach(target -> {
-                                    if (target != entity) {
-                                        target.hurt(level.damageSources().magic(), 2.0f + amplifier);
+                                    if (target != entity && target.isAlive()) {
+                                        target.hurt(level.damageSources().magic(), 2.5f + amplifier * 1.5f);
+                                        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 8, 0.3, 0.3, 0.3, 0.1);
+                                        level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.PLAYERS, 0.6f, 1.8f);
                                     }
                                 });
                     }
@@ -131,6 +146,24 @@ public final class EBMobEffects {
                         var pos = entity.blockPosition().below();
                         if (level.getBlockState(pos).is(Blocks.WATER)) {
                             level.setBlockAndUpdate(pos, Blocks.FROSTED_ICE.defaultBlockState());
+                        }
+                    }
+                    return true;
+                }
+            });
+
+    public static final DeferredHolder<MobEffect, MobEffect> FLIGHT =
+            MOB_EFFECTS.register("flight", () -> new MagicMobEffect(MobEffectCategory.BENEFICIAL, 0x55ffff) {
+                @Override
+                public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
+                    if (entity instanceof Player player) {
+                        if (!player.getAbilities().mayfly) {
+                            player.getAbilities().mayfly = true;
+                            player.onUpdateAbilities();
+                        }
+                        player.fallDistance = 0.0f;
+                        if (player.level().random.nextInt(3) == 0) {
+                            level.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY() + 0.1, player.getZ(), 1, 0.2, 0.0, 0.2, 0.02);
                         }
                     }
                     return true;

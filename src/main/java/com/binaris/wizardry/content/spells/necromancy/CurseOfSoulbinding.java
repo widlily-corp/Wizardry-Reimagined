@@ -11,8 +11,11 @@ import com.binaris.wizardry.registry.EBMobEffects;
 import com.binaris.wizardry.registry.EBParticles;
 import com.binaris.wizardry.registry.Elements;
 import com.binaris.wizardry.registry.SpellTiers;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -28,6 +31,12 @@ public class CurseOfSoulbinding extends RaySpell {
         if (entityHit.getEntity() instanceof LivingEntity livingTarget) {
             if (!ctx.world().isClientSide) {
                 livingTarget.addEffect(new MobEffectInstance(EBMobEffects.CURSE_OF_SOULBINDING, 6000));
+                if (ctx.caster() instanceof Player player) {
+                    player.displayClientMessage(Component.literal("§d✦ Душа врага связана с вашей! ✦"), true);
+                }
+                net.minecraft.server.level.ServerLevel serverLevel = (net.minecraft.server.level.ServerLevel) ctx.world();
+                serverLevel.sendParticles(ParticleTypes.SOUL, livingTarget.getX(), livingTarget.getY() + 1.0, livingTarget.getZ(), 20, 0.4, 0.5, 0.4, 0.05);
+                serverLevel.sendParticles(ParticleTypes.PORTAL, livingTarget.getX(), livingTarget.getY() + 1.0, livingTarget.getZ(), 25, 0.5, 0.5, 0.5, 0.1);
             }
             return true;
         }
