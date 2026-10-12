@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_necromancy"
+    }
+  ],
+  "result": {
+    "id": "ebwizardry:necromancy_banner_pattern",
+    "count": 1
+  }
+}

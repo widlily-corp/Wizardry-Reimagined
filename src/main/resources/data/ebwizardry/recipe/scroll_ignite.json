@@ -1,0 +1,24 @@
+{
+  "ingredients": [
+    {
+      "item": "ebwizardry:blank_scroll"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_fire"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "category": "misc",
+  "result": {
+    "components": {
+      "ebwizardry:spell_data": {
+        "spell": "ebwizardry:ignite"
+      }
+    },
+    "id": "ebwizardry:scroll",
+    "count": 1
+  },
+  "type": "minecraft:crafting_shapeless"
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:oak_planks"
+    },
+    "k": {
+      "item": "minecraft:book"
+    },
+    "i": {
+      "item": "ebwizardry:magic_crystal"
+    }
+  },
+  "pattern": [
+    "bbb",
+    "kik",
+    "bbb"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ebwizardry:bookshelf"
+  },
+  "show_notification": true
+}

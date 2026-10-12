@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "ebwizardry:gilded_dark_oak_wood"
+    },
+    "i": {
+      "item": "ebwizardry:magic_crystal_grand"
+    },
+    "n": {
+      "item": "minecraft:book"
+    }
+  },
+  "pattern": [
+    "bnb",
+    "ibi",
+    "bbb"
+  ],
+  "result": {
+    "id": "ebwizardry:dark_oak_lectern",
+    "count": 1
+  },
+  "show_notification": true
+}

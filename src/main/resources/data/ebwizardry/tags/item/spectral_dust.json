@@ -1,0 +1,19 @@
+{
+  "values": [
+    "ebwizardry:spectral_dust",
+    "ebwizardry:spectral_dust_earth",
+    "ebwizardry:spectral_dust_fire",
+    "ebwizardry:spectral_dust_healing",
+    "ebwizardry:spectral_dust_ice",
+    "ebwizardry:spectral_dust_lightning",
+    "ebwizardry:spectral_dust_necromancy",
+    "ebwizardry:spectral_dust_sorcery",
+    "ebwizardry:earth_elemental_dust",
+    "ebwizardry:fire_elemental_dust",
+    "ebwizardry:healing_elemental_dust",
+    "ebwizardry:ice_elemental_dust",
+    "ebwizardry:lightning_elemental_dust",
+    "ebwizardry:necromancy_elemental_dust",
+    "ebwizardry:sorcery_elemental_dust"
+  ]
+}

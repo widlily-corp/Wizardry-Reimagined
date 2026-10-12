@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "ebwizardry:magic_crystal_fire"
+    }
+  ],
+  "result": {
+    "id": "ebwizardry:fire_banner_pattern",
+    "count": 1
+  }
+}

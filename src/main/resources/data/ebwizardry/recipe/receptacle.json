@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "p": {
+      "item": "minecraft:flower_pot"
+    }
+  },
+  "pattern": [
+    "gpg",
+    " g "
+  ],
+  "result": {
+    "id": "ebwizardry:receptacle",
+    "count": 1
+  },
+  "show_notification": true
+}

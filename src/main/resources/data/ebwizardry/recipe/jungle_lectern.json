@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "ebwizardry:gilded_jungle_wood"
+    },
+    "i": {
+      "item": "ebwizardry:magic_crystal_grand"
+    },
+    "n": {
+      "item": "minecraft:book"
+    }
+  },
+  "pattern": [
+    "bnb",
+    "ibi",
+    "bbb"
+  ],
+  "result": {
+    "id": "ebwizardry:jungle_lectern",
+    "count": 1
+  },
+  "show_notification": true
+}
