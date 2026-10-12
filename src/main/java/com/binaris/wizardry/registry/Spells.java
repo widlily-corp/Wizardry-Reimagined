@@ -1,9 +1,9 @@
 package com.binaris.wizardry.registry;
 
-import net.neoforged.neoforge.registries.DeferredHolder;
+import java.util.function.Supplier;
 
 public final class Spells {
-    public static final DeferredHolder<Spell, NoneSpell> NONE = EBRegistries.SPELLS.register("none", NoneSpell::new);
+    public static final Supplier<Spell> NONE = () -> EBSpells.NONE;
 
     public static void init() {}
 
