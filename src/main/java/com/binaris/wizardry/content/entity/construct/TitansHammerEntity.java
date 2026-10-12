@@ -94,16 +94,52 @@ public class TitansHammerEntity extends MagicConstructEntity {
                 setPos(getX(), getY() - 2.2, getZ());
             }
         } else {
+            // ==========================================
+            // Phase 2: Static Tempest Crater (Lingering Aftermath Zone - 12s)
+            // ==========================================
             postImpactTicks++;
 
-            if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
-                if (postImpactTicks % 4 == 0) {
-                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY() + 1.0, getZ(), 6, 1.5, 1.0, 1.5, 0.1);
+            if (level().isClientSide) {
+                // Electric sparks crawling across the crater ground
+                for (int i = 0; i < 4; i++) {
+                    double angle = random.nextDouble() * Math.PI * 2;
+                    double r = random.nextDouble() * 9.0;
+                    double px = getX() + Math.cos(angle) * r;
+                    double pz = getZ() + Math.sin(angle) * r;
+                    level().addParticle(ParticleTypes.ELECTRIC_SPARK, px, getY() + 0.15, pz, (random.nextDouble() - 0.5) * 0.1, 0.05, (random.nextDouble() - 0.5) * 0.1);
                 }
-            }
+            } else if (level() instanceof ServerLevel serverLevel) {
+                // Every 40 ticks (2 seconds): Secondary Lightning Strike from charged clouds!
+                if (postImpactTicks % 40 == 0) {
+                    double ox = (random.nextDouble() - 0.5) * 8.0;
+                    double oz = (random.nextDouble() - 0.5) * 8.0;
+                    LightningBolt secondaryBolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
+                    if (secondaryBolt != null) {
+                        secondaryBolt.moveTo(getX() + ox, getY(), getZ() + oz);
+                        secondaryBolt.setVisualOnly(true);
+                        serverLevel.addFreshEntity(secondaryBolt);
+                    }
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 3.5f, 1.4f);
 
-            if (postImpactTicks > 35) {
-                discard();
+                    // Chain shock pulse to all enemies in crater
+                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10.0),
+                            this::isValidTarget);
+                    for (LivingEntity enemy : enemies) {
+                        enemy.hurt(level().damageSources().magic(), 8.0f);
+                        enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2, false, false));
+                        enemy.setDeltaMovement(enemy.getDeltaMovement().multiply(0.2, 1.0, 0.2)); // Micro-paralysis
+                        serverLevel.sendParticles(ParticleTypes.FLASH, enemy.getX(), enemy.getY() + 1.0, enemy.getZ(), 1, 0, 0, 0, 0);
+                        serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, enemy.getX(), enemy.getY() + 1.0, enemy.getZ(), 15, 0.3, 0.3, 0.3, 0.1);
+                    }
+                }
+
+                // Discard after 240 ticks (12 full seconds)
+                if (postImpactTicks >= 240) {
+                    serverLevel.sendParticles(ParticleTypes.FLASH, getX(), getY() + 1.0, getZ(), 3, 0.2, 0.2, 0.2, 0);
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY() + 1.0, getZ(), 60, 3.0, 1.0, 3.0, 0.1);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 2.0f, 1.5f);
+                    discard();
+                }
             }
         }
     }
@@ -111,20 +147,26 @@ public class TitansHammerEntity extends MagicConstructEntity {
     private void onImpact() {
         Vec3 pos = position();
 
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5.0f, 0.7f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.TRIDENT_THUNDER.value(), SoundSource.WEATHER, 4.0f, 0.6f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 3.5f, 0.8f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 6.0f, 0.6f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.TRIDENT_THUNDER.value(), SoundSource.WEATHER, 5.0f, 0.55f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 4.5f, 0.7f);
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
             // Visual cataclysm blast
-            serverLevel.sendParticles(ParticleTypes.FLASH, pos.x, pos.y + 0.5, pos.z, 6, 0.5, 0.5, 0.5, 0);
-            serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, pos.x, pos.y + 1.0, pos.z, 5, 1.5, 1.5, 1.5, 0);
-            serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, pos.x, pos.y + 1.0, pos.z, 90, 4.0, 2.0, 4.0, 0.3);
+            serverLevel.sendParticles(ParticleTypes.FLASH, pos.x, pos.y + 0.5, pos.z, 8, 1.0, 1.0, 1.0, 0);
+            serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, pos.x, pos.y + 1.0, pos.z, 6, 2.0, 2.0, 2.0, 0);
+            serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, pos.x, pos.y + 1.0, pos.z, 160, 6.0, 3.0, 6.0, 0.4);
+
+            // Expanding sonic shockwave
+            for (int i = 0; i < 36; i++) {
+                double angle = (Math.PI * 2 / 36) * i;
+                serverLevel.sendParticles(ParticleTypes.SONIC_BOOM, pos.x + 7.0 * Math.cos(angle), pos.y + 0.3, pos.z + 7.0 * Math.sin(angle), 1, 0, 0, 0, 0);
+            }
 
             // Spawn genuine lightning strikes around impact
-            for (int i = 0; i < 3; i++) {
-                double ox = (random.nextDouble() - 0.5) * 6.0;
-                double oz = (random.nextDouble() - 0.5) * 6.0;
+            for (int i = 0; i < 4; i++) {
+                double ox = (random.nextDouble() - 0.5) * 8.0;
+                double oz = (random.nextDouble() - 0.5) * 8.0;
                 LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
                 if (bolt != null) {
                     bolt.moveTo(pos.x + ox, pos.y, pos.z + oz);
@@ -134,16 +176,16 @@ public class TitansHammerEntity extends MagicConstructEntity {
             }
 
             // Damage, stun and knockback entities
-            float blastRadius = 12.0f;
+            float blastRadius = 14.0f;
             List<LivingEntity> targets = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(blastRadius));
             for (LivingEntity target : targets) {
                 if (!isValidTarget(target)) continue;
 
-                target.hurt(level().damageSources().magic(), 60.0f);
-                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 3)); // Stun/Slow IV for 6s
+                target.hurt(level().damageSources().magic(), 70.0f);
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 160, 3)); // Stun/Slow IV for 8s
 
                 // Seismic upward + outward knockback
-                Vec3 knock = target.position().subtract(pos).normalize().scale(1.5).add(0, 0.8, 0);
+                Vec3 knock = target.position().subtract(pos).normalize().scale(2.2).add(0, 0.95, 0);
                 target.setDeltaMovement(knock);
                 if (target instanceof ServerPlayer player) {
                     player.connection.send(new ClientboundSetEntityMotionPacket(player));

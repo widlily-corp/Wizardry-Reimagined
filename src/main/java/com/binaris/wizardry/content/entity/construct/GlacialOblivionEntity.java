@@ -1,6 +1,7 @@
 package com.binaris.wizardry.content.entity.construct;
 
 import com.binaris.wizardry.registry.EBEntities;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
@@ -58,6 +59,46 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
         super.tick();
 
         if (isShattered()) {
+            // ==========================================
+            // Phase 2: Lingering Permafrost Aftermath Zone (12s)
+            // ==========================================
+            stormTicks++;
+
+            if (level().isClientSide) {
+                // Freezing mist and ground blizzard
+                for (int i = 0; i < 4; i++) {
+                    double angle = random.nextDouble() * Math.PI * 2;
+                    double r = random.nextDouble() * 9.0;
+                    double px = getX() + Math.cos(angle) * r;
+                    double pz = getZ() + Math.sin(angle) * r;
+                    level().addParticle(ParticleTypes.SNOWFLAKE, px, getY() + 0.15, pz, (random.nextDouble() - 0.5) * 0.1, 0.02, (random.nextDouble() - 0.5) * 0.1);
+                    level().addParticle(ParticleTypes.ITEM_SNOWBALL, px, getY() + 0.1, pz, 0, 0.01, 0);
+                }
+            } else if (level() instanceof ServerLevel serverLevel) {
+                // Every 10 ticks (~0.5s): Absolute Zero Frostbite Pulse
+                if (stormTicks % 10 == 0) {
+                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(9.5),
+                            this::isValidTarget);
+                    for (LivingEntity enemy : enemies) {
+                        enemy.hurt(level().damageSources().freeze(), 5.0f);
+                        enemy.setTicksFrozen(350);
+                        enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 3, false, false));
+                        enemy.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40, 2, false, false));
+                        serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, enemy.getX(), enemy.getY() + 0.5, enemy.getZ(), 6, 0.3, 0.3, 0.3, 0.02);
+                    }
+
+                    if (stormTicks % 30 == 0) {
+                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.WEATHER, 1.8f, 0.7f);
+                    }
+                }
+
+                // Discard after 240 ticks post-shatter
+                if (stormTicks >= STORM_DURATION + 240) {
+                    serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, getX(), getY() + 1.0, getZ(), 60, 4.0, 1.0, 4.0, 0.05);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.WEATHER, 2.0f, 1.2f);
+                    discard();
+                }
+            }
             return;
         }
 
@@ -72,7 +113,7 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
             Vec3 center = position();
-            double radius = 9.0;
+            double radius = 10.0;
             List<LivingEntity> targets = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(radius));
 
             for (LivingEntity target : targets) {
@@ -81,8 +122,8 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
                 // Pull enemies inward towards absolute zero epicenter
                 Vec3 toCenter = center.subtract(target.position());
                 if (toCenter.lengthSqr() > 1.0) {
-                    Vec3 pull = toCenter.normalize().scale(0.18);
-                    target.setDeltaMovement(target.getDeltaMovement().add(pull.x, 0.02, pull.z));
+                    Vec3 pull = toCenter.normalize().scale(0.22);
+                    target.setDeltaMovement(target.getDeltaMovement().add(pull.x, 0.03, pull.z));
                     if (target instanceof ServerPlayer player) {
                         player.connection.send(new ClientboundSetEntityMotionPacket(player));
                     }
@@ -90,8 +131,8 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
 
                 // Periodic frostbite damage
                 if (stormTicks % 10 == 0) {
-                    target.hurt(level().damageSources().magic(), 4.0f);
-                    target.setTicksFrozen(Math.max(target.getTicksFrozen(), 300));
+                    target.hurt(level().damageSources().freeze(), 5.0f);
+                    target.setTicksFrozen(Math.max(target.getTicksFrozen(), 350));
                 }
             }
 
@@ -99,7 +140,6 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
             if (stormTicks >= STORM_DURATION) {
                 onShatter(serverLevel);
                 this.entityData.set(SHATTERED, true);
-                discard();
             }
         }
     }
@@ -107,27 +147,49 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
     private void onInitialEruption() {
         Vec3 pos = position();
 
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 3.0f, 0.5f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, 2.5f, 0.8f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_HURT_FREEZE, SoundSource.PLAYERS, 2.0f, 0.7f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 4.0f, 0.5f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, 3.5f, 0.75f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_HURT_FREEZE, SoundSource.PLAYERS, 3.0f, 0.7f);
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
-            // Radial frost shockwave
-            for (int i = 0; i < 40; i++) {
-                double angle = (Math.PI * 2 / 40) * i;
-                double speed = 0.9;
-                serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, pos.x, pos.y + 0.3, pos.z, 2, Math.cos(angle) * speed, 0.15, Math.sin(angle) * speed, 0.05);
+            // Massive radial frost shockwave
+            for (int i = 0; i < 48; i++) {
+                double angle = (Math.PI * 2 / 48) * i;
+                double speed = 1.2;
+                serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, pos.x, pos.y + 0.3, pos.z, 3, Math.cos(angle) * speed, 0.2, Math.sin(angle) * speed, 0.08);
             }
 
-            double initialRadius = 9.0;
+            double initialRadius = 11.0;
             List<LivingEntity> targets = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(initialRadius));
             for (LivingEntity target : targets) {
                 if (!isValidTarget(target)) continue;
 
-                target.hurt(level().damageSources().magic(), 45.0f);
+                target.hurt(level().damageSources().magic(), 55.0f);
                 target.setTicksFrozen(400); // 20s freeze overlay
                 target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 3)); // Slowness IV for 10s
                 target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 200, 2)); // Weakness III
+            }
+
+            // Freeze terrain (water -> blue ice, grass -> packed ice/snow)
+            BlockPos centerPos = blockPosition();
+            boolean canGrief = com.binaris.wizardry.api.content.util.EntityUtil.canDamageBlocks(getCaster(), level());
+            for (int x = -4; x <= 4; x++) {
+                for (int z = -4; z <= 4; z++) {
+                    if (x * x + z * z <= 18) {
+                        BlockPos targetPos = centerPos.offset(x, 0, z);
+                        var state = level().getBlockState(targetPos);
+                        if (state.getBlock() == net.minecraft.world.level.block.Blocks.WATER) {
+                            level().setBlockAndUpdate(targetPos, net.minecraft.world.level.block.Blocks.BLUE_ICE.defaultBlockState());
+                        } else if (state.getBlock() == net.minecraft.world.level.block.Blocks.FIRE) {
+                            level().setBlockAndUpdate(targetPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+                        } else if (canGrief && random.nextFloat() < 0.35f) {
+                            BlockPos surfacePos = targetPos.below();
+                            if (level().getBlockState(surfacePos).isSolidRender(level(), surfacePos) && level().getBlockState(targetPos).isAir()) {
+                                level().setBlockAndUpdate(targetPos, net.minecraft.world.level.block.Blocks.SNOW.defaultBlockState());
+                            }
+                        }
+                    }
+                }
             }
         }
     }

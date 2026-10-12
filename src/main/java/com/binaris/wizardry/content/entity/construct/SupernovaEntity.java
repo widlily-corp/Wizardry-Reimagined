@@ -15,11 +15,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -111,12 +114,44 @@ public class SupernovaEntity extends MagicConstructEntity {
                 }
             }
         } else {
-            // Phase 2: Expanding solar blast wave
+            // ==========================================
+            // Phase 2: Scorched Supernova Crater (Lingering Aftermath Zone - 12s)
+            // ==========================================
             postImpactTicks++;
-            spawnPostImpactParticles(postImpactTicks);
 
-            if (postImpactTicks > 30) {
-                discard();
+            if (level().isClientSide) {
+                // Rising volcanic smoke pillars and lava cinders across the crater
+                for (int i = 0; i < 3; i++) {
+                    double angle = random.nextDouble() * Math.PI * 2;
+                    double r = random.nextDouble() * 8.0;
+                    double px = getX() + Math.cos(angle) * r;
+                    double pz = getZ() + Math.sin(angle) * r;
+                    level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, px, getY() + 0.2, pz, 0, 0.08, 0);
+                    level().addParticle(ParticleTypes.FLAME, px, getY() + 0.1, pz, (random.nextDouble() - 0.5) * 0.05, 0.05, (random.nextDouble() - 0.5) * 0.05);
+                }
+            } else if (level() instanceof ServerLevel serverLevel) {
+                // Every 10 ticks (~0.5s): Scorched Crater Hazard Pulse
+                if (postImpactTicks % 10 == 0) {
+                    List<LivingEntity> enemies = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10.0),
+                            this::isValidTarget);
+                    for (LivingEntity enemy : enemies) {
+                        enemy.hurt(level().damageSources().inFire(), 6.0f);
+                        enemy.setRemainingFireTicks(160);
+                        enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, false));
+                        serverLevel.sendParticles(ParticleTypes.LAVA, enemy.getX(), enemy.getY() + 0.5, enemy.getZ(), 3, 0.2, 0.2, 0.2, 0.02);
+                    }
+
+                    if (postImpactTicks % 30 == 0) {
+                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_AMBIENT, SoundSource.WEATHER, 1.8f, 0.8f);
+                    }
+                }
+
+                // Discard after 240 ticks (12 full seconds)
+                if (postImpactTicks >= 240) {
+                    serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 1.0, getZ(), 60, 4.0, 1.0, 4.0, 0.05);
+                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.WEATHER, 2.5f, 0.8f);
+                    discard();
+                }
             }
         }
     }
@@ -125,29 +160,32 @@ public class SupernovaEntity extends MagicConstructEntity {
         Vec3 pos = position();
 
         // 1. Play cataclysmic explosion sounds
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 5.0f, 0.6f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 4.0f, 0.7f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 3.0f, 0.5f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 6.0f, 0.55f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5.0f, 0.7f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 3.5f, 0.5f);
+        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.FIRECHARGE_USE, SoundSource.WEATHER, 4.0f, 0.6f);
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
-            // Huge flash + blast
-            serverLevel.sendParticles(ParticleTypes.FLASH, pos.x, pos.y + 0.5, pos.z, 5, 0.5, 0.5, 0.5, 0.0);
-            serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, pos.x, pos.y + 1.0, pos.z, 6, 1.5, 1.5, 1.5, 0.0);
+            // Massive flash + multi-stage blast emitters
+            serverLevel.sendParticles(ParticleTypes.FLASH, pos.x, pos.y + 0.5, pos.z, 8, 1.0, 1.0, 1.0, 0.0);
+            serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, pos.x, pos.y + 1.0, pos.z, 8, 2.0, 2.0, 2.0, 0.0);
+            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.x, pos.y + 1.0, pos.z, 80, 5.0, 3.0, 5.0, 0.1);
 
-            // Ring of fire on blast
-            for (int i = 0; i < 48; i++) {
-                double angle = (Math.PI * 2 / 48) * i;
-                double speed = 1.2;
-                double vx = Math.cos(angle) * speed;
-                double vz = Math.sin(angle) * speed;
-                serverLevel.sendParticles(ParticleTypes.FLAME, pos.x, pos.y + 0.3, pos.z, 2, vx, 0.2, vz, 0.15);
-                serverLevel.sendParticles(ParticleTypes.LAVA, pos.x, pos.y + 0.5, pos.z, 1, vx * 0.8, 0.3, vz * 0.8, 0.1);
+            // Expanding rings of fire and lava
+            for (int r = 1; r <= 3; r++) {
+                double speed = r * 0.55;
+                for (int i = 0; i < 36; i++) {
+                    double angle = (Math.PI * 2 / 36) * i;
+                    double vx = Math.cos(angle) * speed;
+                    double vz = Math.sin(angle) * speed;
+                    serverLevel.sendParticles(ParticleTypes.FLAME, pos.x, pos.y + 0.3, pos.z, 2, vx, 0.25, vz, 0.12);
+                    serverLevel.sendParticles(ParticleTypes.LAVA, pos.x, pos.y + 0.5, pos.z, 1, vx * 0.7, 0.3, vz * 0.7, 0.08);
+                }
             }
 
-            // 2. Damage, incinerate and knockback entities
-            float blastRadius = 12.0f;
+            // 2. Colossal damage, incineration and massive knockback
+            float blastRadius = 14.0f;
             List<LivingEntity> targets = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(blastRadius));
-            Entity caster = getOwner();
 
             for (LivingEntity target : targets) {
                 if (!isValidTarget(target)) {
@@ -156,14 +194,14 @@ public class SupernovaEntity extends MagicConstructEntity {
 
                 double dist = target.distanceTo(this);
                 if (dist <= blastRadius) {
-                    float damageMultiplier = (float) (1.0 - (dist / blastRadius) * 0.4);
-                    float totalDamage = 55.0f * damageMultiplier;
+                    float damageMultiplier = (float) (1.0 - (dist / blastRadius) * 0.35);
+                    float totalDamage = 75.0f * damageMultiplier;
 
-                    target.hurt(level().damageSources().magic(), totalDamage);
+                    target.hurt(level().damageSources().inFire(), totalDamage);
                     target.setRemainingFireTicks(400); // 20 seconds fire
 
-                    // Outward + upward knockback
-                    Vec3 knock = target.position().subtract(pos).normalize().scale(1.4).add(0, 0.75, 0);
+                    // Outward + upward explosion knockback
+                    Vec3 knock = target.position().subtract(pos).normalize().scale(2.2).add(0, 0.9, 0);
                     target.setDeltaMovement(knock);
                     if (target instanceof ServerPlayer player) {
                         player.connection.send(new ClientboundSetEntityMotionPacket(player));
@@ -171,14 +209,31 @@ public class SupernovaEntity extends MagicConstructEntity {
                 }
             }
 
-            // 3. Ignite a few safe blocks around center
+            // 3. Environmental Scorch (terrain conversion & water vaporisation)
             BlockPos centerPos = blockPosition();
-            for (int x = -2; x <= 2; x++) {
-                for (int z = -2; z <= 2; z++) {
-                    if (random.nextFloat() < 0.45f) {
+            boolean canGrief = EntityUtil.canDamageBlocks(getCaster(), level());
+            for (int x = -4; x <= 4; x++) {
+                for (int z = -4; z <= 4; z++) {
+                    if (x * x + z * z <= 18) {
                         BlockPos targetPos = centerPos.offset(x, 0, z);
-                        if (level().getBlockState(targetPos).isAir() && level().getBlockState(targetPos.below()).isSolidRender(level(), targetPos.below())) {
-                            level().setBlockAndUpdate(targetPos, Blocks.FIRE.defaultBlockState());
+                        BlockState state = level().getBlockState(targetPos);
+
+                        // Flash-vaporise water
+                        if (state.getBlock() == Blocks.WATER) {
+                            level().setBlockAndUpdate(targetPos, Blocks.AIR.defaultBlockState());
+                            serverLevel.sendParticles(ParticleTypes.POOF, targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5, 4, 0.2, 0.2, 0.2, 0.05);
+                            level().playSound(null, targetPos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8f, 1.2f);
+                        } else if (state.getBlock() == Blocks.ICE) {
+                            level().setBlockAndUpdate(targetPos, Blocks.WATER.defaultBlockState());
+                        } else if (canGrief && random.nextFloat() < 0.35f) {
+                            BlockPos surfacePos = targetPos.below();
+                            if (level().getBlockState(surfacePos).isSolidRender(level(), surfacePos) && level().getBlockState(targetPos).isAir()) {
+                                if (random.nextBoolean()) {
+                                    level().setBlockAndUpdate(surfacePos, Blocks.MAGMA_BLOCK.defaultBlockState());
+                                } else {
+                                    level().setBlockAndUpdate(targetPos, Blocks.FIRE.defaultBlockState());
+                                }
+                            }
                         }
                     }
                 }
