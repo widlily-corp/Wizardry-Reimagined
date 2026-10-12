@@ -26,6 +26,7 @@ public class FirebombSpell extends Spell {
         level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), EBSounds.ENTITY_FIREBOMB_THROW.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         if (!level.isClientSide) {
             FirebombEntity firebomb = new FirebombEntity(level, caster);
+            firebomb.aim(caster, 1.25f);
             level.addFreshEntity(firebomb);
         }
         return true;

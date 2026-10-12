@@ -58,8 +58,8 @@ public class BubbleConstruct extends MagicConstructEntity {
 
         if (this.level().isClientSide) {
             boolean dark = isDarkOrb();
-            // Render visible floating spherical cage
-            for (int i = 0; i < 4; i++) {
+            // Render visible floating spherical water cage
+            for (int i = 0; i < 8; i++) {
                 double u = random.nextDouble();
                 double v = random.nextDouble();
                 double theta = u * 2.0 * Math.PI;
@@ -76,9 +76,12 @@ public class BubbleConstruct extends MagicConstructEntity {
                         level().addParticle(ParticleTypes.SQUID_INK, px, py, pz, 0, 0, 0);
                     }
                 } else {
-                    level().addParticle(ParticleTypes.BUBBLE, px, py, pz, 0, 0.04, 0);
-                    if (random.nextInt(4) == 0) {
-                        level().addParticle(ParticleTypes.SPLASH, px, py, pz, 0, 0, 0);
+                    level().addParticle(new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.3f, 0.75f, 1.0f), 1.0f), px, py, pz, 0, 0.01, 0);
+                    if (random.nextBoolean()) {
+                        level().addParticle(ParticleTypes.BUBBLE_POP, px, py, pz, 0, 0.02, 0);
+                    }
+                    if (random.nextInt(3) == 0) {
+                        level().addParticle(ParticleTypes.SPLASH, px, py, pz, 0, 0.01, 0);
                     }
                 }
             }

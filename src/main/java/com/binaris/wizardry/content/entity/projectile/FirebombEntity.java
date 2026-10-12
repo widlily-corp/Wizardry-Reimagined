@@ -33,6 +33,7 @@ public class FirebombEntity extends BombEntity {
 
     public FirebombEntity(Level world, LivingEntity livingEntity) {
         super(EBEntities.FIREBOMB.get(), livingEntity, world);
+        this.aim(livingEntity, 1.25f);
     }
 
     public FirebombEntity(Level world) {
@@ -42,6 +43,17 @@ public class FirebombEntity extends BombEntity {
     @Override
     public int getLifetime() {
         return -1;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level().isClientSide) {
+            level().addParticle(ParticleTypes.FLAME, getX(), getY() + 0.1, getZ(), 0, 0.01, 0);
+            if (this.random.nextBoolean()) {
+                level().addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.1, getZ(), 0, 0.01, 0);
+            }
+        }
     }
 
     @Override
@@ -73,6 +85,12 @@ public class FirebombEntity extends BombEntity {
                 ? EBSpells.FIREBOMB.property(DefaultProperties.SPLASH_DAMAGE) : 3.0f;
         int burnDuration = EBSpells.FIREBOMB != null && EBSpells.FIREBOMB.hasProperty(DefaultProperties.EFFECT_DURATION)
                 ? EBSpells.FIREBOMB.property(DefaultProperties.EFFECT_DURATION) : 7;
+
+        if (level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.FLAME, getX(), getY() + 0.5, getZ(), 45, 1.2, 0.8, 1.2, 0.05);
+            serverLevel.sendParticles(ParticleTypes.LAVA, getX(), getY() + 0.5, getZ(), 15, 0.8, 0.5, 0.8, 0.05);
+            serverLevel.sendParticles(ParticleTypes.EXPLOSION, getX(), getY() + 0.5, getZ(), 1, 0, 0, 0, 0);
+        }
 
         List<LivingEntity> livingEntities = EntityUtil.getLivingEntitiesInRange(level(), getX(), getY(), getZ(), radius);
 

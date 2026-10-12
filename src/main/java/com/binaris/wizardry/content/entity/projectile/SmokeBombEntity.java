@@ -40,9 +40,22 @@ public class SmokeBombEntity extends BombEntity {
         return -1;
     }
 
-    protected void splashEffect() {
+    @Override
+    public void tick() {
+        super.tick();
         if (level().isClientSide) {
-            for (int i = 0; i < 50; i++) {
+            level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 0.1, getZ(), 0, 0.02, 0);
+            level().addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.1, getZ(), 0, 0, 0);
+        }
+    }
+
+    protected void splashEffect() {
+        if (level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY() + 0.5, getZ(), 90, 2.0, 1.2, 2.0, 0.04);
+            serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY() + 0.5, getZ(), 60, 2.5, 1.0, 2.5, 0.05);
+            serverLevel.playSound(null, getX(), getY(), getZ(), net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH, net.minecraft.sounds.SoundSource.PLAYERS, 1.5f, 0.8f);
+        } else if (level().isClientSide) {
+            for (int i = 0; i < 60; i++) {
                 double vx = (random.nextDouble() - 0.5) * 0.4;
                 double vy = random.nextDouble() * 0.2;
                 double vz = (random.nextDouble() - 0.5) * 0.4;
@@ -51,13 +64,14 @@ public class SmokeBombEntity extends BombEntity {
             return;
         }
 
-        double radius = EBSpells.SMOKE_BOMB.hasProperty(DefaultProperties.EFFECT_RADIUS) ? EBSpells.SMOKE_BOMB.property(DefaultProperties.EFFECT_RADIUS) : 2.0;
-        int duration = EBSpells.SMOKE_BOMB.hasProperty(DefaultProperties.EFFECT_DURATION) ? EBSpells.SMOKE_BOMB.property(DefaultProperties.EFFECT_DURATION) : 120;
+        double radius = EBSpells.SMOKE_BOMB.hasProperty(DefaultProperties.EFFECT_RADIUS) ? EBSpells.SMOKE_BOMB.property(DefaultProperties.EFFECT_RADIUS) : 4.0;
+        int duration = EBSpells.SMOKE_BOMB.hasProperty(DefaultProperties.EFFECT_DURATION) ? EBSpells.SMOKE_BOMB.property(DefaultProperties.EFFECT_DURATION) : 160;
         List<LivingEntity> targets = EntityUtil.getLivingWithinRadius(radius, getX(), getY(), getZ(), level());
 
         for (LivingEntity target : targets) {
             if (isValidTarget(target)) {
                 target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration / 2, 0));
             }
         }
     }

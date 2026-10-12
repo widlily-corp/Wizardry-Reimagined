@@ -15,12 +15,13 @@ import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class ThunderboltEntity extends MagicProjectileEntity {
     public ThunderboltEntity(EntityType<? extends ThrowableProjectile> entityType, Level world) {
         super(entityType, world);
-        setLifetime(8);
+        setLifetime(30);
     }
 
     public ThunderboltEntity(Level world) {
@@ -30,13 +31,17 @@ public class ThunderboltEntity extends MagicProjectileEntity {
     @Override
     public void onHitTargetExtraEffects(@NotNull EntityHitResult hitResult) {
         if (!(hitResult.getEntity() instanceof LivingEntity livingEntity)) return;
-        float knockback = EBSpells.THUNDERBOLT.hasProperty(DefaultProperties.KNOCKBACK) ? EBSpells.THUNDERBOLT.property(DefaultProperties.KNOCKBACK) : 0.2f;
+        float knockback = EBSpells.THUNDERBOLT.hasProperty(DefaultProperties.KNOCKBACK) ? EBSpells.THUNDERBOLT.property(DefaultProperties.KNOCKBACK) : 0.4f;
         livingEntity.knockback(knockback * 0.5F, Mth.sin(this.getYRot() * 0.017453292F), -Mth.cos(this.getYRot() * 0.017453292F));
+        if (level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, livingEntity.getX(), livingEntity.getY() + livingEntity.getBbHeight() / 2, livingEntity.getZ(), 20, 0.4, 0.4, 0.4, 0.05);
+            serverLevel.sendParticles(ParticleTypes.FLASH, livingEntity.getX(), livingEntity.getY() + livingEntity.getBbHeight() / 2, livingEntity.getZ(), 1, 0, 0, 0, 0);
+        }
     }
 
     @Override
     public float getDamage(@NotNull EntityHitResult hitResult) {
-        return EBSpells.THUNDERBOLT.hasProperty(DefaultProperties.DAMAGE) ? EBSpells.THUNDERBOLT.property(DefaultProperties.DAMAGE) : 3f;
+        return EBSpells.THUNDERBOLT.hasProperty(DefaultProperties.DAMAGE) ? EBSpells.THUNDERBOLT.property(DefaultProperties.DAMAGE) : 6f;
     }
 
     @Override
@@ -48,19 +53,29 @@ public class ThunderboltEntity extends MagicProjectileEntity {
     @Override
     protected void onHitBlock(@NotNull net.minecraft.world.phys.BlockHitResult result) {
         super.onHitBlock(result);
-        this.level().addParticle(ParticleTypes.EXPLOSION, this.xo, this.yo, this.zo, 0, 0, 0);
+        if (level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.EXPLOSION, getX(), getY(), getZ(), 1, 0, 0, 0, 0);
+            serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(), 25, 0.5, 0.5, 0.5, 0.05);
+            serverLevel.sendParticles(ParticleTypes.FLASH, getX(), getY(), getZ(), 1, 0, 0, 0, 0);
+        }
     }
 
     @Override
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            ParticleBuilder.create(EBParticles.SPARK.get()).pos(xo, yo + getBbHeight() / 2, zo).time(8).spawn(level());
-            for (int i = 0; i < 2; i++) {
-                this.level().addParticle(ParticleTypes.LARGE_SMOKE,
-                        this.xo + random.nextFloat() * 0.2 - 0.1,
-                        this.yo + this.getBbHeight() / 2 + random.nextFloat() * 0.2 - 0.1,
-                        this.zo + random.nextFloat() * 0.2 - 0.1, 0, 0, 0);
+            Vec3 cur = position();
+            Vec3 prev = new Vec3(xo, yo, zo);
+            Vec3 delta = cur.subtract(prev);
+            for (int i = 0; i < 4; i++) {
+                double pct = (double) i / 4.0;
+                double px = prev.x + delta.x * pct + (random.nextDouble() - 0.5) * 0.15;
+                double py = prev.y + delta.y * pct + (random.nextDouble() - 0.5) * 0.15;
+                double pz = prev.z + delta.z * pct + (random.nextDouble() - 0.5) * 0.15;
+                this.level().addParticle(ParticleTypes.ELECTRIC_SPARK, px, py, pz, 0, 0, 0);
+            }
+            if (this.random.nextInt(3) == 0) {
+                this.level().addParticle(ParticleTypes.FLASH, getX(), getY(), getZ(), 0, 0, 0);
             }
         }
     }

@@ -48,6 +48,12 @@ public class PoisonBombEntity extends MagicProjectileEntity {
 
     private void poisonArea() {
         if (!this.level().isClientSide) {
+            if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.5, getZ(), 35, 1.2, 0.6, 1.2, 0.05);
+                serverLevel.sendParticles(ParticleTypes.EFFECT, getX(), getY() + 0.5, getZ(), 60, 2.0, 0.8, 2.0, 0.02);
+                serverLevel.playSound(null, getX(), getY(), getZ(), net.minecraft.sounds.SoundEvents.SPLASH_POTION_BREAK, net.minecraft.sounds.SoundSource.PLAYERS, 1.2f, 0.9f);
+            }
+
             AABB area = this.getBoundingBox().inflate(3.5);
             List<LivingEntity> nearby = this.level().getEntitiesOfClass(LivingEntity.class, area, this::isValidTarget);
             for (LivingEntity target : nearby) {
@@ -73,7 +79,10 @@ public class PoisonBombEntity extends MagicProjectileEntity {
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            this.level().addParticle(ParticleTypes.ITEM_SLIME, getX(), getY(), getZ(), 0, 0, 0);
+            this.level().addParticle(ParticleTypes.ITEM_SLIME, getX(), getY() + 0.1, getZ(), 0, 0.02, 0);
+            if (this.random.nextBoolean()) {
+                this.level().addParticle(ParticleTypes.WITCH, getX(), getY() + 0.1, getZ(), 0, 0, 0);
+            }
         }
     }
 }

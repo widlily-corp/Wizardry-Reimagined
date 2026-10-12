@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class FireballEntity extends MagicProjectileEntity {
@@ -56,13 +57,22 @@ public class FireballEntity extends MagicProjectileEntity {
 
     @Override
     public void onHitTargetExtraEffects(@NotNull EntityHitResult result) {
-        result.getEntity().igniteForSeconds(5);
+        result.getEntity().igniteForSeconds(7);
+        if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.FLAME, getX(), getY() + 0.5, getZ(), 35, 0.8, 0.5, 0.8, 0.05);
+            serverLevel.sendParticles(ParticleTypes.LAVA, getX(), getY() + 0.5, getZ(), 10, 0.5, 0.3, 0.5, 0.05);
+            serverLevel.sendParticles(ParticleTypes.EXPLOSION, getX(), getY() + 0.5, getZ(), 1, 0, 0, 0, 0);
+        }
     }
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult result) {
         super.onHitBlock(result);
         if (!this.level().isClientSide) {
+            if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.FLAME, getX(), getY() + 0.5, getZ(), 30, 0.8, 0.5, 0.8, 0.05);
+                serverLevel.sendParticles(ParticleTypes.LAVA, getX(), getY() + 0.5, getZ(), 8, 0.5, 0.3, 0.5, 0.05);
+            }
             BlockPos firePos = result.getBlockPos().relative(result.getDirection());
             if (this.level().isEmptyBlock(firePos)) {
                 this.level().setBlockAndUpdate(firePos, Blocks.FIRE.defaultBlockState());
@@ -74,8 +84,19 @@ public class FireballEntity extends MagicProjectileEntity {
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            this.level().addParticle(ParticleTypes.FLAME, getX(), getY(), getZ(), 0, 0, 0);
-            this.level().addParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), 0, 0, 0);
+            Vec3 cur = position();
+            Vec3 prev = new Vec3(xo, yo, zo);
+            Vec3 delta = cur.subtract(prev);
+            for (int i = 0; i < 3; i++) {
+                double pct = (double) i / 3.0;
+                double px = prev.x + delta.x * pct + (random.nextDouble() - 0.5) * 0.15;
+                double py = prev.y + delta.y * pct + (random.nextDouble() - 0.5) * 0.15;
+                double pz = prev.z + delta.z * pct + (random.nextDouble() - 0.5) * 0.15;
+                this.level().addParticle(ParticleTypes.FLAME, px, py, pz, 0, 0.01, 0);
+            }
+            if (this.random.nextInt(2) == 0) {
+                this.level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getX(), getY(), getZ(), 0, 0.02, 0);
+            }
         }
     }
 }

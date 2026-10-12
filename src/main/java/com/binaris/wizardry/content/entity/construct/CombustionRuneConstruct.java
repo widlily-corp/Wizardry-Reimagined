@@ -39,10 +39,21 @@ public class CombustionRuneConstruct extends ScaledConstructEntity {
                 this.discard();
                 break;
             }
-        } else if (this.random.nextInt(15) == 0) {
-            double radius = 0.5 + random.nextDouble() * 0.3;
-            float angle = random.nextFloat() * (float) Math.PI * 2;
-            level().addParticle(ParticleTypes.FLAME, this.getX() + radius * Mth.cos(angle), this.getY() + 0.1, this.getZ() + radius * Mth.sin(angle), 0, 0, 0);
+        } else {
+            // Render ground combustion rune circle
+            float runeRadius = getBbWidth() / 2;
+            for (int i = 0; i < 2; i++) {
+                float angle = random.nextFloat() * (float) Math.PI * 2;
+                double r = runeRadius * (0.4 + random.nextDouble() * 0.6);
+                level().addParticle(ParticleTypes.FLAME, this.getX() + r * Mth.cos(angle), this.getY() + 0.05, this.getZ() + r * Mth.sin(angle), 0, 0.01, 0);
+            }
+            if (this.random.nextInt(4) == 0) {
+                float angle = random.nextFloat() * (float) Math.PI * 2;
+                level().addParticle(ParticleTypes.LAVA, this.getX() + runeRadius * Mth.cos(angle), this.getY() + 0.05, this.getZ() + runeRadius * Mth.sin(angle), 0, 0, 0);
+            }
+            if (this.random.nextInt(6) == 0) {
+                level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.05, this.getZ(), 0, 0.02, 0);
+            }
         }
     }
 

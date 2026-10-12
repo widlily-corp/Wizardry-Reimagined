@@ -24,8 +24,12 @@ public class Whirlwind extends RaySpell {
     protected boolean onEntityHit(CastContext ctx, EntityHitResult entityHit, Vec3 origin) {
         if (entityHit.getEntity() instanceof LivingEntity target) {
             Vec3 dir = ctx.caster() != null ? ctx.caster().getLookAngle() : new Vec3(0, 1, 0);
-            target.setDeltaMovement(target.getDeltaMovement().add(dir.x * 1.2, 0.4, dir.z * 1.2));
+            target.setDeltaMovement(target.getDeltaMovement().add(dir.x * 1.5, 0.6, dir.z * 1.5));
             target.hurtMarked = true;
+            if (target instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket(target));
+            }
+            target.hurt(ctx.world().damageSources().magic(), 3.0f);
         }
         return true;
     }
@@ -42,7 +46,14 @@ public class Whirlwind extends RaySpell {
 
     @Override
     protected void spawnParticle(CastContext ctx, double x, double y, double z, double vx, double vy, double vz) {
-        ctx.world().addParticle(ParticleTypes.CLOUD, x, y, z, vx * 0.1, vy * 0.1, vz * 0.1);
+        if (ctx.world().isClientSide) {
+            ctx.world().addParticle(ParticleTypes.CLOUD, x, y, z, vx * 0.2, vy * 0.2 + 0.05, vz * 0.2);
+            if (ctx.world().random.nextInt(3) == 0) {
+                ctx.world().addParticle(ParticleTypes.SWEEP_ATTACK, x, y, z, 0, 0, 0);
+            }
+        } else if (ctx.world() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.CLOUD, x, y, z, 2, vx * 0.2, vy * 0.2 + 0.05, vz * 0.2, 0.05);
+        }
     }
 
     @Override

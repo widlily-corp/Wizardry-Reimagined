@@ -14,7 +14,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -31,13 +33,16 @@ public final class EBMobEffects {
                 MagicMobEffect effect = new MagicMobEffect(MobEffectCategory.HARMFUL, 0x66ccff) {
                     @Override
                     public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
-                        entity.setIsInPowderSnow(true);
+                        entity.setTicksFrozen(Math.min(entity.getTicksRequiredToFreeze() * 3, entity.getTicksFrozen() + 30 + amplifier * 20));
+                        if (entity.tickCount % 6 == 0) {
+                            level.sendParticles(ParticleTypes.SNOWFLAKE, entity.getX(), entity.getY() + entity.getBbHeight() / 2, entity.getZ(), 3, 0.3, 0.3, 0.3, 0.01);
+                        }
                         return true;
                     }
                 };
                 effect.addAttributeModifier(Attributes.MOVEMENT_SPEED,
                         ResourceLocation.fromNamespaceAndPath(WizardryMod.MODID, "effect.frost"),
-                        -0.4, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+                        -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
                 return effect;
             });
 
@@ -142,11 +147,26 @@ public final class EBMobEffects {
             MOB_EFFECTS.register("frost_step", () -> new MagicMobEffect(MobEffectCategory.BENEFICIAL, 0x99ffff) {
                 @Override
                 public boolean applyEffectTick(ServerLevel level, LivingEntity entity, int amplifier) {
-                    if (entity.onGround()) {
-                        var pos = entity.blockPosition().below();
-                        if (level.getBlockState(pos).is(Blocks.WATER)) {
-                            level.setBlockAndUpdate(pos, Blocks.FROSTED_ICE.defaultBlockState());
+                    if (entity.isSpectator()) return true;
+                    int radius = Math.min(16, 2 + amplifier);
+                    BlockPos playerPos = entity.blockPosition();
+                    BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
+                    boolean frozeAny = false;
+                    for (int x = -radius; x <= radius; x++) {
+                        for (int z = -radius; z <= radius; z++) {
+                            if (x * x + z * z <= radius * radius) {
+                                mpos.set(playerPos.getX() + x, playerPos.getY() - 1, playerPos.getZ() + z);
+                                BlockState state = level.getBlockState(mpos);
+                                if (state.getBlock() == Blocks.WATER && state.getFluidState().isSource()) {
+                                    level.setBlockAndUpdate(mpos, Blocks.FROSTED_ICE.defaultBlockState());
+                                    level.scheduleTick(mpos, Blocks.FROSTED_ICE, level.random.nextInt(60) + 60);
+                                    frozeAny = true;
+                                }
+                            }
                         }
+                    }
+                    if (frozeAny || entity.tickCount % 4 == 0) {
+                        level.sendParticles(ParticleTypes.SNOWFLAKE, entity.getX(), entity.getY() + 0.1, entity.getZ(), 4, 0.3, 0.05, 0.3, 0.01);
                     }
                     return true;
                 }

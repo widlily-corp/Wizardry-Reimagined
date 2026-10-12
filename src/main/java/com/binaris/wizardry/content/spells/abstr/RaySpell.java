@@ -140,9 +140,7 @@ public abstract class RaySpell extends Spell {
 
         if (!flag && !onMiss(ctx, origin, direction)) return false;
 
-        if (ctx.world().isClientSide) {
-            spawnParticleRay(ctx, origin, direction, range);
-        }
+        spawnParticleRay(ctx, origin, direction, range);
 
         return true;
     }

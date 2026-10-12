@@ -16,10 +16,17 @@ import org.jetbrains.annotations.NotNull;
 public class PocketWorkbench extends Spell {
     @Override
     public boolean cast(PlayerCastContext ctx) {
-        ctx.caster().openMenu(new SimpleMenuProvider(
-                (containerId, playerInventory, player) -> new CraftingMenu(containerId, playerInventory, ContainerLevelAccess.create(ctx.world(), ctx.caster().blockPosition())),
-                Component.translatable("container.crafting")
-        ));
+        if (!ctx.world().isClientSide) {
+            ctx.caster().openMenu(new SimpleMenuProvider(
+                    (containerId, playerInventory, player) -> new CraftingMenu(containerId, playerInventory, ContainerLevelAccess.create(ctx.world(), ctx.caster().blockPosition())) {
+                        @Override
+                        public boolean stillValid(net.minecraft.world.entity.player.Player player) {
+                            return true;
+                        }
+                    },
+                    Component.translatable("container.crafting")
+            ));
+        }
         this.playSound(ctx.world(), ctx.caster(), ctx.castingTicks(), -1);
         return true;
     }

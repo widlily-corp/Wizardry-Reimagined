@@ -30,10 +30,14 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.SPARK.get(),
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/spark.png"), 0.5f));
 
-        event.registerEntityRenderer(EBEntities.LIGHTNING_BOLT.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.LIGHTNING_BOLT.get(),
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/spark.png"), 0.9f));
+
+        event.registerEntityRenderer(EBEntities.FIREBALL.get(),
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/magic_fireball.png"), 0.9f));
 
         event.registerEntityRenderer(EBEntities.FIREBOMB.get(),
-                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/firebolt.png"), 0.6f));
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/firebolt.png"), 0.7f));
 
         event.registerEntityRenderer(EBEntities.ICE_CHARGE.get(),
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/ice_charge.png"), 0.6f));
@@ -45,7 +49,7 @@ public final class ClientEntityEvents {
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/darkness_orb.png"), 1.1f));
 
         event.registerEntityRenderer(EBEntities.POISON_BOMB.get(),
-                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/dart.png"), 0.6f));
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/dart.png"), 0.7f));
 
         event.registerEntityRenderer(EBEntities.FIRE_BOLT.get(),
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/firebolt.png"), 0.5f));
@@ -53,7 +57,8 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.FLAME_CATCHER_ARROW.get(),
                 ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/flamecatcher_arrow.png")));
 
-        event.registerEntityRenderer(EBEntities.THUNDERBOLT.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.THUNDERBOLT.get(),
+                ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/spark.png"), 1.0f));
 
         event.registerEntityRenderer(EBEntities.SPARK_BOMB.get(),
                 ctx -> new MagicProjectileRenderer<>(ctx, WizardryMod.id("textures/entity/spark.png"), 0.5f));
@@ -86,7 +91,7 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.HAILSTORM.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.FROST_SIGIL.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.ICE_SPIKE.get(), com.binaris.wizardry.client.renderer.entity.construct.IceSpikeRenderer::new);
-        event.registerEntityRenderer(EBEntities.ICE_BARRIER.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ICE_BARRIER.get(), com.binaris.wizardry.client.renderer.entity.construct.IceBarrierRenderer::new);
         event.registerEntityRenderer(EBEntities.LIGHTNING_SIGIL.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.TORNADO.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.HEAL_AURA.get(), BlankRenderer::new);

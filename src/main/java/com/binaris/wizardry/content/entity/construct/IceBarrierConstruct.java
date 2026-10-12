@@ -51,9 +51,20 @@ public class IceBarrierConstruct extends ScaledConstructEntity {
 
     @Override
     public void tick() {
-        if (level().isClientSide && firstTick) {
-            setSizeMultiplier(sizeMultiplier);
-            setRot(getYRot(), getXRot());
+        if (level().isClientSide) {
+            if (firstTick) {
+                setSizeMultiplier(sizeMultiplier);
+                setRot(getYRot(), getXRot());
+            }
+            if (this.random.nextInt(3) == 0) {
+                float a = Mth.cos((float) Math.toRadians(getYRot()));
+                float b = Mth.sin((float) Math.toRadians(getYRot()));
+                double offset = (this.random.nextDouble() - 0.5) * getBbWidth();
+                double px = getX() + offset * a;
+                double py = getY() + this.random.nextDouble() * getBbHeight();
+                double pz = getZ() + offset * b;
+                level().addParticle(net.minecraft.core.particles.ParticleTypes.SNOWFLAKE, px, py, pz, 0, 0.01, 0);
+            }
         }
 
         this.xOld = getX();

@@ -32,7 +32,20 @@ public class Arc extends RaySpell {
             return false;
         }
 
-        if (ctx.world().isClientSide) {
+        if (ctx.world() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            Vec3 targetCenter = target.position().add(0, target.getBbHeight() / 2, 0);
+            Vec3 delta = targetCenter.subtract(origin);
+            double dist = delta.length();
+            int steps = Math.max(6, (int) (dist * 4));
+            for (int i = 0; i <= steps; i++) {
+                double pct = (double) i / steps;
+                double px = origin.x + delta.x * pct + (serverLevel.random.nextDouble() - 0.5) * 0.3;
+                double py = origin.y + delta.y * pct + (serverLevel.random.nextDouble() - 0.5) * 0.3;
+                double pz = origin.z + delta.z * pct + (serverLevel.random.nextDouble() - 0.5) * 0.3;
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, px, py, pz, 1, 0, 0, 0, 0.02);
+            }
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.FLASH, targetCenter.x, targetCenter.y, targetCenter.z, 1, 0, 0, 0, 0);
+        } else if (ctx.world().isClientSide) {
             ParticleBuilder.create(EBParticles.LIGHTNING.get())
                     .entity(ctx.caster())
                     .pos(ctx.caster() != null ? origin.subtract(ctx.caster().position()) : origin)
@@ -55,6 +68,15 @@ public class Arc extends RaySpell {
     @Override
     protected boolean onMiss(CastContext ctx, Vec3 origin, Vec3 direction) {
         return false;
+    }
+
+    @Override
+    protected void spawnParticle(CastContext ctx, double x, double y, double z, double vx, double vy, double vz) {
+        if (ctx.world().isClientSide) {
+            ctx.world().addParticle(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, x, y, z, (ctx.world().random.nextDouble() - 0.5) * 0.1, (ctx.world().random.nextDouble() - 0.5) * 0.1, (ctx.world().random.nextDouble() - 0.5) * 0.1);
+        } else if (ctx.world() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, x, y, z, 1, 0.05, 0.05, 0.05, 0.02);
+        }
     }
 
     @Override

@@ -39,11 +39,12 @@ public class FireBreath extends RaySpell {
     @Override
     protected boolean onEntityHit(CastContext ctx, EntityHitResult entityHit, Vec3 origin) {
         if (entityHit.getEntity() instanceof LivingEntity target) {
-            if (ctx.castingTicks() % Math.max(1, target.invulnerableDuration) == 1) {
+            if (ctx.castingTicks() % 6 == 1 || ctx.castingTicks() <= 1) {
                 int duration = (int) (ctx.modifiers().get(SpellModifiers.DURATION, property(DefaultProperties.EFFECT_DURATION)));
                 target.igniteForSeconds(duration);
                 float damage = ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.DAMAGE));
-                target.hurt(ctx.caster() != null ? ctx.world().damageSources().indirectMagic(ctx.caster(), ctx.caster()) : ctx.world().damageSources().magic(), damage);
+                target.invulnerableTime = 0;
+                target.hurt(ctx.caster() != null ? ctx.world().damageSources().indirectMagic(ctx.caster(), ctx.caster()) : ctx.world().damageSources().inFire(), damage);
             }
         }
         return true;
@@ -61,7 +62,14 @@ public class FireBreath extends RaySpell {
 
     @Override
     protected void spawnParticle(CastContext ctx, double x, double y, double z, double vx, double vy, double vz) {
-        ParticleBuilder.create(EBParticles.MAGIC_FIRE.get()).pos(x, y, z).velocity(vx, vy, vz).time(12).spawn(ctx.world());
+        if (ctx.world().isClientSide) {
+            ctx.world().addParticle(net.minecraft.core.particles.ParticleTypes.FLAME, x, y, z, vx * 0.15, vy * 0.15, vz * 0.15);
+            if (ctx.world().random.nextInt(2) == 0) {
+                ctx.world().addParticle(net.minecraft.core.particles.ParticleTypes.CAMPFIRE_COSY_SMOKE, x, y, z, vx * 0.05, vy * 0.05, vz * 0.05);
+            }
+        } else if (ctx.world() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME, x, y, z, 1, vx * 0.15, vy * 0.15, vz * 0.15, 0.02);
+        }
     }
 
     @Override

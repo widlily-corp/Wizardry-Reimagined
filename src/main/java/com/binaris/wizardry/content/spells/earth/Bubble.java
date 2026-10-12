@@ -60,8 +60,13 @@ public class Bubble extends RaySpell {
 
     @Override
     protected void spawnParticle(CastContext ctx, double x, double y, double z, double vx, double vy, double vz) {
-        ctx.world().addParticle(ParticleTypes.SPLASH, x, y, z, 0, 0, 0);
-        ParticleBuilder.create(EBParticles.MAGIC_BUBBLE.get()).pos(x, y, z).spawn(ctx.world());
+        if (ctx.world().isClientSide) {
+            ctx.world().addParticle(ParticleTypes.SPLASH, x, y, z, 0, 0.05, 0);
+            ctx.world().addParticle(ParticleTypes.BUBBLE_POP, x, y, z, vx * 0.1, vy * 0.1, vz * 0.1);
+        } else if (ctx.world() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SPLASH, x, y, z, 2, 0.1, 0.1, 0.1, 0.02);
+            serverLevel.sendParticles(ParticleTypes.BUBBLE_POP, x, y, z, 1, vx * 0.1, vy * 0.1, vz * 0.1, 0.02);
+        }
     }
 
     @Override

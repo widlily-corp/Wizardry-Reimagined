@@ -40,18 +40,32 @@ public class Freeze extends RaySpell {
     protected boolean onEntityHit(CastContext ctx, EntityHitResult entityHit, Vec3 origin) {
         if (!(entityHit.getEntity() instanceof LivingEntity target)) return false;
 
+        DamageSource source = ctx.caster() != null ? MagicDamageSource.causeDirectMagicDamage(ctx.caster(), EBDamageSources.FROST) : target.damageSources().magic();
+        float damage = ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.DAMAGE));
         if (target instanceof Blaze || target instanceof MagmaCube) {
-            DamageSource source = ctx.caster() != null ? MagicDamageSource.causeDirectMagicDamage(ctx.caster(), EBDamageSources.FROST) : target.damageSources().magic();
-            target.hurt(source, ctx.modifiers().get(SpellModifiers.POTENCY, property(DefaultProperties.DAMAGE)));
+            target.hurt(source, damage * 2.0f);
+        } else {
+            target.hurt(source, Math.max(1.0f, damage * 0.5f));
         }
 
         if (ctx.world().isClientSide) return true;
+
+        int dur = (int) (ctx.modifiers().get(SpellModifiers.DURATION, property(DefaultProperties.EFFECT_DURATION)));
+        int str = property(DefaultProperties.EFFECT_STRENGTH);
+
+        target.setTicksFrozen(target.getTicksRequiredToFreeze() + dur);
+        target.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, dur, Math.max(2, str + 1)));
+
         if (EBMobEffects.FROST != null && EBMobEffects.FROST.get() != null) {
-            target.addEffect(new MobEffectInstance(EBMobEffects.FROST,
-                    (int) (ctx.modifiers().get(SpellModifiers.DURATION, property(DefaultProperties.EFFECT_DURATION))),
-                    property(DefaultProperties.EFFECT_STRENGTH)));
+            target.addEffect(new MobEffectInstance(EBMobEffects.FROST, dur, str));
         }
         if (target.isOnFire()) target.clearFire();
+
+        if (ctx.world() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SNOWFLAKE, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 25, 0.4, 0.5, 0.4, 0.05);
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ITEM_SNOWBALL, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 10, 0.3, 0.4, 0.3, 0.05);
+        }
+
         return true;
     }
 

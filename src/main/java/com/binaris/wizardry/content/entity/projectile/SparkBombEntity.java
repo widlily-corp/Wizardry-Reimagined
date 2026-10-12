@@ -51,8 +51,25 @@ public class SparkBombEntity extends BombEntity {
             }
             target.hurt(level().damageSources().lightningBolt(), splashDamage * damageMultiplier);
 
+            if (level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 15, 0.3, 0.3, 0.3, 0.05);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.FLASH, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 1, 0, 0, 0, 0);
+            }
             ParticleBuilder.create(EBParticles.SPARK.get())
                     .pos(position()).target(target).time(10).spawn(level());
+        }
+        if (level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, getX(), getY(), getZ(), 30, 0.8, 0.5, 0.8, 0.08);
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.FLASH, getX(), getY(), getZ(), 1, 0, 0, 0, 0);
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level().isClientSide) {
+            level().addParticle(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, getX(), getY() + 0.1, getZ(),
+                    (random.nextDouble() - 0.5) * 0.1, (random.nextDouble() - 0.5) * 0.1, (random.nextDouble() - 0.5) * 0.1);
         }
     }
 
