@@ -105,6 +105,7 @@ public final class EBSpells {
     public static final Spell PHASE_STEP;
     public static final Spell METEOR;
     public static final Spell ARROW_RAIN;
+    public static final Spell ARROW_CASTER;
     public static final Spell REVERSAL;
     public static final Spell PLAGUE_DARKNESS;
     public static final Spell FOREST_CURSE;
@@ -531,6 +532,8 @@ public final class EBSpells {
         METEOR = spell("meteor", Meteor::new);
 
         ARROW_RAIN = spell("arrow_rain", ArrowRain::new);
+
+        ARROW_CASTER = spell("arrow_caster", ArrowCaster::new);
 
         REVERSAL = spell("reversal", Reversal::new);
 

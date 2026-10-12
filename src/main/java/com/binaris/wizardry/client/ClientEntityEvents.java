@@ -75,6 +75,8 @@ public final class ClientEntityEvents {
 
         event.registerEntityRenderer(EBEntities.CONJURED_ARROW.get(),
                 ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/conjured_arrow.png")));
+        event.registerEntityRenderer(EBEntities.SWARM_ARROW.get(),
+                ctx -> new MagicArrowRenderer<>(ctx, WizardryMod.id("textures/entity/conjured_arrow.png")));
 
         event.registerEntityRenderer(EBEntities.RING_OF_FIRE.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.FIRE_SIGIL.get(), BlankRenderer::new);
@@ -92,6 +94,7 @@ public final class ClientEntityEvents {
         event.registerEntityRenderer(EBEntities.BOULDER.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.DECAY.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.ARROW_RAIN.get(), BlankRenderer::new);
+        event.registerEntityRenderer(EBEntities.ARROW_ORB.get(), BlankRenderer::new);
         event.registerEntityRenderer(EBEntities.ZOMBIE_SPAWNER.get(), BlankRenderer::new);
 
         event.registerEntityRenderer(EBEntities.WIZARD.get(), com.binaris.wizardry.client.renderer.entity.mob.WizardRenderer::new);

@@ -79,6 +79,9 @@ public final class EBEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<ConjuredArrowEntity>> CONJURED_ARROW =
             register("conjured_arrow", ConjuredArrowEntity::new, 0.5f, 0.5f);
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SwarmArrowEntity>> SWARM_ARROW =
+            register("swarm_arrow", SwarmArrowEntity::new, 0.5f, 0.5f);
+
     public static final DeferredHolder<EntityType<?>, EntityType<FireRingConstruct>> RING_OF_FIRE =
             register("ring_of_fire", FireRingConstruct::new, 3.0f, 1.0f);
 
@@ -126,6 +129,9 @@ public final class EBEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<ArrowRainConstruct>> ARROW_RAIN =
             register("arrow_rain", ArrowRainConstruct::new, 8.0f, 0.5f);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ArrowOrbConstruct>> ARROW_ORB =
+            register("arrow_orb", ArrowOrbConstruct::new, 1.2f, 1.2f);
 
     public static final DeferredHolder<EntityType<?>, EntityType<ZombieSpawnerConstruct>> ZOMBIE_SPAWNER =
             register("zombie_spawner", ZombieSpawnerConstruct::new, 1.0f, 1.0f);
