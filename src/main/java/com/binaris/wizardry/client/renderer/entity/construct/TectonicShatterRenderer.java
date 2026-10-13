@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.Blocks;
@@ -81,8 +82,10 @@ public class TectonicShatterRenderer extends EntityRenderer<TectonicShatterEntit
                 BlockState toRender = (y % 3 == 0) ? deepslateState : ((y % 3 == 1) ? basaltState : tuffState);
                 var modelToRender = (y % 3 == 0) ? deepslateModel : ((y % 3 == 1) ? basaltModel : tuffModel);
 
+                BlockPos pillarPos = entity.blockPosition().offset((int) Math.round(ox), (int) Math.round(sinkY + y * 0.95D), (int) Math.round(oz));
+
                 renderer.tesselateBlock(
-                        entity.level(), modelToRender, toRender, entity.blockPosition(),
+                        entity.level(), modelToRender, toRender, pillarPos,
                         poseStack, bufferSource.getBuffer(RenderType.cutout()), false,
                         entity.getRandom(), entity.getId(), OverlayTexture.NO_OVERLAY
                 );
