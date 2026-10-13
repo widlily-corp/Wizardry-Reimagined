@@ -63,7 +63,9 @@ public class TectonicShatterEntity extends MagicConstructEntity {
 
         if (activeTicks == 0) {
             onSeismicEruption();
-            this.entityData.set(ERUPTED, true);
+            if (!level().isClientSide) {
+                this.entityData.set(ERUPTED, true);
+            }
         }
 
         activeTicks++;
@@ -129,9 +131,11 @@ public class TectonicShatterEntity extends MagicConstructEntity {
             // FINALE: COLOSSAL STONE AVALANCHE & MONOLITH COLLAPSE CRUMBLE (TICK 240)
             // =========================================================================
             Vec3 pos = position();
-            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.STONE_BREAK, SoundSource.PLAYERS, 14.0f, 0.5f);
-            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 12.0f, 0.55f);
-            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.WEATHER, 10.0f, 0.6f);
+            if (!level().isClientSide) {
+                level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.STONE_BREAK, SoundSource.PLAYERS, 14.0f, 0.5f);
+                level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 12.0f, 0.55f);
+                level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.WEATHER, 10.0f, 0.6f);
+            }
 
             if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
                 // Expanding sonic boom shockwaves across 30 blocks
@@ -171,11 +175,13 @@ public class TectonicShatterEntity extends MagicConstructEntity {
         Vec3 pos = position();
 
         // Layered colossal earthquake soundscape (volume 12.0f audible across 190 blocks)
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.WEATHER, 12.0f, 0.55f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 10.0f, 0.4f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 10.0f, 0.5f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.RAVAGER_STUNNED, SoundSource.PLAYERS, 8.0f, 0.65f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.IRON_GOLEM_ATTACK, SoundSource.PLAYERS, 8.0f, 0.7f);
+        if (!level().isClientSide) {
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.WARDEN_SONIC_BOOM, SoundSource.WEATHER, 12.0f, 0.55f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 10.0f, 0.4f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 10.0f, 0.5f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.RAVAGER_STUNNED, SoundSource.PLAYERS, 8.0f, 0.65f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.IRON_GOLEM_ATTACK, SoundSource.PLAYERS, 8.0f, 0.7f);
+        }
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
             // Seismic shockwave rings
