@@ -92,11 +92,13 @@ public class SupernovaEntity extends MagicConstructEntity {
         if (!impacted) {
             if (charge < CHARGE_DURATION) {
                 // Phase 0: Concentrating solar energy high above
-                this.entityData.set(CHARGE_TICKS, charge + 1);
-                spawnChargingParticles(charge);
-                if (charge % 6 == 0) {
-                    level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.5f, 0.6f + (charge * 0.03f));
+                if (!level().isClientSide) {
+                    this.entityData.set(CHARGE_TICKS, charge + 1);
+                    if (charge % 6 == 0) {
+                        level().playSound(null, getX(), getY(), getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.5f, 0.6f + (charge * 0.03f));
+                    }
                 }
+                spawnChargingParticles(charge);
             } else {
                 // Phase 1: High velocity descent
                 Vec3 target = getTargetPos();
@@ -107,8 +109,10 @@ public class SupernovaEntity extends MagicConstructEntity {
                 if (dy >= -1.8) {
                     // Impact reached!
                     setPos(target.x, target.y, target.z);
-                    this.entityData.set(IMPACTED, true);
-                    onImpact();
+                    if (!level().isClientSide) {
+                        this.entityData.set(IMPACTED, true);
+                        onImpact();
+                    }
                 } else {
                     setPos(getX(), getY() - 1.8, getZ());
                 }
@@ -181,10 +185,12 @@ public class SupernovaEntity extends MagicConstructEntity {
         Vec3 pos = position();
 
         // 1. Play cataclysmic explosion sounds (volume 12.0f audible across 190 blocks)
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 12.0f, 0.55f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 10.0f, 0.7f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 8.0f, 0.5f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.FIRECHARGE_USE, SoundSource.WEATHER, 4.0f, 0.6f);
+        if (!level().isClientSide) {
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 12.0f, 0.55f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 10.0f, 0.7f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.BEACON_DEACTIVATE, SoundSource.WEATHER, 8.0f, 0.5f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.FIRECHARGE_USE, SoundSource.WEATHER, 4.0f, 0.6f);
+        }
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
             // Massive flash + multi-stage blast emitters
@@ -330,6 +336,12 @@ public class SupernovaEntity extends MagicConstructEntity {
         if (tag.contains("Impacted")) {
             this.entityData.set(IMPACTED, tag.getBoolean("Impacted"));
         }
+        if (tag.contains("PostImpactTicks")) {
+            this.postImpactTicks = tag.getInt("PostImpactTicks");
+        }
+        if (tag.contains("ChargeTicks")) {
+            this.entityData.set(CHARGE_TICKS, tag.getInt("ChargeTicks"));
+        }
     }
 
     @Override
@@ -339,5 +351,7 @@ public class SupernovaEntity extends MagicConstructEntity {
         tag.putFloat("TargetY", this.entityData.get(TARGET_Y));
         tag.putFloat("TargetZ", this.entityData.get(TARGET_Z));
         tag.putBoolean("Impacted", this.entityData.get(IMPACTED));
+        tag.putInt("PostImpactTicks", this.postImpactTicks);
+        tag.putInt("ChargeTicks", this.entityData.get(CHARGE_TICKS));
     }
 }

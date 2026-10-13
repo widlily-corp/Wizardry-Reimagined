@@ -169,9 +169,11 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
     private void onInitialEruption() {
         Vec3 pos = position();
 
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 4.0f, 0.5f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, 3.5f, 0.75f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_HURT_FREEZE, SoundSource.PLAYERS, 3.0f, 0.7f);
+        if (!level().isClientSide) {
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 4.0f, 0.5f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.AMETHYST_CLUSTER_BREAK, SoundSource.PLAYERS, 3.5f, 0.75f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_HURT_FREEZE, SoundSource.PLAYERS, 3.0f, 0.7f);
+        }
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
             // Massive radial frost shockwave
@@ -263,7 +265,9 @@ public class GlacialOblivionEntity extends MagicConstructEntity {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        this.stormTicks = tag.getInt("StormTicks");
+        if (tag.contains("StormTicks")) {
+            this.stormTicks = tag.getInt("StormTicks");
+        }
         if (tag.contains("Shattered")) {
             this.entityData.set(SHATTERED, tag.getBoolean("Shattered"));
         }

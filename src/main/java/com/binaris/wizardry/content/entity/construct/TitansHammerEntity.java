@@ -88,8 +88,10 @@ public class TitansHammerEntity extends MagicConstructEntity {
 
             if (dy >= -2.2) {
                 setPos(target.x, target.y, target.z);
-                this.entityData.set(IMPACTED, true);
-                onImpact();
+                if (!level().isClientSide) {
+                    this.entityData.set(IMPACTED, true);
+                    onImpact();
+                }
             } else {
                 setPos(getX(), getY() - 2.2, getZ());
             }
@@ -163,9 +165,11 @@ public class TitansHammerEntity extends MagicConstructEntity {
     private void onImpact() {
         Vec3 pos = position();
 
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 6.0f, 0.6f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.TRIDENT_THUNDER.value(), SoundSource.WEATHER, 5.0f, 0.55f);
-        level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 4.5f, 0.7f);
+        if (!level().isClientSide) {
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 6.0f, 0.6f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.TRIDENT_THUNDER.value(), SoundSource.WEATHER, 5.0f, 0.55f);
+            level().playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.WEATHER, 4.5f, 0.7f);
+        }
 
         if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
             // Visual cataclysm blast
@@ -219,6 +223,9 @@ public class TitansHammerEntity extends MagicConstructEntity {
         if (tag.contains("Impacted")) {
             this.entityData.set(IMPACTED, tag.getBoolean("Impacted"));
         }
+        if (tag.contains("PostImpactTicks")) {
+            this.postImpactTicks = tag.getInt("PostImpactTicks");
+        }
     }
 
     @Override
@@ -228,5 +235,6 @@ public class TitansHammerEntity extends MagicConstructEntity {
         tag.putFloat("TargetY", this.entityData.get(TARGET_Y));
         tag.putFloat("TargetZ", this.entityData.get(TARGET_Z));
         tag.putBoolean("Impacted", this.entityData.get(IMPACTED));
+        tag.putInt("PostImpactTicks", this.postImpactTicks);
     }
 }
