@@ -1,6 +1,7 @@
 package com.binaris.wizardry.content.item;
 
 import com.binaris.wizardry.client.gui.HandbookClientHelper;
+import java.util.function.Supplier;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,7 +24,8 @@ public class WizardHandbookItem extends Item {
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (level.isClientSide) {
-            HandbookClientHelper.openHandbook();
+            Supplier<Runnable> opener = () -> HandbookClientHelper::openHandbook;
+            opener.get().run();
         }
         player.awardStat(Stats.ITEM_USED.get(this));
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);

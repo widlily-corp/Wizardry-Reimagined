@@ -41,7 +41,7 @@ public class SpellBookCloningRecipe extends CustomRecipe {
             }
         }
 
-        return !sourceBook.isEmpty() && blankBooks > 0;
+        return !sourceBook.isEmpty() && blankBooks == 1;
     }
 
     @Override
@@ -63,12 +63,12 @@ public class SpellBookCloningRecipe extends CustomRecipe {
             }
         }
 
-        if (sourceBook.isEmpty() || blankBooks < 1) return ItemStack.EMPTY;
+        if (sourceBook.isEmpty() || blankBooks != 1) return ItemStack.EMPTY;
 
         SpellData spellData = sourceBook.get(EBDataComponents.SPELL_DATA.get());
         if (spellData == null || spellData.isEmpty()) return ItemStack.EMPTY;
 
-        ItemStack result = new ItemStack(EBCraftingItems.SPELL_BOOK.get(), blankBooks);
+        ItemStack result = new ItemStack(EBCraftingItems.SPELL_BOOK.get(), 1);
         result.set(EBDataComponents.SPELL_DATA.get(), spellData);
         return result;
     }
