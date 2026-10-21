@@ -4,6 +4,7 @@ import com.binaris.wizardry.api.content.util.EntityUtil;
 import com.binaris.wizardry.registry.EBEntities;
 import com.binaris.wizardry.registry.EBSounds;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -123,5 +124,19 @@ public class BubbleConstruct extends MagicConstructEntity {
                 serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, SoundSource.NEUTRAL, 1.0f, 1.0f);
             }
         }
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("DarkOrb")) {
+            setDarkOrb(tag.getBoolean("DarkOrb"));
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("DarkOrb", isDarkOrb());
     }
 }

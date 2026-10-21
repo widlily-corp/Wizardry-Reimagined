@@ -3,6 +3,7 @@ package com.binaris.wizardry.content.entity.construct;
 import com.binaris.wizardry.registry.EBEntities;
 import com.binaris.wizardry.registry.EBSounds;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -45,7 +46,7 @@ public class ZombieSpawnerConstruct extends MagicConstructEntity {
         // 1. Ongoing portal swirling particles & ambient hum
         spawnPortalParticles();
 
-        if (tickCount % 25 == 0) {
+        if (!level().isClientSide && tickCount % 25 == 0) {
             level().playSound(null, getX(), getY(), getZ(), SoundEvents.PORTAL_AMBIENT, SoundSource.PLAYERS, 0.5f, 0.8f);
         }
 
@@ -53,41 +54,43 @@ public class ZombieSpawnerConstruct extends MagicConstructEntity {
         if (lifetime - tickCount > 10 && spawnTimer-- <= 0) {
             spawnTimer = 20;
 
-            if (EBSounds.ENTITY_ZOMBIE_SPAWNER_SPAWN != null && EBSounds.ENTITY_ZOMBIE_SPAWNER_SPAWN.get() != null) {
-                playSound(EBSounds.ENTITY_ZOMBIE_SPAWNER_SPAWN.get(), 1.0f, 1.0f);
-            }
-            level().playSound(null, getX(), getY(), getZ(), SoundEvents.PORTAL_TRAVEL, SoundSource.PLAYERS, 0.8f, 1.3f);
-            level().playSound(null, getX(), getY(), getZ(), SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.PLAYERS, 0.6f, 0.6f);
-
-            if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
-                // Portal opening flash & soul burst
-                serverLevel.sendParticles(ParticleTypes.FLASH, getX(), getY(), getZ(), 2, 0.2, 0.2, 0.2, 0);
-                serverLevel.sendParticles(ParticleTypes.SOUL, getX(), getY(), getZ(), 16, 0.6, 0.3, 0.6, 0.08);
-                serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY(), getZ(), 10, 0.5, 0.2, 0.5, 0.05);
-
-                Zombie zombie = spawnHusks ? new Husk(EntityType.HUSK, level()) : new Zombie(EntityType.ZOMBIE, level());
-                LivingEntity caster = getCaster();
-                if (caster != null) {
-                    zombie.setCustomName(Component.literal("Minion of " + caster.getName().getString()));
-                } else {
-                    zombie.setCustomName(Component.literal("Minion of the Underworld"));
+            if (!level().isClientSide) {
+                if (EBSounds.ENTITY_ZOMBIE_SPAWNER_SPAWN != null && EBSounds.ENTITY_ZOMBIE_SPAWNER_SPAWN.get() != null) {
+                    playSound(EBSounds.ENTITY_ZOMBIE_SPAWNER_SPAWN.get(), 1.0f, 1.0f);
                 }
+                level().playSound(null, getX(), getY(), getZ(), SoundEvents.PORTAL_TRAVEL, SoundSource.PLAYERS, 0.8f, 1.3f);
+                level().playSound(null, getX(), getY(), getZ(), SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.PLAYERS, 0.6f, 0.6f);
 
-                double nx = getX() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE;
-                double nz = getZ() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE;
-                zombie.setPos(nx, getY() - 0.2, nz);
+                if (level() instanceof ServerLevel serverLevel) {
+                    // Portal opening flash & soul burst
+                    serverLevel.sendParticles(ParticleTypes.FLASH, getX(), getY(), getZ(), 2, 0.2, 0.2, 0.2, 0);
+                    serverLevel.sendParticles(ParticleTypes.SOUL, getX(), getY(), getZ(), 16, 0.6, 0.3, 0.6, 0.08);
+                    serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY(), getZ(), 10, 0.5, 0.2, 0.5, 0.05);
 
-                // Velocity: Drop down out of the portal
-                zombie.setDeltaMovement(0, -0.28, 0);
+                    Zombie zombie = spawnHusks ? new Husk(EntityType.HUSK, level()) : new Zombie(EntityType.ZOMBIE, level());
+                    LivingEntity caster = getCaster();
+                    if (caster != null) {
+                        zombie.setCustomName(Component.literal("Minion of " + caster.getName().getString()));
+                    } else {
+                        zombie.setCustomName(Component.literal("Minion of the Underworld"));
+                    }
 
-                // Give slow falling so minions don't smash to death on ground impact
-                zombie.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, false, false));
+                    double nx = getX() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE;
+                    double nz = getZ() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE;
+                    zombie.setPos(nx, getY() - 0.2, nz);
 
-                // Equip iron helmet so zombies don't burn if summoned during daytime
-                zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET));
-                zombie.setDropChance(EquipmentSlot.HEAD, 0.0f);
+                    // Velocity: Drop down out of the portal
+                    zombie.setDeltaMovement(0, -0.28, 0);
 
-                level().addFreshEntity(zombie);
+                    // Give slow falling so minions don't smash to death on ground impact
+                    zombie.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, false, false));
+
+                    // Equip iron helmet so zombies don't burn if summoned during daytime
+                    zombie.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET));
+                    zombie.setDropChance(EquipmentSlot.HEAD, 0.0f);
+
+                    level().addFreshEntity(zombie);
+                }
             }
         }
     }
@@ -121,5 +124,27 @@ public class ZombieSpawnerConstruct extends MagicConstructEntity {
             serverLevel.sendParticles(ParticleTypes.SQUID_INK, getX(), getY(), getZ(), 40, 1.5, 0.5, 1.5, 0.1);
         }
         super.despawn();
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("SpawnHusks")) {
+            this.spawnHusks = tag.getBoolean("SpawnHusks");
+        } else if (tag.contains("spawnHusks")) {
+            this.spawnHusks = tag.getBoolean("spawnHusks");
+        }
+        if (tag.contains("SpawnTimer")) {
+            this.spawnTimer = tag.getInt("SpawnTimer");
+        } else if (tag.contains("spawnTimer")) {
+            this.spawnTimer = tag.getInt("spawnTimer");
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("SpawnHusks", this.spawnHusks);
+        tag.putInt("SpawnTimer", this.spawnTimer);
     }
 }

@@ -36,7 +36,7 @@ public abstract class MagicConstructEntity extends Entity implements OwnableEnti
 
     public @Nullable LivingEntity getCaster() {
         return casterUUID != null && level() instanceof net.minecraft.server.level.ServerLevel serverLevel
-                ? (LivingEntity) serverLevel.getEntity(casterUUID) : null;
+                && serverLevel.getEntity(casterUUID) instanceof LivingEntity living ? living : null;
     }
 
     @Override

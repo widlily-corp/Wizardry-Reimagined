@@ -8,6 +8,7 @@ import com.binaris.wizardry.registry.EBMobEffects;
 import com.binaris.wizardry.registry.EBSounds;
 import com.binaris.wizardry.registry.EBSpells;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
@@ -81,5 +82,24 @@ public class IceSpikeConstruct extends ScaledConstructEntity {
 
     public void setFacing(Direction facing) {
         this.facing = facing;
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("Facing")) {
+            Direction dir = Direction.byName(tag.getString("Facing"));
+            if (dir != null) {
+                this.facing = dir;
+            }
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if (facing != null) {
+            tag.putString("Facing", facing.getName());
+        }
     }
 }

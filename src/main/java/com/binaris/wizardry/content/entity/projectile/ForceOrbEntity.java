@@ -55,8 +55,11 @@ public class ForceOrbEntity extends MagicProjectileEntity {
             AABB area = this.getBoundingBox().inflate(4.0);
             List<LivingEntity> nearby = this.level().getEntitiesOfClass(LivingEntity.class, area, this::isValidTarget);
             for (LivingEntity target : nearby) {
-                Vec3 dir = target.position().subtract(this.position()).normalize().scale(1.2);
-                target.push(dir.x, 0.4, dir.z);
+                Vec3 diff = target.position().subtract(this.position());
+                if (diff.lengthSqr() > 1e-4) {
+                    Vec3 dir = diff.normalize().scale(1.2);
+                    target.push(dir.x, 0.4, dir.z);
+                }
             }
         }
     }

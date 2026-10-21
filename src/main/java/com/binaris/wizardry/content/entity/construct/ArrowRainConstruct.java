@@ -36,7 +36,7 @@ public class ArrowRainConstruct extends ScaledConstructEntity {
             double z = this.zo + (this.level().random.nextDouble() - 0.5D) * (double) getBbWidth();
 
             ConjuredArrowEntity arrow = new ConjuredArrowEntity(x, y, z, this.level());
-            arrow.setDeltaMovement(Mth.cos((float) Math.toRadians(this.getYRot() + 90)), -0.6, Mth.sin((float) Math.toRadians(this.getYRot() + 90)));
+            arrow.setDeltaMovement((level().random.nextDouble() - 0.5D) * 0.1D, -1.0D, (level().random.nextDouble() - 0.5D) * 0.1D);
             arrow.setOwner(this.getCaster());
             arrow.setBaseDamage(7.0d * damageMultiplier);
             this.level().addFreshEntity(arrow);

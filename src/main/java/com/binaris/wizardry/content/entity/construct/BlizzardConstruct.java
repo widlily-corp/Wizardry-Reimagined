@@ -48,9 +48,9 @@ public class BlizzardConstruct extends ScaledConstructEntity {
                     EntityUtil.attackEntityWithoutKnockback(target, getCaster() != null ? MagicDamageSource.causeIndirectMagicDamage(this, getCaster(), EBDamageSources.FROST)
                                     : MagicDamageSource.causeDirectMagicDamage(this, EBDamageSources.SORCERY),
                             1.0f * damageMultiplier);
-                }
-                if (EBMobEffects.FROST != null && EBMobEffects.FROST.get() != null) {
-                    target.addEffect(new MobEffectInstance(EBMobEffects.FROST, 20));
+                    if (EBMobEffects.FROST != null && EBMobEffects.FROST.get() != null) {
+                        target.addEffect(new MobEffectInstance(EBMobEffects.FROST, 20));
+                    }
                 }
             }
 

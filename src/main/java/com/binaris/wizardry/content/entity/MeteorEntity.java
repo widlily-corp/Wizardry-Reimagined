@@ -55,8 +55,8 @@ public class MeteorEntity extends FallingBlockEntity {
 
     @Override
     public void tick() {
-        if (this.tickCount % 12 == 1 && level().isClientSide && EBSounds.ENTITY_METEOR_FALLING != null && EBSounds.ENTITY_METEOR_FALLING.get() != null) {
-            level().playSound(null, getX(), getY(), getZ(), EBSounds.ENTITY_METEOR_FALLING.get(), SoundSource.PLAYERS, 3.0f, 0.9f);
+        if (this.tickCount % 12 == 1 && !this.level().isClientSide && EBSounds.ENTITY_METEOR_FALLING != null && EBSounds.ENTITY_METEOR_FALLING.get() != null) {
+            this.level().playSound(null, getX(), getY(), getZ(), EBSounds.ENTITY_METEOR_FALLING.get(), SoundSource.PLAYERS, 3.0f, 0.9f);
         }
 
         if (this.level().isClientSide) {

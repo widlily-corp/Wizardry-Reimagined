@@ -39,6 +39,8 @@ public class LightningSigilConstruct extends ScaledConstructEntity {
             this.discard();
         }
 
+        if (this.level().isClientSide) return;
+
         List<LivingEntity> targets = EntityUtil.getLivingWithinRadius(getBbWidth() / 2, getX(), getY(), getZ(), level());
         for (LivingEntity target : targets) {
             if (!isValidTarget(target)) continue;

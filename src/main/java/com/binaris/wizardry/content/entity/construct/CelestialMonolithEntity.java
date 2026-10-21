@@ -117,8 +117,10 @@ public class CelestialMonolithEntity extends MagicConstructEntity {
             // Check impact
             if (newY <= ty) {
                 setPos(tx, ty, tz);
-                this.entityData.set(IMPACTED, true);
-                performCataclysmicImpact(tx, ty, tz);
+                if (!level().isClientSide) {
+                    this.entityData.set(IMPACTED, true);
+                    performCataclysmicImpact(tx, ty, tz);
+                }
             }
         } else {
             // ==========================================
@@ -245,7 +247,7 @@ public class CelestialMonolithEntity extends MagicConstructEntity {
 
                 // Violent radial shockwave impulse
                 Vec3 diff = target.position().subtract(new Vec3(x, y, z));
-                if (diff.lengthSqr() > 0.001) {
+                if (diff.lengthSqr() > 1e-4) {
                     Vec3 dir = diff.normalize();
                     target.setDeltaMovement(target.getDeltaMovement().add(dir.x * 2.2, 0.95, dir.z * 2.2));
                     target.hurtMarked = true;
@@ -260,9 +262,24 @@ public class CelestialMonolithEntity extends MagicConstructEntity {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        setTargetPos(tag.getFloat("tx"), tag.getFloat("ty"), tag.getFloat("tz"));
-        this.entityData.set(IMPACTED, tag.getBoolean("impacted"));
-        this.postImpactTicks = tag.getInt("postTicks");
+        if (tag.contains("tx") && tag.contains("ty") && tag.contains("tz")) {
+            setTargetPos(tag.getFloat("tx"), tag.getFloat("ty"), tag.getFloat("tz"));
+        } else if (tag.contains("TargetX") && tag.contains("TargetY") && tag.contains("TargetZ")) {
+            setTargetPos(tag.getFloat("TargetX"), tag.getFloat("TargetY"), tag.getFloat("TargetZ"));
+        }
+        if (tag.contains("impacted")) {
+            this.entityData.set(IMPACTED, tag.getBoolean("impacted"));
+        } else if (tag.contains("Impacted")) {
+            this.entityData.set(IMPACTED, tag.getBoolean("Impacted"));
+        }
+        if (tag.contains("FallSpeed")) {
+            this.fallSpeed = tag.getFloat("FallSpeed");
+        }
+        if (tag.contains("PostImpactTicks")) {
+            this.postImpactTicks = tag.getInt("PostImpactTicks");
+        } else if (tag.contains("postTicks")) {
+            this.postImpactTicks = tag.getInt("postTicks");
+        }
     }
 
     @Override
@@ -272,6 +289,7 @@ public class CelestialMonolithEntity extends MagicConstructEntity {
         tag.putFloat("ty", getTargetY());
         tag.putFloat("tz", getTargetZ());
         tag.putBoolean("impacted", isImpacted());
-        tag.putInt("postTicks", postImpactTicks);
+        tag.putFloat("FallSpeed", this.fallSpeed);
+        tag.putInt("PostImpactTicks", this.postImpactTicks);
     }
 }

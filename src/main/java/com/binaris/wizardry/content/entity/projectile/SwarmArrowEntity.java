@@ -83,12 +83,16 @@ public class SwarmArrowEntity extends AbstractArrow {
             if (this.tickCount > 1) {
                 LivingEntity target = getTargetEntity();
                 if (target != null && target.isAlive()) {
-                    Vec3 toTarget = target.getEyePosition().subtract(position()).normalize();
-                    Vec3 currentMotion = getDeltaMovement();
-                    double speed = Math.max(1.3, currentMotion.length());
-                    Vec3 newMotion = currentMotion.add(toTarget.scale(0.32)).normalize().scale(speed);
-                    setDeltaMovement(newMotion);
-                    hasImpulse = true;
+                    Vec3 diff = target.getEyePosition().subtract(position());
+                    if (diff.lengthSqr() > 1e-4) {
+                        Vec3 toTarget = diff.normalize();
+                        Vec3 currentMotion = getDeltaMovement();
+                        double speed = Math.max(1.3, currentMotion.length());
+                        Vec3 combined = currentMotion.add(toTarget.scale(0.32));
+                        Vec3 newMotion = (combined.lengthSqr() > 1e-4 ? combined.normalize() : toTarget).scale(speed);
+                        setDeltaMovement(newMotion);
+                        hasImpulse = true;
+                    }
                 } else {
                     findNewTarget(14.0);
                 }
@@ -121,7 +125,8 @@ public class SwarmArrowEntity extends AbstractArrow {
                 if (nextTarget != null) {
                     bouncesRemaining--;
                     targetUUID = nextTarget.getUUID();
-                    Vec3 toNext = nextTarget.getEyePosition().subtract(position()).normalize();
+                    Vec3 diff = nextTarget.getEyePosition().subtract(position());
+                    Vec3 toNext = diff.lengthSqr() > 1e-4 ? diff.normalize() : new Vec3(0, 1, 0);
                     setDeltaMovement(toNext.scale(1.5));
                     hasImpulse = true;
 
@@ -142,7 +147,8 @@ public class SwarmArrowEntity extends AbstractArrow {
             if (nextTarget != null) {
                 bouncesRemaining--;
                 targetUUID = nextTarget.getUUID();
-                Vec3 toNext = nextTarget.getEyePosition().subtract(position()).normalize();
+                Vec3 diff = nextTarget.getEyePosition().subtract(position());
+                Vec3 toNext = diff.lengthSqr() > 1e-4 ? diff.normalize() : new Vec3(0, 1, 0);
                 setDeltaMovement(toNext.scale(1.4));
                 hasImpulse = true;
                 this.inGround = false;
@@ -178,7 +184,7 @@ public class SwarmArrowEntity extends AbstractArrow {
                 && e != currentHit
                 && !hitTargets.contains(e.getUUID())
                 && e != getOwner()
-                && (getOwner() == null || !((LivingEntity) getOwner()).isAlliedTo(e))));
+                && !(getOwner() instanceof LivingEntity livingOwner && livingOwner.isAlliedTo(e))));
 
         if (candidates.isEmpty()) return null;
         candidates.sort(Comparator.comparingDouble(this::distanceToSqr));
@@ -192,7 +198,7 @@ public class SwarmArrowEntity extends AbstractArrow {
                 e.isAlive()
                 && !hitTargets.contains(e.getUUID())
                 && e != getOwner()
-                && (getOwner() == null || !((LivingEntity) getOwner()).isAlliedTo(e))));
+                && !(getOwner() instanceof LivingEntity livingOwner && livingOwner.isAlliedTo(e))));
 
         if (candidates.isEmpty()) return null;
         candidates.sort(Comparator.comparingDouble(this::distanceToSqr));

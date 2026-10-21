@@ -49,9 +49,11 @@ public class HealAuraConstruct extends ScaledConstructEntity {
             return;
         }
 
+        LivingEntity caster = getCaster();
         List<LivingEntity> targets = EntityUtil.getLivingWithinCylinder(getBbWidth() / 2, xo, yo, zo, getBbHeight(), level());
         for (LivingEntity target : targets) {
-            if (!this.isValidTarget(target)) {
+            boolean isAlly = target == caster || (caster != null && caster.isAlliedTo(target));
+            if (isAlly && target.isAlive()) {
                 if (target.getHealth() < target.getMaxHealth() && target.tickCount % 5 == 0) {
                     float healAmount = EBSpells.HEALING_AURA != null && EBSpells.HEALING_AURA.hasProperty(DefaultProperties.HEALTH)
                             ? EBSpells.HEALING_AURA.property(DefaultProperties.HEALTH) : 1.0f;

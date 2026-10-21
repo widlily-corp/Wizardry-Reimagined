@@ -1,5 +1,6 @@
 package com.binaris.wizardry.content.entity.construct;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -68,5 +69,19 @@ public abstract class ScaledConstructEntity extends MagicConstructEntity {
 
     protected boolean shouldScaleHeight() {
         return true;
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains("SizeMultiplier")) {
+            setSizeMultiplier(tag.getFloat("SizeMultiplier"));
+        }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putFloat("SizeMultiplier", getSizeMultiplier());
     }
 }
