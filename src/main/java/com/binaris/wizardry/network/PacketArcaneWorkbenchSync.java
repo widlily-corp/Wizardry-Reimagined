@@ -29,6 +29,7 @@ public record PacketArcaneWorkbenchSync(int action) implements CustomPacketPaylo
     public static void handle(PacketArcaneWorkbenchSync payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
+            if (player == null || player.isRemoved() || player.level() == null) return;
             if (player.containerMenu instanceof ArcaneWorkbenchMenu menu) {
                 if (payload.action() == ACTION_APPLY) {
                     menu.onApplyButtonPressed(player);

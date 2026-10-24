@@ -53,7 +53,16 @@ public class DartEntity extends MagicArrowEntity {
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            this.level().addParticle(ParticleTypes.CRIT, getX(), getY(), getZ(), 0, 0, 0);
+            double dx = getX() - xo;
+            double dy = getY() - yo;
+            double dz = getZ() - zo;
+            for (int i = 0; i < 2; i++) {
+                double pct = (i + 0.5) / 2.0;
+                double px = xo + dx * pct + (random.nextDouble() - 0.5) * 0.05;
+                double py = yo + dy * pct + (random.nextDouble() - 0.5) * 0.05;
+                double pz = zo + dz * pct + (random.nextDouble() - 0.5) * 0.05;
+                this.level().addParticle(ParticleTypes.CRIT, px, py, pz, 0, 0, 0);
+            }
         }
     }
 }

@@ -46,12 +46,17 @@ public class ArrowSpell<T extends MagicArrowEntity> extends Spell {
 
     @Override
     public boolean cast(EntityCastContext ctx) {
-        if (ctx.target() == null) return false;
+        if (ctx.caster() == null) return false;
 
         if (!ctx.world().isClientSide) {
             T arrow = arrowFactory.apply(ctx.world());
-            int aimingError = EntityUtil.getDefaultAimingError(ctx.world().getDifficulty());
-            arrow.aim(ctx.caster(), ctx.target(), calculateVelocity(ctx, arrow, ctx.caster().getEyeHeight() - (float) MagicArrowEntity.LAUNCH_Y_OFFSET), aimingError);
+            float speed = calculateVelocity(ctx, arrow, ctx.caster().getEyeHeight() - (float) MagicArrowEntity.LAUNCH_Y_OFFSET);
+            if (ctx.target() != null) {
+                int aimingError = EntityUtil.getDefaultAimingError(ctx.world().getDifficulty());
+                arrow.aim(ctx.caster(), ctx.target(), speed, aimingError);
+            } else {
+                arrow.aim(ctx.caster(), speed);
+            }
             arrow.damageMultiplier = ctx.modifiers().getFactor(SpellModifiers.POTENCY);
             addArrowExtras(ctx, arrow);
             ctx.world().addFreshEntity(arrow);

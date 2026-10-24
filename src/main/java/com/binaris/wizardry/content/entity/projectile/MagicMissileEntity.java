@@ -49,11 +49,17 @@ public class MagicMissileEntity extends MagicArrowEntity {
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
-            double x = getX();
-            double y = getY() + 0.1;
-            double z = getZ();
-            this.level().addParticle(ParticleTypes.ENCHANTED_HIT, x, y, z, 0.0, 0.0, 0.0);
-            this.level().addParticle(ParticleTypes.WITCH, x, y, z, 0.0, 0.0, 0.0);
+            double dx = getX() - xo;
+            double dy = getY() - yo;
+            double dz = getZ() - zo;
+            for (int i = 0; i < 2; i++) {
+                double pct = (i + 0.5) / 2.0;
+                double px = xo + dx * pct + (random.nextDouble() - 0.5) * 0.08;
+                double py = yo + dy * pct + 0.1 + (random.nextDouble() - 0.5) * 0.08;
+                double pz = zo + dz * pct + (random.nextDouble() - 0.5) * 0.08;
+                this.level().addParticle(ParticleTypes.ENCHANTED_HIT, px, py, pz, 0.0, 0.0, 0.0);
+                this.level().addParticle(ParticleTypes.WITCH, px, py, pz, 0.0, 0.0, 0.0);
+            }
         }
     }
 }

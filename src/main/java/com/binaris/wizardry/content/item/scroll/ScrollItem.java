@@ -5,8 +5,10 @@ import com.binaris.wizardry.content.component.SpellData;
 import com.binaris.wizardry.content.item.wand.ICastItem;
 import com.binaris.wizardry.registry.EBDataComponents;
 import com.binaris.wizardry.registry.EBRegistries;
+import com.binaris.wizardry.registry.EBSounds;
 import com.binaris.wizardry.registry.Spell;
 import com.binaris.wizardry.registry.Spells;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -95,10 +97,13 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
 
         if (spell.getChargeup() > 0) {
             player.startUsingItem(hand);
+            if (level.isClientSide) {
+                player.playSound(EBSounds.ITEM_WAND_CHARGEUP.get(), 1.0f, 1.0f);
+            }
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
 
-        boolean success = castInstant(level, player, stack, spell);
+        boolean success = castInstant(level, player, hand, stack, spell);
         return success ? InteractionResultHolder.sidedSuccess(stack, level.isClientSide()) : InteractionResultHolder.fail(stack);
     }
 
@@ -114,12 +119,25 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
 
         int useTick = getUseDuration(stack, livingEntity) - timeLeft;
         if (useTick >= spell.getChargeup()) {
-            castInstant(level, player, stack, spell);
+            castInstant(level, player, player.getUsedItemHand(), stack, spell);
             player.stopUsingItem();
         }
     }
 
-    protected boolean castInstant(Level level, Player player, ItemStack stack, Spell spell) {
+    @Override
+    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, int timeLeft) {
+        Spell spell = getCurrentSpell(stack);
+        if (spell != Spells.NONE.get() && spell.getChargeup() > 0) {
+            int elapsed = getUseDuration(stack, entity) - timeLeft;
+            if (elapsed < spell.getChargeup()) {
+                if (level.isClientSide) {
+                    entity.playSound(net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH, 0.5f, 1.6f);
+                }
+            }
+        }
+    }
+
+    protected boolean castInstant(Level level, Player player, InteractionHand hand, ItemStack stack, Spell spell) {
         boolean success;
         try {
             success = spell.cast(level, player);
@@ -127,9 +145,14 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
             com.binaris.wizardry.WizardryMod.LOGGER.error("Failed to cast spell {}", spell, t);
             return false;
         }
-        if (success && !player.isCreative()) {
-            stack.shrink(1);
-            player.getCooldowns().addCooldown(this, Math.max(10, spell.getCooldown()));
+        if (success) {
+            if (hand != null) {
+                player.swing(hand, true);
+            }
+            if (!player.isCreative()) {
+                stack.shrink(1);
+                player.getCooldowns().addCooldown(this, Math.max(10, spell.getCooldown()));
+            }
         }
         return success;
     }
@@ -159,6 +182,19 @@ public class ScrollItem extends Item implements ICastItem, IWorkbenchItem {
         if (spell != Spells.NONE.get()) {
             tooltip.add(spell.getTier().getDescriptionFormatted());
             tooltip.add(Component.translatable(spell.getElement().getDescriptionId()).withStyle(spell.getElement().getColor()));
+            tooltip.add(Component.translatable("tooltip.ebwizardry.scroll.single_use").withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
+            if (spell.getCooldown() > 0) {
+                float cdSec = Math.round(spell.getCooldown() / 2.0f) / 10.0f;
+                tooltip.add(Component.translatable("tooltip.ebwizardry.spell.cooldown",
+                        String.format(java.util.Locale.US, "%.1f", cdSec)).withStyle(ChatFormatting.DARK_GRAY));
+            }
+            if (spell.getChargeup() > 0) {
+                float chargeSec = Math.round(spell.getChargeup() / 2.0f) / 10.0f;
+                tooltip.add(Component.translatable("tooltip.ebwizardry.spell.chargeup",
+                        String.format(java.util.Locale.US, "%.1f", chargeSec)).withStyle(ChatFormatting.DARK_GRAY));
+            }
+            String descKey = "spell." + spell.getLocation().getNamespace() + "." + spell.getLocation().getPath() + ".desc";
+            tooltip.add(Component.translatable(descKey).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
     }
 

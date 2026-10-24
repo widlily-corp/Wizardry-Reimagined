@@ -47,11 +47,16 @@ public class ProjectileSpell<T extends MagicProjectileEntity> extends Spell {
 
     @Override
     public boolean cast(EntityCastContext ctx) {
-        if (ctx.target() == null) return false;
+        if (ctx.caster() == null) return false;
         if (!ctx.world().isClientSide) {
             T projectile = projectileFactory.apply(ctx.world());
-            int aimingError = EntityUtil.getDefaultAimingError(ctx.world().getDifficulty());
-            projectile.aim(ctx.caster(), ctx.target(), calculateVelocity(ctx, projectile), aimingError);
+            float speed = calculateVelocity(ctx, projectile);
+            if (ctx.target() != null) {
+                int aimingError = EntityUtil.getDefaultAimingError(ctx.world().getDifficulty());
+                projectile.aim(ctx.caster(), ctx.target(), speed, aimingError);
+            } else {
+                projectile.aim(ctx.caster(), speed);
+            }
             projectile.damageMultiplier = ctx.modifiers().getFactor(SpellModifiers.POTENCY);
             if (projectile instanceof BombEntity bomb) {
                 bomb.blastMultiplier = ctx.modifiers().getFactor(SpellModifiers.BLAST);
@@ -59,6 +64,7 @@ public class ProjectileSpell<T extends MagicProjectileEntity> extends Spell {
             ctx.world().addFreshEntity(projectile);
         }
 
+        ctx.caster().swing(ctx.hand(), true);
         this.playSound(ctx.world(), ctx.caster(), ctx.castingTicks(), -1);
         return true;
     }

@@ -28,6 +28,7 @@ public record PacketCastSpell(InteractionHand hand) implements CustomPacketPaylo
     public static void handle(PacketCastSpell payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
+            if (player == null || player.isRemoved() || player.level() == null) return;
             ItemStack stack = player.getItemInHand(payload.hand());
             if (stack.getItem() instanceof WandItem wand) {
                 wand.castCurrentSpell(player.level(), player, payload.hand(), stack);

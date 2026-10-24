@@ -14,8 +14,6 @@ import org.joml.Vector3f;
 import java.util.function.Supplier;
 
 public final class ParticleBuilder {
-    private static final ParticleBuilder instance = new ParticleBuilder();
-
     private ParticleOptions particle;
     private double x, y, z;
     private double vx, vy, vz;
@@ -26,7 +24,9 @@ public final class ParticleBuilder {
     private int count = 1;
     private double spreadX = 0, spreadY = 0, spreadZ = 0;
 
-    private ParticleBuilder() {}
+    public ParticleBuilder(ParticleOptions particle) {
+        this.particle = particle != null ? particle : ParticleTypes.CRIT;
+    }
 
     public static ParticleBuilder create(Supplier<? extends ParticleOptions> particleSupplier) {
         return create(particleSupplier != null ? particleSupplier.get() : ParticleTypes.CRIT);
@@ -82,16 +82,7 @@ public final class ParticleBuilder {
     }
 
     public static ParticleBuilder create(ParticleOptions particle) {
-        instance.particle = particle != null ? particle : ParticleTypes.CRIT;
-        instance.x = instance.y = instance.z = 0;
-        instance.vx = instance.vy = instance.vz = 0;
-        instance.red = instance.green = instance.blue = 1;
-        instance.scale = 1;
-        instance.lifetime = 20;
-        instance.entity = null;
-        instance.count = 1;
-        instance.spreadX = instance.spreadY = instance.spreadZ = 0;
-        return instance;
+        return new ParticleBuilder(particle);
     }
 
     public ParticleBuilder pos(double x, double y, double z) {
@@ -263,15 +254,18 @@ public final class ParticleBuilder {
             toSpawn = new DustParticleOptions(new Vector3f(red, green, blue), Math.max(0.8f, scale));
         }
 
-        for (int i = 0; i < count; i++) {
-            double spawnX = baseX + (spreadX > 0 ? (level.random.nextDouble() * 2 - 1) * spreadX : 0);
-            double spawnY = baseY + (spreadY > 0 ? (level.random.nextDouble() * 2 - 1) * spreadY : 0);
-            double spawnZ = baseZ + (spreadZ > 0 ? (level.random.nextDouble() * 2 - 1) * spreadZ : 0);
-
-            if (level.isClientSide) {
+        if (level.isClientSide) {
+            for (int i = 0; i < count; i++) {
+                double spawnX = baseX + (spreadX > 0 ? (level.random.nextDouble() * 2 - 1) * spreadX : 0);
+                double spawnY = baseY + (spreadY > 0 ? (level.random.nextDouble() * 2 - 1) * spreadY : 0);
+                double spawnZ = baseZ + (spreadZ > 0 ? (level.random.nextDouble() * 2 - 1) * spreadZ : 0);
                 level.addParticle(toSpawn, spawnX, spawnY, spawnZ, vx, vy, vz);
-            } else if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(toSpawn, spawnX, spawnY, spawnZ, 1, vx, vy, vz, 0.0);
+            }
+        } else if (level instanceof ServerLevel serverLevel) {
+            if (spreadX == 0 && spreadY == 0 && spreadZ == 0) {
+                serverLevel.sendParticles(toSpawn, baseX, baseY, baseZ, count, vx, vy, vz, 0.0);
+            } else {
+                serverLevel.sendParticles(toSpawn, baseX, baseY, baseZ, count, spreadX, spreadY, spreadZ, 0.02);
             }
         }
     }

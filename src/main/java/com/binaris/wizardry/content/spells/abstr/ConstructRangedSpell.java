@@ -64,7 +64,7 @@ public class ConstructRangedSpell<T extends MagicConstructEntity> extends Constr
     @Override
     public boolean cast(EntityCastContext ctx) {
         double range = ctx.modifiers().get(SpellModifiers.RANGE, property(DefaultProperties.RANGE));
-        if (ctx.target() == null) return false;
+        if (ctx.caster() == null || ctx.target() == null) return false;
         if (ctx.caster().distanceTo(ctx.target()) >= range || ctx.world().isClientSide) return false;
 
         Vec3 origin = ctx.caster().getEyePosition(1);

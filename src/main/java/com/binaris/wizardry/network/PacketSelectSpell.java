@@ -30,6 +30,7 @@ public record PacketSelectSpell(int slotIndex) implements CustomPacketPayload {
     public static void handle(PacketSelectSpell payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
+            if (player == null || player.isRemoved() || player.level() == null) return;
             ItemStack wand = player.getMainHandItem();
             if (!(wand.getItem() instanceof WandItem)) {
                 wand = player.getOffhandItem();
@@ -44,6 +45,9 @@ public record PacketSelectSpell(int slotIndex) implements CustomPacketPayload {
                     wandItem.selectSpell(wand, payload.slotIndex());
                 }
                 player.stopUsingItem();
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        com.binaris.wizardry.registry.EBSounds.ITEM_WAND_SWITCH_SPELL.get(),
+                        net.minecraft.sounds.SoundSource.PLAYERS, 0.7f, 1.0f);
             }
         });
     }

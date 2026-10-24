@@ -125,6 +125,11 @@ public abstract class MagicProjectileEntity extends ThrowableProjectile {
     }
 
     public void aim(LivingEntity caster, Entity target, float speed, float aimingError) {
+        if (caster == null) return;
+        if (target == null) {
+            aim(caster, speed);
+            return;
+        }
         this.setOwner(caster);
         double startY = caster.getY() + caster.getEyeHeight() - LAUNCH_Y_OFFSET;
         double dx = target.getX() - caster.getX();

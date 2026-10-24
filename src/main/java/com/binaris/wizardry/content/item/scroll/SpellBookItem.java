@@ -5,6 +5,7 @@ import com.binaris.wizardry.registry.EBDataComponents;
 import com.binaris.wizardry.registry.EBRegistries;
 import com.binaris.wizardry.registry.Spell;
 import com.binaris.wizardry.registry.Spells;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -64,6 +65,22 @@ public class SpellBookItem extends Item {
         if (spell != Spells.NONE.get()) {
             tooltip.add(spell.getTier().getDescriptionFormatted());
             tooltip.add(Component.translatable(spell.getElement().getDescriptionId()).withStyle(spell.getElement().getColor()));
+
+            tooltip.add(Component.translatable("tooltip.ebwizardry.spell.cost", spell.getCost()).withStyle(ChatFormatting.BLUE));
+            if (spell.getCooldown() > 0) {
+                float cdSec = Math.round(spell.getCooldown() / 2.0f) / 10.0f;
+                tooltip.add(Component.translatable("tooltip.ebwizardry.spell.cooldown",
+                        String.format(java.util.Locale.US, "%.1f", cdSec)).withStyle(ChatFormatting.DARK_GRAY));
+            }
+            if (spell.getChargeup() > 0) {
+                float chargeSec = Math.round(spell.getChargeup() / 2.0f) / 10.0f;
+                tooltip.add(Component.translatable("tooltip.ebwizardry.spell.chargeup",
+                        String.format(java.util.Locale.US, "%.1f", chargeSec)).withStyle(ChatFormatting.DARK_GRAY));
+            }
+            String descKey = "spell." + spell.getLocation().getNamespace() + "." + spell.getLocation().getPath() + ".desc";
+            tooltip.add(Component.translatable(descKey).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        } else {
+            tooltip.add(Component.translatable("tooltip.ebwizardry.spell_book.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
     }
 

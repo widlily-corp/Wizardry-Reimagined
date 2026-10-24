@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -284,6 +285,81 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
         return super.getName(stack);
     }
 
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        SpellTier tier = getTier();
+        Element element = getElement();
+        tooltip.add(Component.translatable("tooltip.ebwizardry.wand.tier", tier.getDescriptionFormatted())
+                .withStyle(ChatFormatting.GRAY));
+        if (element != Elements.MAGIC.get()) {
+            tooltip.add(Component.translatable("tooltip.ebwizardry.wand.element",
+                    Component.translatable(element.getDescriptionId()).withStyle(element.getColor()))
+                    .withStyle(ChatFormatting.GRAY));
+        }
+
+        int mana = getMana(stack);
+        int maxMana = getManaCapacity(stack);
+        ChatFormatting manaColor = mana == maxMana ? ChatFormatting.AQUA : (mana > maxMana * 0.25f ? ChatFormatting.BLUE : ChatFormatting.RED);
+        tooltip.add(Component.translatable("tooltip.ebwizardry.wand.mana",
+                Component.literal(String.valueOf(mana)).withStyle(manaColor),
+                Component.literal(String.valueOf(maxMana)).withStyle(ChatFormatting.DARK_AQUA))
+                .withStyle(ChatFormatting.GRAY));
+
+        Spell currentSpell = getCurrentSpell(stack);
+        if (currentSpell != Spells.NONE.get()) {
+            tooltip.add(Component.translatable("tooltip.ebwizardry.wand.selected_spell", currentSpell.getDescriptionFormatted())
+                    .withStyle(ChatFormatting.GOLD));
+
+            int cost = currentSpell.getCost();
+            ChatFormatting costColor = mana >= cost ? ChatFormatting.AQUA : ChatFormatting.RED;
+            tooltip.add(Component.literal("  ").append(Component.translatable("tooltip.ebwizardry.spell.mana_cost",
+                    Component.literal(String.valueOf(cost)).withStyle(costColor)))
+                    .withStyle(ChatFormatting.DARK_GRAY));
+
+            int cdTicks = currentSpell.getCooldown();
+            int cdLevel = getUpgradeLevel(stack, WandUpgrades.COOLDOWN);
+            cdTicks = (int) (cdTicks * Math.max(0.25f, 1.0f - COOLDOWN_REDUCTION_PER_LEVEL * cdLevel));
+            float cdSec = Math.round(cdTicks / 2.0f) / 10.0f;
+            if (cdSec > 0) {
+                tooltip.add(Component.literal("  ").append(Component.translatable("tooltip.ebwizardry.spell.cooldown",
+                        String.format(java.util.Locale.US, "%.1f", cdSec)))
+                        .withStyle(ChatFormatting.DARK_GRAY));
+            }
+            if (currentSpell.getChargeup() > 0) {
+                float chargeSec = Math.round(currentSpell.getChargeup() / 2.0f) / 10.0f;
+                tooltip.add(Component.literal("  ").append(Component.translatable("tooltip.ebwizardry.spell.chargeup",
+                        String.format(java.util.Locale.US, "%.1f", chargeSec)))
+                        .withStyle(ChatFormatting.DARK_GRAY));
+            }
+        } else {
+            tooltip.add(Component.translatable("tooltip.ebwizardry.wand.no_spells").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+        }
+
+        Spell[] spells = getSpells(stack);
+        int boundCount = 0;
+        for (Spell s : spells) {
+            if (s != Spells.NONE.get()) boundCount++;
+        }
+        tooltip.add(Component.translatable("tooltip.ebwizardry.wand.spells_summary", boundCount, getSpellSlotCount(stack))
+                .withStyle(ChatFormatting.DARK_PURPLE));
+
+        int totalUpgrades = getTotalUpgrades(stack);
+        int maxUpgrades = getTier().getUpgradeLimit() + (getElement() == Elements.MAGIC.get() ? NON_ELEMENTAL_UPGRADE_BONUS : 0);
+        tooltip.add(Component.translatable("tooltip.ebwizardry.wand.upgrades_summary", totalUpgrades, maxUpgrades)
+                .withStyle(ChatFormatting.DARK_AQUA));
+
+        if (getTier() != SpellTiers.MASTER.get()) {
+            SpellTier nextTier = getTier().next();
+            int currentProg = getProgression(stack);
+            int reqProg = nextTier.getProgression();
+            if (currentProg >= reqProg) {
+                tooltip.add(Component.translatable("tooltip.ebwizardry.wand.ready_to_upgrade").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+            } else {
+                tooltip.add(Component.translatable("tooltip.ebwizardry.wand.progression", currentProg, reqProg).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+        }
+    }
+
     // ==========================================
     // Spell Casting Logic
     // ==========================================
@@ -296,12 +372,40 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
     }
 
     @Override
+    public @NotNull net.minecraft.world.item.UseAnim getUseAnimation(@NotNull ItemStack stack) {
+        return net.minecraft.world.item.UseAnim.BOW;
+    }
+
+    protected void notifyCastFailure(Player player, Level level, ItemStack stack, Spell spell) {
+        if (player == null || spell == null || spell == Spells.NONE.get()) return;
+        if (spell.getTier().getLevel() > getTier().getLevel() && getTier() != SpellTiers.MASTER.get()) {
+            player.displayClientMessage(Component.translatable("item.ebwizardry.wand.tier_too_low").withStyle(ChatFormatting.RED), true);
+            if (level.isClientSide) {
+                player.playSound(net.minecraft.sounds.SoundEvents.DISPENSER_FAIL, 0.7f, 1.4f);
+            }
+        } else if (!player.isCreative() && spell.getCost() > getMana(stack)) {
+            player.displayClientMessage(Component.translatable("item.ebwizardry.wand.not_enough_mana").withStyle(ChatFormatting.RED), true);
+            if (level.isClientSide) {
+                player.playSound(net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH, 0.6f, 1.6f);
+            }
+        } else if (!player.isCreative() && getCurrentCooldown(stack, level) > 0) {
+            int cd = getCurrentCooldown(stack, level);
+            float sec = Math.round(cd / 2.0f) / 10.0f;
+            player.displayClientMessage(Component.translatable("item.ebwizardry.wand.on_cooldown", String.format(java.util.Locale.US, "%.1f", sec)).withStyle(ChatFormatting.RED), true);
+            if (level.isClientSide) {
+                player.playSound(net.minecraft.sounds.SoundEvents.DISPENSER_FAIL, 0.5f, 1.8f);
+            }
+        }
+    }
+
+    @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         Spell spell = getCurrentSpell(stack);
         if (spell == Spells.NONE.get()) return InteractionResultHolder.pass(stack);
 
         if (!canCastRequirements(stack, spell, player, level)) {
+            notifyCastFailure(player, level, stack, spell);
             return InteractionResultHolder.fail(stack);
         }
 
@@ -319,7 +423,10 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
 
     public void castCurrentSpell(Level level, Player player, InteractionHand hand, ItemStack stack) {
         Spell spell = getCurrentSpell(stack);
-        if (!canCastRequirements(stack, spell, player, level)) return;
+        if (!canCastRequirements(stack, spell, player, level)) {
+            notifyCastFailure(player, level, stack, spell);
+            return;
+        }
 
         if (spell.getChargeup() > 0) {
             player.startUsingItem(hand);
@@ -352,6 +459,23 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
         return MAX_USE_DURATION;
     }
 
+    @Override
+    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, int timeLeft) {
+        Spell spell = getCurrentSpell(stack);
+        if (spell != Spells.NONE.get() && spell.getChargeup() > 0) {
+            int usedTicks = getUseDuration(stack, entity) - timeLeft;
+            if (usedTicks < spell.getChargeup()) {
+                level.playSound(null, entity.getX(), entity.getY(), entity.getZ(),
+                        net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH, net.minecraft.sounds.SoundSource.PLAYERS, 0.6f, 1.6f);
+                if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE,
+                            entity.getX(), entity.getY() + entity.getEyeHeight() * 0.8, entity.getZ(),
+                            6, 0.15, 0.15, 0.15, 0.02);
+                }
+            }
+        }
+    }
+
     protected boolean castInstant(Level level, Player player, InteractionHand hand, ItemStack stack, Spell spell) {
         boolean success;
         try {
@@ -361,6 +485,8 @@ public class WandItem extends Item implements ICastItem, IManaItem, IWorkbenchIt
             return false;
         }
         if (!success) return false;
+
+        player.swing(hand, true);
 
         consumeMana(stack, spell.getCost(), player);
 

@@ -40,8 +40,9 @@ public class FrostBarrier extends Spell {
 
     @Override
     public boolean cast(EntityCastContext ctx) {
-        if (ctx.caster().onGround()) {
-            if (!createBarriers(ctx.world(), ctx.caster().position(), ctx.target().position().subtract(ctx.caster().position()), ctx.caster()))
+        if (ctx.caster() != null && ctx.caster().onGround()) {
+            Vec3 dir = ctx.target() != null ? ctx.target().position().subtract(ctx.caster().position()) : ctx.caster().getLookAngle();
+            if (!createBarriers(ctx.world(), ctx.caster().position(), dir, ctx.caster()))
                 return false;
             this.playSound(ctx.world(), ctx.caster(), ctx.castingTicks(), -1);
             return true;

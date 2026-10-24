@@ -81,6 +81,7 @@ public abstract class RaySpell extends Spell {
 
     @Override
     public boolean cast(EntityCastContext ctx) {
+        if (ctx.caster() == null) return false;
         Vec3 origin = new Vec3(ctx.caster().getX(), ctx.caster().getY() + ctx.caster().getEyeHeight() - Y_OFFSET, ctx.caster().getZ());
         Vec3 targetPos = null;
 
@@ -99,9 +100,8 @@ public abstract class RaySpell extends Spell {
             }
         }
 
-        if (targetPos == null) return false;
-
-        if (!shootSpell(ctx, origin, targetPos.subtract(origin).normalize())) return false;
+        Vec3 direction = targetPos != null ? targetPos.subtract(origin).normalize() : ctx.caster().getLookAngle();
+        if (!shootSpell(ctx, origin, direction)) return false;
         this.playSound(ctx.world(), ctx.caster(), ctx.castingTicks(), -1);
         return true;
     }
